@@ -1,0 +1,230 @@
+@import url('./clash-grotesk.css');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@100;200;300;400;500;600;700&family=IBM+Plex+Sans+Thai:wght@100;200;300;400;500;600;700&display=swap');
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+  font-family: inherit;
+}
+
+/* ############### CUSTOM PROPERTIES (VARIABLES) ############### */
+
+:root {
+  /* ---------- COLORS ---------- */
+
+  /* NEUTRAL COLORS */
+  --clr-900: #040a1a;
+  --clr-910: rgba(4, 10, 26, 0.1);
+  --clr-920: rgba(4, 10, 26, 0.2);
+  --clr-930: rgba(4, 10, 26, 0.3);
+  --clr-940: rgba(4, 10, 26, 0.4);
+  --clr-950: rgba(4, 10, 26, 0.5);
+  --clr-800: #232936;
+  --clr-700: #424753;
+  --clr-600: #61656f;
+  --clr-500: #80848c;
+  --clr-400: #9fa2a8;
+  --clr-300: #bec0c5;
+  --clr-200: #e5e7ea;
+  --clr-100: #fbfdfe;
+  --clr-110: rgba(255, 255, 255, 0.1);
+  --clr-120: rgba(255, 255, 255, 0.2);
+  --clr-130: rgba(255, 255, 255, 0.3);
+  --clr-140: rgba(255, 255, 255, 0.4);
+  --clr-150: rgba(255, 255, 255, 0.5);
+
+  /* PRIMARY & ACCENTS */
+  --clr-pri-900: #00001f;
+  --clr-pri-800: #000339;
+  --clr-pri-700: #001c52;
+  --clr-pri-600: #01366c;
+  --clr-pri-500: #1a4f85;
+  --clr-pri-400: #316191;
+  --clr-pri-300: #5f84aa;
+  --clr-pri-200: #8ca7c2;
+  --clr-pri-100: #bacada;
+
+  --clr-acc-900: #7a0e00;
+  --clr-acc-800: #932800;
+  --clr-acc-700: #ad4110;
+  --clr-acc-600: #c65b2a;
+  --clr-acc-500: #e07443;
+  --clr-acc-400: #e69069;
+  --clr-acc-300: #ecac8e;
+  --clr-acc-200: #efb9a1;
+  --clr-acc-100: #f6d5c7;
+
+  /* SEMANTIC COLORS */
+  --clr-sem-ok: #28a745;
+  --clr-sem-warn: #ffc107;
+  --clr-sem-err-700: #bc2b39;
+  --clr-sem-err: #dc3545;
+  --clr-sem-err-300: #e26975;
+  --clr-sem-link: #0078a7;
+
+  /* ---------- SPACINGS ---------- */
+
+  --sp-xs: 0.25rem;
+  --sp-s: 0.5rem;
+  --sp-m: 1rem;
+  --sp-l: 1.5rem;
+  --sp-xl: 2rem;
+  --sp-2xl: 4rem;
+  --sp-3xl: 8rem;
+  --sp-4xl: 12rem;
+  --sp-5xl: 16rem;
+
+  /* ---------- TYPOGRAPHIES ---------- */
+
+  --ff-primary: 'IBM Plex Sans Thai';
+  --ff-secondary: 'IBM Plex Sans Thai Looped';
+
+  --fs-h1: 3rem;
+  --fs-h2: 2.75rem;
+  --fs-h3: 2.5rem;
+  --fs-h4: 2rem;
+  --fs-h5: 1.5rem;
+  --fs-h6: 1.25rem;
+  --fs-p1: 0.875rem;
+  --fs-p2: 0.875rem;
+
+  --lh-h1: 1;
+  --lh-h2: 1;
+  --lh-h3: 1.25;
+  --lh-h4: 1.4;
+  --lh-h5: 1.5;
+  --lh-p1: 1.5;
+  --lh-p2: 1.5;
+
+  --fw-th: 100;
+  --fw-rg: 400;
+  --fw-bd: 700;
+  --fw-xb: 800;
+  --fw-bl: 900;
+
+  /* ---------- SHADOWS ---------- */
+
+  --sd-1: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --sd-2: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --sd-3: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --sd-4: 0 2px 4px rgba(0, 0, 0, 0.4);
+  --sd-5: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* ############### SET THE MAIN ELEMENTS ############### */
+
+body {
+  min-height: 100vh;
+  background: var(--clr-200);
+  color: var(--clr-900);
+  line-height: 1.6;
+  font-family:
+    'IBM Plex Sans Thai Looped',
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
+    sans-serif;
+  font-size: 1em;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+h1 {
+  font-family: ClashGrotesk-Bold, sans-serif;
+  font-size: var(--fs-h1);
+  line-height: var(--lh-h1);
+}
+h2 {
+  font-family: ClashGrotesk-Bold, sans-serif;
+  font-size: var(--fs-h2);
+  line-height: var(--lh-h2);
+}
+h3 {
+  font-family: 'IBM Plex Sans Thai', sans-serif;
+  font-size: var(--fs-h3);
+  line-height: var(--lh-h3);
+  font-weight: 700;
+}
+h4 {
+  font-family: 'IBM Plex Sans Thai', sans-serif;
+  font-size: var(--fs-h4);
+  line-height: var(--lh-h3);
+  font-weight: 600;
+}
+h5 {
+  font-family: 'IBM Plex Sans Thai', sans-serif;
+  font-size: var(--fs-h5);
+  line-height: var(--lh-h3);
+  font-weight: 500;
+}
+h6 {
+  font-family: 'IBM Plex Sans Thai', sans-serif;
+  font-size: var(--fs-h6);
+  line-height: var(--lh-h3);
+  font-weight: 400;
+}
+p {
+  font-family: 'IBM Plex Sans Thai Looped', serif;
+  font-size: var(--fs-p1);
+  line-height: var(--lh-p1);
+  font-weight: 600;
+}
+small {
+  display: block;
+  font-family: 'IBM Plex Sans Thai Looped', serif;
+  font-size: var(--fs-p2);
+  line-height: var(--lh-p2);
+  color: var(--clr-700);
+  font-weight: 400;
+}
+mark {
+  color: var(--clr-acc-2-500);
+}
+
+button {
+  padding: var(--sp-m) var(--sp-l);
+  border: none;
+  border-radius: var(--sp-m);
+  box-shadow: var(--sd-2);
+}
+
+button.primary {
+  background: var(--clr-pri-500);
+  color: var(--clr-100);
+  transition: all 50ms ease-out;
+}
+button.primary:hover,
+button.primary:focus,
+button.primary:active {
+  background: var(--clr-pri-600);
+}
+button.primary:disabled {
+  opacity: 0.7;
+  filter: grayscale(1);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+button.secondary {
+  background: var(--clr-100);
+  color: var(--clr-pri-500);
+  border: var(--clr-200) 1px solid;
+  transition: all 50ms ease-out;
+}
+button.secondary:hover,
+button.secondary:focus {
+  background: var(--clr-300);
+  border: var(--clr-300) 1px solid;
+}
