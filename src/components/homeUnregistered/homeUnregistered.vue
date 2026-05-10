@@ -22,8 +22,8 @@ const goToRegister = () => {
       </div>
     </header>
     <footer>
-      <button class="primary" @click="goToRegister"><p>ลงทะเบียน</p></button>
-      <button class="secondary"><p>ดูรายละเอียดของงาน</p></button>
+      <button type="button" class="primary" @click="goToRegister"><p>ลงทะเบียน</p></button>
+      <button type="button" class="secondary"><p>ดูรายละเอียดของงาน</p></button>
     </footer>
   </section>
 </template>

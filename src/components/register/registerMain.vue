@@ -94,7 +94,9 @@ const createRegisData = () => {
     participantType: participantType.value,
     organization: organization.value,
     faculty: faculty.value,
+    facultyOther: facultyOther.value,
     department: department.value,
+    departmentOther: departmentOther.value,
 
     consent: props.pdpaConsent && props.mediaConsent,
     isStep1Valid: isStep1Valid.value,

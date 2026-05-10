@@ -1,12 +1,18 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import RegisterHeader from '@/components/register/registerHeader.vue'
 import RegisterMain from '@/components/register/registerMain.vue'
 import RegisterFooter from '@/components/register/registerFooter.vue'
 import ConfirmDiscard from '@/components/register/confirmDiscard.vue'
 import ConfirmSubmit from '@/components/register/confirmSubmit.vue'
-import { submitRegistration } from '@/services/registrationService'
+import {
+  getActivities,
+  getMyQr,
+  getMyRegistration,
+  submitRegistration,
+} from '@/services/registrationService'
+import { getLineProfile, initLineAuth } from '@/services/lineAuthService'
 
 const router = useRouter()
 const registerStep = ref(1)
@@ -20,6 +26,13 @@ const mediaConsent = ref(false)
 const regisData = ref({})
 const isSubmitting = ref(false)
 const submitError = ref('')
+const isBooting = ref(true)
+const lineProfile = ref(null)
+const activities = ref([])
+const qr = ref(null)
+const registeredParticipant = ref(null)
+
+const isRegistered = computed(() => Boolean(registeredParticipant.value && qr.value))
 
 const isStep2Valid = (data) => {
   const requiredKeys = [
@@ -64,14 +77,23 @@ const goToHomeUnregistered = () => {
   router.push('/')
 }
 
+const getFallbackSessionIds = () => {
+  const firstAvailableSession = activities.value
+    .flatMap((activity) => activity.sessions || [])
+    .find((session) => !session.isFull)
+
+  return firstAvailableSession ? [firstAvailableSession.id] : []
+}
+
 const registerIn = async () => {
   isSubmitting.value = true
   submitError.value = ''
 
   try {
-    // const profile = await liff.getProfile()
-    // const lineUserId = profile.userId
-    const lineUserId = 'dev-user-001' // dev mode
+    const selectedSessionIds = getFallbackSessionIds()
+    if (selectedSessionIds.length === 0) {
+      throw new Error('ยังไม่มีรอบกิจกรรมที่เปิดให้ลงทะเบียน')
+    }
 
     const payload = {
       nationality: regisData.value.nationality,
@@ -82,22 +104,48 @@ const registerIn = async () => {
       dateOfBirth: regisData.value.dateOfBirth,
       email: regisData.value.email,
       phoneNumber: regisData.value.phoneNumber,
-      participantType: selectedType.value, // "STUDENT", "TEACHER", etc
+      participantType: selectedType.value,
       organization: regisData.value.organization ?? null,
       faculty: regisData.value.faculty ?? null,
+      facultyOther: regisData.value.facultyOther ?? null,
       department: regisData.value.department ?? null,
+      departmentOther: regisData.value.departmentOther ?? null,
       consent: pdpaConsent.value && mediaConsent.value,
-      selectedSessionIds: [], // TODO: เพิ่ม session เลือก
+      selectedSessionIds,
     }
 
-    console.log(payload)
-    await submitRegistration(payload, lineUserId)
-    router.push('/register/success') // TODO: สร้างหน้า success
+    registeredParticipant.value = await submitRegistration(payload, selectedSessionIds)
+    qr.value = await getMyQr()
+    showingConfirmSubmit.value = false
   } catch (err) {
     submitError.value = err.message
-    showingConfirmSubmit.value = false // ปิด modal ถ้า error
+    showingConfirmSubmit.value = false
   } finally {
     isSubmitting.value = false
+  }
+}
+
+const bootstrap = async () => {
+  isBooting.value = true
+  submitError.value = ''
+
+  try {
+    const auth = await initLineAuth()
+    if (auth.redirected) return
+
+    lineProfile.value = getLineProfile()
+    activities.value = await getActivities()
+
+    try {
+      registeredParticipant.value = await getMyRegistration()
+      qr.value = await getMyQr()
+    } catch (err) {
+      if (err.status !== 404) throw err
+    }
+  } catch (err) {
+    submitError.value = err.message
+  } finally {
+    isBooting.value = false
   }
 }
 
@@ -107,7 +155,6 @@ const goToStep1 = () => {
 }
 
 const goToStep2 = () => {
-  // Check b4 going to step 2
   if (!regisData.value.isStep1Valid) {
     step1Error.value = true
   } else {
@@ -124,10 +171,23 @@ const goToStep3 = () => {
     step2Error.value = true
   }
 }
+
+onMounted(bootstrap)
 </script>
 
 <template>
-  <section>
+  <section v-if="isBooting" class="line-state">
+    <p>Connecting LINE...</p>
+  </section>
+
+  <section v-else-if="isRegistered" class="registered-qr">
+    <h2>Registration Complete</h2>
+    <p>{{ lineProfile?.displayName }}</p>
+    <img :src="qr.dataUrl" alt="Registration QR code" />
+    <code>{{ qr.qrData }}</code>
+  </section>
+
+  <section v-else>
     <registerHeader :step="registerStep" />
     <registerMain
       :step="registerStep"
@@ -166,6 +226,7 @@ const goToStep3 = () => {
     <div class="" v-show="showingConfirmSubmit">
       <ConfirmSubmit
         :selectedType="selectedType"
+        :isSubmitting="isSubmitting"
         @submit="registerIn"
         @stay="showingConfirmSubmit = false"
       />
@@ -174,6 +235,25 @@ const goToStep3 = () => {
 </template>
 
 <style scoped>
+.line-state,
+.registered-qr {
+  display: grid;
+  gap: 1rem;
+  place-items: center;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.registered-qr img {
+  width: min(320px, 100%);
+  border-radius: 1rem;
+}
+
+.registered-qr code {
+  max-width: min(520px, 100%);
+  overflow-wrap: anywhere;
+}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.2s ease;
