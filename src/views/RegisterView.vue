@@ -1,6 +1,8 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import '../assets/styles/register.css'
+import LangToggle from '@/components/LangToggle.vue'
 import RegisterHeader from '@/components/register/registerHeader.vue'
 import RegisterMain from '@/components/register/registerMain.vue'
 import RegisterFooter from '@/components/register/registerFooter.vue'
@@ -8,11 +10,10 @@ import ConfirmDiscard from '@/components/register/confirmDiscard.vue'
 import ConfirmSubmit from '@/components/register/confirmSubmit.vue'
 import {
   getActivities,
-  getMyQr,
   getMyRegistration,
   submitRegistration,
 } from '@/services/registrationService'
-import { getLineProfile, initLineAuth } from '@/services/lineAuthService'
+import { initLineAuth } from '@/services/lineAuthService'
 
 const router = useRouter()
 const registerStep = ref(1)
@@ -27,12 +28,7 @@ const regisData = ref({})
 const isSubmitting = ref(false)
 const submitError = ref('')
 const isBooting = ref(true)
-const lineProfile = ref(null)
 const activities = ref([])
-const qr = ref(null)
-const registeredParticipant = ref(null)
-
-const isRegistered = computed(() => Boolean(registeredParticipant.value && qr.value))
 
 const isStep2Valid = (data) => {
   const requiredKeys = [
@@ -114,9 +110,10 @@ const registerIn = async () => {
       selectedSessionIds,
     }
 
-    registeredParticipant.value = await submitRegistration(payload, selectedSessionIds)
-    qr.value = await getMyQr()
+    await submitRegistration(payload, selectedSessionIds)
     showingConfirmSubmit.value = false
+
+    router.push('/')
   } catch (err) {
     submitError.value = err.message
     showingConfirmSubmit.value = false
@@ -133,12 +130,13 @@ const bootstrap = async () => {
     const auth = await initLineAuth()
     if (auth.redirected) return
 
-    lineProfile.value = getLineProfile()
     activities.value = await getActivities()
 
     try {
-      registeredParticipant.value = await getMyRegistration()
-      qr.value = await getMyQr()
+      // if registered, redirect
+      await getMyRegistration()
+      router.push('/')
+      return
     } catch (err) {
       if (err.status !== 404) throw err
     }
@@ -176,82 +174,69 @@ onMounted(bootstrap)
 </script>
 
 <template>
-  <section v-if="isBooting" class="line-state">
-    <p>Connecting LINE...</p>
-  </section>
+  <nav>
+    <LangToggle />
+  </nav>
+  <section class="register">
+    <section v-if="isBooting" class="line-state">
+      <p>Connecting LINE...</p>
+    </section>
 
-  <section v-else-if="isRegistered" class="registered-qr">
-    <h2>Registration Complete</h2>
-    <p>{{ lineProfile?.displayName }}</p>
-    <img :src="qr.dataUrl" alt="Registration QR code" />
-    <code>{{ qr.qrData }}</code>
-  </section>
-
-  <section v-else>
-    <registerHeader :step="registerStep" />
-    <registerMain
-      :step="registerStep"
-      :step1Error="step1Error"
-      :step2Error="step2Error"
-      v-model:selectedType="selectedType"
-      v-model:step1Error="step1Error"
-      v-model:pdpaConsent="pdpaConsent"
-      v-model:mediaConsent="mediaConsent"
-      v-model:regisData="regisData"
-    />
-    <registerFooter
-      :step="registerStep"
-      :consent="pdpaConsent && mediaConsent"
-      @goToHomeUnregistered="showConfirmDiscard"
-      @goToStep1="goToStep1"
-      @goToStep2="goToStep2"
-      @goToStep3="goToStep3"
-      @registerIn="showConfirmSubmit"
-    />
-
-    <p v-if="submitError" style="color: var(--clr-sem-err)">{{ submitError }}</p>
-  </section>
-
-  <Transition name="fade">
-    <div class="" v-show="showingConfirmDiscard">
-      <ConfirmDiscard
-        :selectedType="selectedType"
-        @discard="goToHomeUnregistered"
-        @stay="showingConfirmDiscard = false"
+    <section v-else>
+      <registerHeader :step="registerStep" />
+      <registerMain
+        :step="registerStep"
+        :step1Error="step1Error"
+        :step2Error="step2Error"
+        v-model:selectedType="selectedType"
+        v-model:step1Error="step1Error"
+        v-model:pdpaConsent="pdpaConsent"
+        v-model:mediaConsent="mediaConsent"
+        v-model:regisData="regisData"
       />
-    </div>
-  </Transition>
-
-  <Transition name="fade-confirm">
-    <div class="" v-show="showingConfirmSubmit">
-      <ConfirmSubmit
-        :selectedType="selectedType"
-        :isSubmitting="isSubmitting"
-        @submit="registerIn"
-        @stay="showingConfirmSubmit = false"
+      <registerFooter
+        :step="registerStep"
+        :consent="pdpaConsent && mediaConsent"
+        @goToHomeUnregistered="showConfirmDiscard"
+        @goToStep1="goToStep1"
+        @goToStep2="goToStep2"
+        @goToStep3="goToStep3"
+        @registerIn="showConfirmSubmit"
       />
-    </div>
-  </Transition>
+
+      <p v-if="submitError" style="color: var(--clr-sem-err)">{{ submitError }}</p>
+    </section>
+
+    <Transition name="fade">
+      <div class="" v-show="showingConfirmDiscard">
+        <ConfirmDiscard
+          :selectedType="selectedType"
+          @discard="goToHomeUnregistered"
+          @stay="showingConfirmDiscard = false"
+        />
+      </div>
+    </Transition>
+
+    <Transition name="fade-confirm">
+      <div class="" v-show="showingConfirmSubmit">
+        <ConfirmSubmit
+          :selectedType="selectedType"
+          :isSubmitting="isSubmitting"
+          @submit="registerIn"
+          @stay="showingConfirmSubmit = false"
+        />
+      </div>
+    </Transition>
+  </section>
 </template>
 
 <style scoped>
-.line-state,
-.registered-qr {
+.line-state {
   display: grid;
   gap: 1rem;
   place-items: center;
   padding: 2rem 1rem;
   text-align: center;
-}
-
-.registered-qr img {
-  width: min(320px, 100%);
-  border-radius: 1rem;
-}
-
-.registered-qr code {
-  max-width: min(520px, 100%);
-  overflow-wrap: anywhere;
 }
 
 .fade-enter-active,

@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import liff from '@line/liff'
-import HomeView from '../pages/homeUnregistered.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -8,12 +7,17 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: () => import('../views/HomeView.vue'),
     },
     {
       path: '/register',
       name: 'register',
-      component: () => import('../pages/registerPage.vue'),
+      component: () => import('../views/RegisterView.vue'),
+    },
+    {
+      path: '/staff-login',
+      name: 'staff login',
+      component: () => import('../views/StaffLoginView.vue'),
     },
   ],
 })
@@ -32,8 +36,7 @@ router.beforeEach(async (to) => {
           if (liff.isLoggedIn()) {
             return '/register'
           }
-        } catch {
-        }
+        } catch {}
       }
     }
   }

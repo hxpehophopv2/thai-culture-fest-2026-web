@@ -1,5 +1,5 @@
 <script setup>
-import { useRouter } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import posterHero from '@/assets/images/posterHero.png'
 
 const router = useRouter()
@@ -12,7 +12,7 @@ const goToRegister = () => {
 <template>
   <section id="home-unregistered">
     <header>
-      <h2>KMUTT ROOTED</h2>
+      <h2><RouterLink to="/staff-login">KMUTT ROOTED</RouterLink></h2>
       <h1>Thai Sustainable Culture Fest 2026</h1>
       <small>
         โครงการรณรงค์และส่งเสริมค่านิยมความเป็นไทย เพื่อขับเคลื่อนวัฒนธรรมไทยสู่ความยั่งยืน

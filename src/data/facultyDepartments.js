@@ -1,7 +1,6 @@
-// key คงที่ ไม่ขึ้นกับภาษา
 export const FACULTY_LIST = [
-  { value: 'ENG', th: 'วิศวกรรมศาสตร์', en: 'Engineering' },
-  { value: 'SCI', th: 'วิทยาศาสตร์', en: 'Science' },
+  { value: 'FE', th: 'วิศวกรรมศาสตร์', en: 'Engineering (FE)' },
+  { value: 'FSci', th: 'วิทยาศาสตร์', en: 'Science (FSci)' },
   {
     value: 'FIET',
     th: 'ครุศาสตร์อุตสาหกรรมและเทคโนโลยี (FIET)',
@@ -32,16 +31,30 @@ export const FACULTY_LIST = [
 ]
 
 export const DEPARTMENT_MAP = {
-  ENG: [
-    { value: 'CE', th: 'วิศวกรรมโยธา', en: 'Civil Engineering' },
-    { value: 'ME', th: 'วิศวกรรมเครื่องกล', en: 'Mechanical Engineering' },
-    { value: 'EE', th: 'วิศวกรรมไฟฟ้า', en: 'Electrical Engineering' },
+  FE: [
     { value: 'CHE', th: 'วิศวกรรมเคมี', en: 'Chemical Engineering' },
-    { value: 'IE', th: 'วิศวกรรมอุตสาหการ', en: 'Industrial Engineering' },
+    { value: 'CE', th: 'วิศวกรรมโยธา', en: 'Civil Engineering' },
     { value: 'CPE', th: 'วิศวกรรมคอมพิวเตอร์', en: 'Computer Engineering' },
+    {
+      value: 'INC',
+      th: 'วิศวกรรมระบบควบคุมและเครื่องมือวัด',
+      en: 'Control System and Instrumentation Engineering',
+    },
+    { value: 'EE', th: 'วิศวกรรมไฟฟ้า', en: 'Electrical Engineering' },
+    {
+      value: 'ENE',
+      th: 'วิศวกรรมอิเล็กทรอนิกส์และโทรคมนาคม',
+      en: 'Electronics and Telecommunication Engineering',
+    },
+    { value: 'ENV', th: 'วิศวกรรมสิ่งแวดล้อม', en: 'Environmental Engineering' },
+    { value: 'ME', th: 'วิศวกรรมเครื่องกล', en: 'Mechanical Engineering' },
+    { value: 'PE', th: 'วิศวกรรมการผลิต', en: 'Production Engineering' },
+    { value: 'TME', th: 'วิศวกรรมเครื่องมือและวัสดุ', en: 'Tool and Materials Engineering' },
+    { value: 'FoE', th: 'วิศวกรรมอาหาร', en: 'Food Engineering' },
+    { value: 'BE', th: 'วิศวกรรมชีวภาพ', en: 'Biological Engineering' },
     { value: 'other', th: 'อื่น ๆ', en: 'Other' },
   ],
-  SCI: [
+  FSci: [
     { value: 'MATH', th: 'คณิตศาสตร์', en: 'Mathematics' },
     { value: 'PHYS', th: 'ฟิสิกส์', en: 'Physics' },
     { value: 'CHEM', th: 'เคมี', en: 'Chemistry' },
@@ -49,8 +62,9 @@ export const DEPARTMENT_MAP = {
     { value: 'other', th: 'อื่น ๆ', en: 'Other' },
   ],
   SIT: [
-    { value: 'IT', th: 'เทคโนโลยีสารสนเทศ', en: 'Information Technology' },
-    { value: 'DST', th: 'วิทยาการข้อมูล', en: 'Data Science and Technology' },
+    { value: 'IT', th: 'เทคโนโลยีสารสนเทศ (IT)', en: 'Information Technology (IT)' },
+    { value: 'CS', th: 'วิทยาการคอมพิวเตอร์ (CS)', en: 'Computer Science (CS)' },
+    { value: 'DSI', th: 'นวัตกรรมบริการดิจิทัล (DSI)', en: 'Digital Service Innovation (DSI)' },
     { value: 'other', th: 'อื่น ๆ', en: 'Other' },
   ],
   // คณะที่ไม่มีในนี้จะ fallback เป็น Other อัตโนมัติ
