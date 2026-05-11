@@ -1,4 +1,7 @@
-section#register {
+section.register {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
   padding: var(--sp-l) var(--sp-l) var(--sp-2xl);
 }
 
@@ -9,8 +12,15 @@ h4 {
   color: var(--clr-pri-500);
 }
 
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 header > .stepper {
   width: 100%;
+  max-width: 40em;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -48,7 +58,10 @@ header > .stepper {
 }
 
 section#register-main > main {
-  padding: var(--sp-xl) 0 var(--sp-2xl);
+  padding: var(--sp-xl) 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 section#register-main > main > h6 {
@@ -57,13 +70,17 @@ section#register-main > main > h6 {
 }
 
 section#register-main > main > form {
+  width: 100%;
+  max-width: 40em;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: var(--sp-m);
 }
 
-section#register-main > main > small.error {
-  margin-top: var(--sp-m);
+section#register-main > main .error-text {
+  color: var(--clr-sem-err);
+  margin-top: var(--sp-s);
   text-align: center;
 }
 
@@ -87,14 +104,15 @@ section#register-main > main input[type='email'],
 section#register-main > main input[type='tel'],
 section#register-main > main input[type='date'] {
   flex: 4 1 auto;
+  background: var(--clr-100);
   outline: none;
   border: none;
-  border-radius: var(--sp-m);
-  padding: var(--sp-m);
+  border-radius: var(--sp-s);
+  padding: var(--sp-s);
 }
 section#register-main > main select {
   flex: 1 1 auto;
-  padding: var(--sp-m);
+  padding: var(--sp-s);
   background: var(--clr-100);
 }
 section#register-main > main input[type='text']:focus,
@@ -127,6 +145,7 @@ form#step3-form > label {
 }
 
 form#step3-form > label input[type='checkbox'] {
+  cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
   background-color: var(--clr-100);
@@ -142,7 +161,8 @@ form#step3-form > label input[type='checkbox'] {
   flex-shrink: 0;
 }
 
-form#step3-form > label input[type='checkbox']:focus {
+form#step3-form > label input[type='checkbox']:focus,
+form#step3-form > label input[type='checkbox']:hover {
   box-shadow: 0 0 0 1px var(--clr-acc-500);
 }
 
@@ -168,8 +188,14 @@ form#step3-form > label input[type='checkbox']:checked::before {
 
 /* ######################## FOOTER ######################## */
 
+section#register-footer {
+  display: flex;
+  justify-content: center;
+}
+
 footer {
   width: 100%;
+  max-width: 40em;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--sp-m);
@@ -228,7 +254,7 @@ button.discard {
   background: var(--clr-sem-err);
   color: var(--clr-100);
 }
-button.submit {
-  background: var(--clr-pri-500);
+button.discard:hover {
+  background: var(--clr-sem-err-700);
   color: var(--clr-100);
 }

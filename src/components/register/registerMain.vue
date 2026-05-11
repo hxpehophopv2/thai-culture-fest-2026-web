@@ -220,9 +220,9 @@ const i18n = {
   selectPlc: { 'th-TH': 'เลือก', 'en-US': 'Select' },
   prenameOpt1: { 'th-TH': 'นาย', 'en-US': 'Mr.' },
   prenameOpt2: { 'th-TH': 'นาง', 'en-US': 'Mrs.' },
-  prenameOpt3: { 'th-TH': 'นางสาว', 'en-US': 'Ms.' },
-  prenameOpt4: { 'th-TH': 'เด็กชาย', 'en-US': 'Master' },
-  prenameOpt5: { 'th-TH': 'เด็กหญิง', 'en-US': 'Miss' },
+  prenameOpt3: { 'th-TH': 'น.ส.', 'en-US': 'Ms.' },
+  prenameOpt4: { 'th-TH': 'ด.ช.', 'en-US': 'Master' },
+  prenameOpt5: { 'th-TH': 'ด.ญ.', 'en-US': 'Miss' },
   nickname: { 'th-TH': 'ชื่อเล่น', 'en-US': 'Nickname' },
   nicknamePlc: { 'th-TH': 'เช่น พลอย', 'en-US': 'e.g. John' },
   dob: { 'th-TH': 'วัน/เดือน/ปีเกิด', 'en-US': 'Date of Birth' },
@@ -351,7 +351,7 @@ const i18n = {
           />
         </div>
       </form>
-      <small v-if="step1Error && !isStep1Valid" style="color: var(--clr-sem-err)">
+      <small v-if="step1Error && !isStep1Valid" class="error-text">
         {{ t(i18n.errorSelect) }}
       </small>
     </main>
@@ -386,7 +386,7 @@ const i18n = {
             />
           </div>
           <small
-            class="error"
+            class="error-text"
             v-if="step2Error && (!prename || !fullname)"
             style="color: var(--clr-sem-err)"
           >
@@ -423,7 +423,7 @@ const i18n = {
             :class="{ 'error-border': step2Error && (!email || !isEmailValid) }"
           />
           <small
-            class="error"
+            class="error-text"
             v-if="step2Error && email && !isEmailValid"
             style="color: var(--clr-sem-err)"
           >
@@ -441,7 +441,7 @@ const i18n = {
             :class="{ 'error-border': step2Error && (!phoneNo || !isPhoneValid) }"
           />
           <small
-            class="error"
+            class="error-text"
             v-if="step2Error && phoneNo && !isPhoneValid"
             style="color: var(--clr-sem-err)"
           >
@@ -518,7 +518,7 @@ const i18n = {
 :deep(.iti__selected-country) {
   height: 100% !important;
   background: var(--clr-200) !important;
-  padding: 0 var(--sp-s) !important;
+  padding: 0 var(--sp-s) 0 0 !important;
   border-radius: var(--sp-s) !important;
   outline: none !important;
   box-shadow: none !important;
@@ -533,11 +533,16 @@ const i18n = {
   cursor: pointer;
 }
 
+:deep(.iti__selected-dial-code) {
+  font-family: inherit;
+  font-size: var(--fs-p2);
+}
+
 :deep(.iti input[type='tel']) {
   width: 100% !important;
-  padding: var(--sp-m) !important;
-  padding-left: var(--sp-3xl) !important;
-  border-radius: var(--sp-m) !important;
+  padding: var(--sp-s) !important;
+  padding-left: 8em !important;
+  border-radius: var(--sp-s) !important;
   margin: 0 !important;
   box-sizing: border-box;
   z-index: 1 !important;

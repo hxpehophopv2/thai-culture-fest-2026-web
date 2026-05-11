@@ -8,8 +8,10 @@ const emit = defineEmits(['submit', 'stay'])
     <div class="confirm-container">
       <h5>ยืนยันการส่งข้อมูล?</h5>
       <div class="confirm-btn-container">
-        <button @click="() => emit('stay')" :disabled="isSubmitting"><p>ไม่</p></button>
-        <button class="submit" @click="() => emit('submit')" :disabled="isSubmitting">
+        <button class="secondary" @click="() => emit('stay')" :disabled="isSubmitting">
+          <p>ไม่</p>
+        </button>
+        <button class="primary submit" @click="() => emit('submit')" :disabled="isSubmitting">
           <p>{{ isSubmitting ? 'กำลังส่ง...' : 'ยืนยัน' }}</p>
         </button>
       </div>

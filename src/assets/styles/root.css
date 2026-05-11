@@ -119,6 +119,7 @@
 
 body {
   min-height: 100vh;
+  justify-content: center;
   background: var(--clr-200);
   color: var(--clr-900);
   line-height: 1.6;
@@ -194,6 +195,7 @@ mark {
 }
 
 button {
+  cursor: pointer;
   padding: var(--sp-m) var(--sp-l);
   border: none;
   border-radius: var(--sp-m);
@@ -203,10 +205,8 @@ button {
 button.primary {
   background: var(--clr-pri-500);
   color: var(--clr-100);
-  transition: all 50ms ease-out;
 }
 button.primary:hover,
-button.primary:focus,
 button.primary:active {
   background: var(--clr-pri-600);
 }
@@ -221,10 +221,8 @@ button.secondary {
   background: var(--clr-100);
   color: var(--clr-pri-500);
   border: var(--clr-200) 1px solid;
-  transition: all 50ms ease-out;
 }
-button.secondary:hover,
-button.secondary:focus {
+button.secondary:hover {
   background: var(--clr-300);
   border: var(--clr-300) 1px solid;
 }
