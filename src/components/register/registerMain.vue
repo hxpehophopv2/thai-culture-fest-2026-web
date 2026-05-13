@@ -46,6 +46,22 @@ const availableDepartments = computed(() => {
   return DEPARTMENT_MAP[faculty.value] ?? [{ value: 'other', th: 'อื่น ๆ', en: 'Other' }]
 })
 
+const isFullnameValid = computed(() => {
+  if (!fullname.value) return false
+  // เช็คว่ามีการเว้นวรรคระหว่างชื่อและนามสกุลหรือไม่
+  const parts = fullname.value.trim().split(/\s+/)
+  return parts.length >= 2
+})
+
+const isDobValid = computed(() => {
+  if (!dob.value) return false
+  const selectedDate = new Date(dob.value)
+  const today = new Date()
+  // เซ็ตเวลาเป็น 00:00:00 เพื่อให้สามารถเลือกวันปัจจุบันได้
+  today.setHours(0, 0, 0, 0)
+  return selectedDate <= today
+})
+
 const isEmailValid = computed(() => {
   if (!email.value) return false
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -100,7 +116,8 @@ const createRegisData = () => {
 
     consent: props.pdpaConsent && props.mediaConsent,
     isStep1Valid: isStep1Valid.value,
-    isFormatValid: isEmailValid.value && isPhoneValid.value,
+    isFormatValid:
+      isEmailValid.value && isPhoneValid.value && isFullnameValid.value && isDobValid.value,
   }
 }
 
@@ -260,6 +277,14 @@ const i18n = {
     'th-TH': 'กรุณากรอกข้อมูลให้ครบถ้วน',
     'en-US': 'This field is required',
   },
+  errorFullname: {
+    'th-TH': 'กรุณากรอกทั้งชื่อและนามสกุล (เว้นวรรคระหว่างชื่อและนามสกุล)',
+    'en-US': 'Please enter both first and last name (separated by a space)',
+  },
+  errorDobFuture: {
+    'th-TH': 'วันเกิดต้องไม่เป็นวันในอนาคต',
+    'en-US': 'Date of birth cannot be in the future',
+  },
   errorEmailFormat: {
     'th-TH': 'รูปแบบอีเมลไม่ถูกต้อง',
     'en-US': 'Invalid email format',
@@ -324,6 +349,7 @@ const i18n = {
             type="text"
             :placeholder="t(i18n.facultyOtherPlc)"
             :class="{ 'error-border': step1Error && !facultyOther.trim() }"
+            style="margin-top: var(--sp-s)"
           />
         </div>
 
@@ -348,6 +374,7 @@ const i18n = {
             type="text"
             :placeholder="t(i18n.deptOtherPlc)"
             :class="{ 'error-border': step1Error && !departmentOther.trim() }"
+            style="margin-top: var(--sp-s)"
           />
         </div>
       </form>
@@ -392,6 +419,13 @@ const i18n = {
           >
             {{ t(i18n.errorRequired) }}
           </small>
+          <small
+            class="error-text"
+            v-else-if="step2Error && fullname && !isFullnameValid"
+            style="color: var(--clr-sem-err)"
+          >
+            {{ t(i18n.errorFullname) }}
+          </small>
         </div>
 
         <div class="field">
@@ -410,8 +444,15 @@ const i18n = {
             v-model="dob"
             type="date"
             name="dob"
-            :class="{ 'error-border': step2Error && !dob }"
+            :class="{ 'error-border': step2Error && (!dob || !isDobValid) }"
           />
+          <small
+            class="error-text"
+            v-if="step2Error && dob && !isDobValid"
+            style="color: var(--clr-sem-err)"
+          >
+            {{ t(i18n.errorDobFuture) }}
+          </small>
         </div>
 
         <div class="field">
@@ -433,16 +474,21 @@ const i18n = {
 
         <div class="field">
           <label for="">{{ t(i18n.phone) }}</label>
-          <IntlTelInput
-            v-model="phoneNo"
-            initialCountry="th"
-            @change-country="handlePhoneCountryChange"
-            :load-utils="() => import('intl-tel-input/utils')"
-            :class="{ 'error-border': step2Error && (!phoneNo || !isPhoneValid) }"
-          />
+          <div :class="{ 'phone-error-wrapper': step2Error && (!phoneNo || !isPhoneValid) }">
+            <IntlTelInput
+              v-model="phoneNo"
+              initialCountry="th"
+              @change-country="handlePhoneCountryChange"
+              :load-utils="() => import('intl-tel-input/utils')"
+            />
+          </div>
+
+          <small class="error-text" v-if="step2Error && !phoneNo" style="color: var(--clr-sem-err)">
+            {{ t(i18n.errorRequired) }}
+          </small>
           <small
             class="error-text"
-            v-if="step2Error && phoneNo && !isPhoneValid"
+            v-else-if="step2Error && phoneNo && !isPhoneValid"
             style="color: var(--clr-sem-err)"
           >
             {{ t(i18n.errorPhoneFormat) }}
@@ -519,7 +565,7 @@ const i18n = {
   height: 100% !important;
   background: var(--clr-200) !important;
   padding: 0 var(--sp-s) 0 0 !important;
-  border-radius: var(--sp-s) !important;
+  border-radius: var(--sp-xs) !important;
   outline: none !important;
   box-shadow: none !important;
   display: flex !important;
@@ -560,7 +606,8 @@ const i18n = {
 :deep(.iti.error-border) {
   box-shadow: none !important;
 }
-:deep(.iti.error-border input[type='tel']) {
-  box-shadow: 0 0 0 2px var(--clr-sem-err) !important;
+.phone-error-wrapper :deep(input[type='tel']) {
+  border-color: var(--clr-sem-err) !important;
+  box-shadow: 0 0 0 1px var(--clr-sem-err) !important;
 }
 </style>

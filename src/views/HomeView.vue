@@ -3,9 +3,9 @@ import { ref, onMounted } from 'vue'
 import { getMyRegistration } from '@/services/registrationService'
 import { initLineAuth } from '@/services/lineAuthService'
 import HomeUnregistered from '@/components/homeUnregistered/homeUnregistered.vue'
-import HomeRegistered from '@/views/HomeRegisteredView.vue'
+import HomeRegistered from '@/components/homeRegistered/HomeRegistered.vue'
 
-const isBooting = ref(true)
+const isBooting = ref(false)
 const isRegistered = ref(false)
 
 const checkUserStatus = async () => {
@@ -26,22 +26,20 @@ const checkUserStatus = async () => {
   }
 }
 
-onMounted(checkUserStatus)
+// onMounted(checkUserStatus)
 </script>
 
 <template>
   <!-- Loading State -->
-  <div v-if="isBooting" class="loading-screen">
+  <section v-if="isBooting" class="loading-screen">
     <p>Loading...</p>
-  </div>
-
-  <!-- Show Registered View -->
-  <HomeRegistered v-else-if="isRegistered" />
-
-  <!-- Show Unregistered View (Landing Page) -->
-  <main v-else>
-    <HomeUnregistered />
-  </main>
+  </section>
+  <section id="home-view" v-else>
+    <!-- Show Login View (Not logged in) -->
+    <HomeUnregistered v-if="!isRegistered" />
+    <!-- Show Scanner View (Logged in) -->
+    <HomeRegistered v-else />
+  </section>
 </template>
 
 <style scoped>

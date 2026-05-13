@@ -30,6 +30,7 @@
   --clr-400: #9fa2a8;
   --clr-300: #bec0c5;
   --clr-200: #e5e7ea;
+  --clr-201: #eef0f2;
   --clr-100: #fbfdfe;
   --clr-110: rgba(255, 255, 255, 0.1);
   --clr-120: rgba(255, 255, 255, 0.2);
@@ -120,7 +121,7 @@
 body {
   min-height: 100vh;
   justify-content: center;
-  background: var(--clr-200);
+  background: var(--clr-100);
   color: var(--clr-900);
   line-height: 1.6;
   font-family:
@@ -218,11 +219,9 @@ button.primary:disabled {
 }
 
 button.secondary {
-  background: var(--clr-100);
+  background: var(--clr-201);
   color: var(--clr-pri-500);
-  border: var(--clr-200) 1px solid;
 }
 button.secondary:hover {
   background: var(--clr-300);
-  border: var(--clr-300) 1px solid;
 }
