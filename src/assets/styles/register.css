@@ -1,0 +1,279 @@
+section.register {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-l) var(--sp-l) var(--sp-2xl);
+}
+
+nav {
+  padding: var(--sp-xl) var(--sp-l) var(--sp-l);
+  text-align: right;
+}
+
+/* ######################## HEADER ######################## */
+
+h4 {
+  text-align: center;
+  color: var(--clr-pri-500);
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+header > .stepper {
+  width: 100%;
+  max-width: 40em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-m) var(--sp-xl);
+}
+
+.stepper > .node {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 100em;
+  background: var(--clr-200);
+  flex-shrink: 0;
+  transition: background 0.3s ease;
+}
+
+.stepper > .line {
+  flex-grow: 1;
+  height: 0.5em;
+  background: var(--clr-200);
+  z-index: -99;
+  margin: 0 -4px;
+  transition: background 0.3s ease;
+}
+
+.stepper > .active {
+  background: var(--clr-pri-500);
+}
+
+/* ######################## MAIN ######################## */
+
+.error-border-wrapper {
+  border: 1px solid var(--clr-sem-err);
+  border-radius: 4px;
+}
+
+section#register-main > main {
+  padding: var(--sp-xl) 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+section#register-main > main > h6 {
+  text-align: center;
+  margin-bottom: var(--sp-m);
+}
+
+section#register-main > main > form {
+  width: 100%;
+  max-width: 40em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--sp-m);
+}
+
+section#register-main > main .error-text {
+  color: var(--clr-sem-err);
+  margin-top: var(--sp-s);
+  text-align: center;
+}
+
+.error-border {
+  box-shadow: 0 0 0 2px var(--clr-sem-err);
+}
+
+section#register-main > main .field {
+  display: flex;
+  flex-direction: column;
+}
+section#register-main > main .field > .field-input {
+  width: 100%;
+  display: flex;
+  gap: var(--sp-s);
+}
+
+section#register-main > main label {
+  color: var(--clr-500);
+}
+
+section#register-main > main ::placeholder {
+  opacity: 0.5;
+}
+
+section#register-main > main select,
+section#register-main > main input[type='text'],
+section#register-main > main input[type='email'],
+section#register-main > main input[type='tel'],
+section#register-main > main input[type='date'] {
+  min-width: 0;
+  background: var(--clr-100);
+  outline: none;
+  border: var(--clr-200) 1px solid;
+  border-radius: var(--sp-s);
+  padding: var(--sp-s);
+}
+section#register-main > main .field > .field-input > select {
+  flex: 1 1 0%;
+}
+section#register-main > main .field > .field-input > input {
+  flex: 4 1 0%;
+}
+section#register-main > main select {
+  padding: var(--sp-s);
+  background: var(--clr-100);
+}
+section#register-main > main input[type='text']:focus,
+section#register-main > main input[type='text']:active,
+section#register-main > main input[type='email']:focus,
+section#register-main > main input[type='email']:active,
+section#register-main > main input[type='tel']:focus,
+section#register-main > main input[type='tel']:active,
+section#register-main > main input[type='date']:focus,
+section#register-main > main input[type='date']:active {
+  box-shadow: 0 0 0 2px var(--clr-pri-500);
+}
+
+form#step3-form > p,
+form#step3-form > label {
+  font-size: var(--fs-p1);
+  font-weight: 400;
+}
+form#step3-form > p {
+  background: var(--clr-100);
+  padding: var(--sp-m);
+  border: var(--clr-300) 1px solid;
+  border-radius: var(--sp-s);
+}
+
+form#step3-form > label {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-s);
+  cursor: pointer;
+}
+
+form#step3-form > label input[type='checkbox'] {
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: var(--clr-100);
+  margin: 0;
+
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--clr-acc-500);
+  border-radius: var(--sp-xs);
+
+  display: grid;
+  place-content: center;
+  flex-shrink: 0;
+}
+
+form#step3-form > label input[type='checkbox']:focus,
+form#step3-form > label input[type='checkbox']:hover {
+  box-shadow: 0 0 0 1px var(--clr-acc-500);
+}
+
+form#step3-form > label input[type='checkbox']::before {
+  content: '';
+  width: 0.65em;
+  height: 0.65em;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+
+  background-color: var(--clr-100);
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+form#step3-form > label input[type='checkbox']:checked {
+  background-color: var(--clr-acc-500);
+  border-color: var(--clr-acc-500);
+}
+
+form#step3-form > label input[type='checkbox']:checked::before {
+  transform: scale(1);
+}
+
+/* ######################## FOOTER ######################## */
+
+section#register-footer {
+  display: flex;
+  justify-content: center;
+}
+
+footer {
+  width: 100%;
+  max-width: 40em;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-m);
+}
+
+/* ######################## CONFIRM DISCARD ######################## */
+
+section#confirm-discard {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 100vw;
+  height: 100vh;
+  background: var(--clr-950);
+  backdrop-filter: blur(4px);
+  z-index: 999999;
+}
+section#confirm-submit {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 100vw;
+  height: 100vh;
+  background: var(--clr-950);
+  backdrop-filter: blur(4px);
+  z-index: 999999;
+}
+
+div.confirm-container {
+  width: 80vw;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--sp-m);
+  background: var(--clr-100);
+  border-radius: var(--sp-m);
+  padding: var(--sp-l);
+
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+div.confirm-container > div.confirm-btn-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-m);
+}
+
+button.discard {
+  background: var(--clr-sem-err);
+  color: var(--clr-100);
+}
+button.discard:hover {
+  background: var(--clr-sem-err-700);
+  color: var(--clr-100);
+}
