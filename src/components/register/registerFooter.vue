@@ -12,7 +12,7 @@ const emit = defineEmits([
 </script>
 
 <template>
-  <section class="register-footer">
+  <section id="register-footer">
     <footer v-show="step === 1">
       <button class="secondary" @click="() => emit('goToHomeUnregistered')"><p>ย้อนกลับ</p></button>
       <button class="primary" @click="() => emit('goToStep2')"><p>ถัดไป</p></button>

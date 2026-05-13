@@ -5,6 +5,11 @@ section.register {
   padding: var(--sp-l) var(--sp-l) var(--sp-2xl);
 }
 
+nav {
+  padding: var(--sp-xl) var(--sp-l) var(--sp-l);
+  text-align: right;
+}
+
 /* ######################## HEADER ######################## */
 
 h4 {
@@ -32,7 +37,7 @@ header > .stepper {
   width: 48px;
   height: 48px;
   border-radius: 100em;
-  background: var(--clr-100);
+  background: var(--clr-200);
   flex-shrink: 0;
   transition: background 0.3s ease;
 }
@@ -40,7 +45,7 @@ header > .stepper {
 .stepper > .line {
   flex-grow: 1;
   height: 0.5em;
-  background: var(--clr-100);
+  background: var(--clr-200);
   z-index: -99;
   margin: 0 -4px;
   transition: background 0.3s ease;
@@ -98,20 +103,33 @@ section#register-main > main .field > .field-input {
   gap: var(--sp-s);
 }
 
+section#register-main > main label {
+  color: var(--clr-500);
+}
+
+section#register-main > main ::placeholder {
+  opacity: 0.5;
+}
+
 section#register-main > main select,
 section#register-main > main input[type='text'],
 section#register-main > main input[type='email'],
 section#register-main > main input[type='tel'],
 section#register-main > main input[type='date'] {
-  flex: 4 1 auto;
+  min-width: 0;
   background: var(--clr-100);
   outline: none;
-  border: none;
+  border: var(--clr-200) 1px solid;
   border-radius: var(--sp-s);
   padding: var(--sp-s);
 }
+section#register-main > main .field > .field-input > select {
+  flex: 1 1 0%;
+}
+section#register-main > main .field > .field-input > input {
+  flex: 4 1 0%;
+}
 section#register-main > main select {
-  flex: 1 1 auto;
   padding: var(--sp-s);
   background: var(--clr-100);
 }
@@ -134,7 +152,8 @@ form#step3-form > label {
 form#step3-form > p {
   background: var(--clr-100);
   padding: var(--sp-m);
-  border-radius: var(--sp-m);
+  border: var(--clr-300) 1px solid;
+  border-radius: var(--sp-s);
 }
 
 form#step3-form > label {
@@ -246,7 +265,7 @@ div.confirm-container {
 div.confirm-container > div.confirm-btn-container {
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: var(--sp-m);
 }
 

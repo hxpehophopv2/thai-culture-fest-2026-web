@@ -1,0 +1,484 @@
+nav {
+  z-index: 99999;
+  position: fixed;
+  width: 100%;
+  display: flex;
+  justify-content: end;
+  gap: var(--sp-m);
+  background: transparent;
+  padding: var(--sp-xl) var(--sp-l) var(--sp-l);
+}
+
+nav button.logout-btn {
+  background: var(--clr-sem-err);
+  color: var(--clr-100);
+  border-radius: 999em;
+  padding: var(--sp-xs) var(--sp-m);
+  cursor: pointer;
+  font-size: 0.85rem;
+  box-shadow: none;
+}
+nav button.logout-btn:hover,
+nav button.logout-btn:active {
+  background: var(--clr-sem-err-700);
+}
+
+/* ######################## MAIN CONTAINER ######################## */
+#scanner-view {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--clr-950, #000);
+}
+
+.camera-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* ######################## OVERLAY & SCAN FRAME ######################## */
+.scan-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  padding-bottom: var(--sp-2xl);
+}
+
+.scan-frame {
+  position: relative;
+  width: 75%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  max-width: 500px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+  border-radius: var(--sp-m);
+}
+
+.corner {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-color: var(--clr-pri-500);
+  border-style: solid;
+}
+
+.top-left {
+  top: -2px;
+  left: -2px;
+  border-width: 4px 0 0 4px;
+  border-top-left-radius: var(--sp-m);
+}
+.top-right {
+  top: -2px;
+  right: -2px;
+  border-width: 4px 4px 0 0;
+  border-top-right-radius: var(--sp-m);
+}
+.bottom-left {
+  bottom: -2px;
+  left: -2px;
+  border-width: 0 0 4px 4px;
+  border-bottom-left-radius: var(--sp-m);
+}
+.bottom-right {
+  bottom: -2px;
+  right: -2px;
+  border-width: 0 4px 4px 0;
+  border-bottom-right-radius: var(--sp-m);
+}
+
+.scan-text {
+  color: var(--clr-100);
+  font-weight: 500;
+  z-index: 11;
+  margin-bottom: var(--sp-s);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.zone-name {
+  z-index: 11;
+  background: var(--clr-100);
+  color: var(--clr-600);
+  padding: var(--sp-xs) var(--sp-s);
+  border-radius: 100em;
+  margin-bottom: var(--sp-l);
+}
+
+.cam-error-msg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--clr-sem-err);
+  text-align: center;
+  background: var(--clr-100);
+  padding: var(--sp-m);
+  border-radius: var(--sp-m);
+}
+
+/* ######################## FLOATING ACTION BUTTON ######################## */
+.fab-manual {
+  min-width: 14em;
+  position: absolute;
+  bottom: var(--sp-2xl);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--sp-s);
+
+  background: var(--clr-100);
+  color: var(--clr-950);
+  border: none;
+  padding: var(--sp-m) var(--sp-l);
+  border-radius: 100em;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.fab-manual:hover,
+.fab-manual:active {
+  transform: translateX(-50%) scale(0.98);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ######################## MODAL (MANUAL ENTRY) ######################## */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: grid;
+  place-items: center;
+  z-index: 999999;
+}
+
+.modal-container {
+  width: 90vw;
+  max-width: 400px;
+  background: var(--clr-100);
+  padding: var(--sp-l);
+  border-radius: var(--sp-m);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-m);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-container h6 {
+  text-align: center;
+  color: var(--clr-pri-500);
+}
+
+.manual-input {
+  width: 100%;
+  padding: var(--sp-m);
+  border: 2px solid var(--clr-200, #e2e8f0);
+  border-radius: var(--sp-s);
+  font-size: var(--fs-p1);
+  outline: none;
+  text-align: center;
+  transition: border-color 0.2s ease;
+}
+
+.manual-input:focus {
+  border-color: var(--clr-pri-500);
+}
+
+.modal-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-m);
+  margin-top: var(--sp-s);
+}
+
+.modal-actions button {
+  padding: var(--sp-m);
+  border-radius: var(--sp-s);
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+}
+
+.modal-actions button.cancel {
+  background: var(--clr-200, #e2e8f0);
+  color: var(--clr-600, #475569);
+}
+
+.modal-actions button.primary {
+  background: var(--clr-pri-500);
+  color: var(--clr-100);
+}
+
+/* ######################## TRANSITION ######################## */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* ######################## MODAL (CONFIRM LOGOUT) ######################## */
+.confirm-container {
+  width: 80vw;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--sp-m);
+  background: var(--clr-100);
+  border-radius: var(--sp-m);
+  padding: var(--sp-l);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.confirm-container h5 {
+  text-align: center;
+  margin-bottom: var(--sp-xs);
+}
+
+.confirm-btn-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-m);
+}
+
+.confirm-btn-container button {
+  padding: var(--sp-m);
+  border-radius: var(--sp-s);
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  display: grid;
+  place-items: center;
+}
+
+.confirm-btn-container button.secondary {
+  background: var(--clr-200, #e2e8f0);
+  color: var(--clr-900);
+}
+
+.confirm-btn-container button.discard {
+  background: var(--clr-sem-err);
+  color: var(--clr-100);
+}
+
+.confirm-btn-container button.discard:hover {
+  background: var(--clr-sem-err-700);
+}
+
+/* ######################## ZONE BADGE ######################## */
+.zone-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-s);
+  background: var(--clr-100);
+  padding: var(--sp-xs) var(--sp-m);
+  border-radius: 100em;
+  margin-bottom: var(--sp-xl);
+  z-index: 11;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.z-name {
+  color: var(--clr-600);
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.z-divider {
+  width: 1px;
+  height: 1.2rem;
+  background-color: var(--clr-300, #cbd5e1);
+}
+
+.z-code-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-xs);
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--clr-600);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  box-shadow: none;
+}
+
+.z-code-btn:hover {
+  color: var(--clr-pri-500);
+}
+
+/* ######################## COPY TOAST NOTIFICATION ######################## */
+.copy-toast {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--clr-800);
+  color: var(--clr-100);
+  padding: var(--sp-s) var(--sp-l);
+  border-radius: var(--sp-s);
+  font-size: 0.85rem;
+  font-weight: 500;
+  z-index: 999999;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+/* Toast Animation */
+.toast-slide-enter-active,
+.toast-slide-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.toast-slide-enter-from,
+.toast-slide-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -20px);
+}
+
+@import url('@/assets/styles/staffScanner.css');
+
+/* ######################## NAV & USER MENU ######################## */
+.user-menu-wrapper {
+  position: relative;
+  z-index: 100000; /* สูงกว่า overlay แน่นอน */
+}
+
+.user-avatar-btn {
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--clr-100);
+  padding: var(--sp-s);
+  border: 1px solid var(--clr-100);
+  border-radius: 50%;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+}
+
+.user-avatar-btn:hover,
+.user-avatar-btn.active-avatar {
+  background: var(--clr-150);
+  transform: scale(1.05);
+}
+
+.dropdown-overlay-close {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 99998;
+}
+
+/* ######################## DROPDOWN MENU ######################## */
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + var(--sp-s));
+  right: 0;
+  background: var(--clr-100);
+  width: max-content;
+  min-width: 180px;
+  max-width: 70vw;
+  border-radius: var(--sp-s);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  z-index: 100000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dropdown-header {
+  padding: var(--sp-m);
+  text-align: left;
+}
+
+.staff-name {
+  color: var(--clr-900);
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: var(--sp-xs);
+}
+
+.staff-zone-badge {
+  display: inline-block;
+  background: var(--clr-200);
+  color: var(--clr-700);
+  padding: 2px 8px;
+  border-radius: var(--sp-xs);
+  font-size: 0.8rem;
+}
+
+.staff-zone-badge strong {
+  color: var(--clr-900);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: var(--clr-200);
+  width: 100%;
+}
+
+.dropdown-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-xs);
+  width: 100%;
+  padding: var(--sp-m);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  color: var(--clr-sem-err);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.dropdown-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Dropdown Animation */
+.dropdown-slide-enter-active,
+.dropdown-slide-leave-active {
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: top right;
+}
+.dropdown-slide-enter-from,
+.dropdown-slide-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
