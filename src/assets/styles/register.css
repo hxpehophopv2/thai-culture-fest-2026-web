@@ -10,8 +10,6 @@ nav {
   text-align: right;
 }
 
-/* ######################## HEADER ######################## */
-
 h4 {
   text-align: center;
   color: var(--clr-pri-500);
@@ -55,8 +53,6 @@ header > .stepper {
   background: var(--clr-pri-500);
 }
 
-/* ######################## MAIN ######################## */
-
 .error-border-wrapper {
   border: 1px solid var(--clr-sem-err);
   border-radius: 4px;
@@ -99,7 +95,8 @@ section#register-main > main .field {
 }
 section#register-main > main .field > .field-input {
   width: 100%;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 4fr;
   gap: var(--sp-s);
 }
 
@@ -116,18 +113,16 @@ section#register-main > main input[type='text'],
 section#register-main > main input[type='email'],
 section#register-main > main input[type='tel'],
 section#register-main > main input[type='date'] {
+  -webkit-appearance: none;
+  appearance: none;
   min-width: 0;
+  width: 100%;
+  font-size: 14px;
   background: var(--clr-100);
   outline: none;
   border: var(--clr-200) 1px solid;
   border-radius: var(--sp-s);
   padding: var(--sp-s);
-}
-section#register-main > main .field > .field-input > select {
-  flex: 1 1 0%;
-}
-section#register-main > main .field > .field-input > input {
-  flex: 4 1 0%;
 }
 section#register-main > main select {
   padding: var(--sp-s);
@@ -205,8 +200,6 @@ form#step3-form > label input[type='checkbox']:checked::before {
   transform: scale(1);
 }
 
-/* ######################## FOOTER ######################## */
-
 section#register-footer {
   display: flex;
   justify-content: center;
@@ -219,8 +212,6 @@ footer {
   grid-template-columns: 1fr 1fr;
   gap: var(--sp-m);
 }
-
-/* ######################## CONFIRM DISCARD ######################## */
 
 section#confirm-discard {
   position: fixed;
@@ -276,4 +267,15 @@ button.discard {
 button.discard:hover {
   background: var(--clr-sem-err-700);
   color: var(--clr-100);
+}
+
+.country-error-wrapper select {
+  border-color: var(--clr-sem-err) !important;
+  box-shadow: 0 0 0 2px var(--clr-sem-err) !important;
+}
+
+select.country-select {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
 }
