@@ -70,8 +70,9 @@ const isEmailValid = computed(() => {
 
 const isPhoneValid = computed(() => {
   if (!phoneNo.value) return false
-  const phoneRegex = /^[+0-9\s-]{8,20}$/
-  return phoneRegex.test(phoneNo.value)
+  const cleanPhone = phoneNo.value.replace(/[\s-]/g, '')
+  const phoneRegex = /^\+?[0-9]{9,15}$/
+  return phoneRegex.test(cleanPhone)
 })
 
 // --- Step 1 validity ---
@@ -191,8 +192,8 @@ const i18n = {
   participantTypeOpt3: { 'th-TH': 'สตาฟประจำงาน', 'en-US': 'Event Staff' },
   participantTypeOpt4: { 'th-TH': 'บุคคลทั่วไป', 'en-US': 'General Public' },
   participantTypeOpt5: { 'th-TH': 'แขกรับเชิญพิเศษ', 'en-US': 'Special Guest' },
-  organization: { 'th-TH': 'หน่วยงาน/สถาบันศึกษา', 'en-US': 'Organization/University' },
-  organizationPlc: { 'th-TH': 'หน่วยงาน/สถาบันศึกษา', 'en-US': 'Organization/University' },
+  organization: { 'th-TH': 'หน่วยงาน/สถานศึกษา', 'en-US': 'Organization/University' },
+  organizationPlc: { 'th-TH': 'หน่วยงาน/สถานศึกษา', 'en-US': 'Organization/University' },
   chooseDept: { 'th-TH': 'เลือกภาควิชา/สาขา...', 'en-US': 'Choose a department...' },
   facultyOtherPlc: { 'th-TH': 'ระบุคณะ', 'en-US': 'Specify faculty' },
   deptOtherPlc: { 'th-TH': 'ระบุภาควิชา/สาขา', 'en-US': 'Specify department' },
@@ -497,13 +498,18 @@ const i18n = {
 
         <div class="field">
           <label for="">{{ t(i18n.nationality) }}</label>
-          <CountrySelect
-            v-model="country"
-            :country="country"
-            topCountry="TH"
-            :placeholder="t(i18n.nationalityPlc)"
-            :class="{ 'error-border': step2Error && !country }"
-          />
+          <div :class="{ 'country-error-wrapper': step2Error && !country }">
+            <CountrySelect
+              v-model="country"
+              :country="country"
+              topCountry="TH"
+              :placeholder="t(i18n.nationalityPlc)"
+              class="country-select"
+            />
+          </div>
+          <small class="error-text" v-if="step2Error && !country" style="color: var(--clr-sem-err)">
+            {{ t(i18n.errorRequired) }}
+          </small>
         </div>
       </form>
     </main>
@@ -587,11 +593,12 @@ const i18n = {
 :deep(.iti input[type='tel']) {
   width: 100% !important;
   padding: var(--sp-s) !important;
-  padding-left: 8em !important;
+  padding-left: 7.5em !important;
   border-radius: var(--sp-s) !important;
   margin: 0 !important;
   box-sizing: border-box;
   z-index: 1 !important;
+  font-size: 14px !important;
 }
 
 :deep(.iti__dropdown-content),
@@ -609,5 +616,16 @@ const i18n = {
 .phone-error-wrapper :deep(input[type='tel']) {
   border-color: var(--clr-sem-err) !important;
   box-shadow: 0 0 0 1px var(--clr-sem-err) !important;
+}
+
+.country-error-wrapper :deep(select) {
+  border-color: var(--clr-sem-err) !important;
+  box-shadow: 0 0 0 2px var(--clr-sem-err) !important;
+}
+
+:deep(select.country-select) {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
 }
 </style>
