@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { getMyQr } from '@/services/registrationService'
 import { getLineProfile } from '@/services/lineAuthService'
+import LangToggle from '../LangToggle.vue'
 
 const qr = ref(null)
 const lineProfile = ref(null)

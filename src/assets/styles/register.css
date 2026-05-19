@@ -118,6 +118,10 @@ section#register-main > main input[type='date'] {
   min-width: 0;
   width: 100%;
   font-size: 14px;
+  color: var(--clr-900, #111);
+  min-height: 40px;
+  /* -------------------------------------- */
+
   background: var(--clr-100);
   outline: none;
   border: var(--clr-200) 1px solid;
