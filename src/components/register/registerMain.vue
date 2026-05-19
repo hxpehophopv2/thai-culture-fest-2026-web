@@ -254,9 +254,9 @@ const i18n = {
   step3Title: { 'th-TH': 'ข้อตกลงและเงื่อนไข', 'en-US': 'Terms and Conditions' },
   pdpaConsent: {
     'th-TH':
-      'ข้าพเจ้ายินยอมให้ผู้จัดงานเก็บรวบรวม ใช้ และประมวลผลข้อมูลส่วนบุคคลที่ให้ไว้ในแบบฟอร์มนี้ เพื่อวัตถุประสงค์ในการลงทะเบียน การยืนยันตัวตน การจัดกิจกรรม การติดต่อสื่อสาร และการบริหารจัดการงาน KMUTT ROOTED เท่านั้น',
+      'ข้าพเจ้ายินยอมให้ผู้จัดงานเก็บรวบรวม ใช้ และประมวลผลข้อมูลส่วนบุคคลที่ให้ไว้ในแบบฟอร์มนี้ เพื่อวัตถุประสงค์ในการลงทะเบียน การยืนยันตัวตน การจัดกิจกรรม การติดต่อสื่อสาร และการบริหารจัดการงาน Thai Sustainable Culture Fest 2026 เท่านั้น',
     'en-US':
-      'I consent to the collection, use, and processing of my personal data provided in this form for registration, identity verification, event communication, and event management purposes for KMUTT ROOTED only.',
+      'I consent to the collection, use, and processing of my personal data provided in this form for registration, identity verification, event communication, and event management purposes for Thai Sustainable Culture Fest 2026 only.',
   },
   mediaConsent: {
     'th-TH':

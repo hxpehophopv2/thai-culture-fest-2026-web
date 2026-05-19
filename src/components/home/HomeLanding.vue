@@ -51,7 +51,7 @@ onUnmounted(() => {
   <div id="home-unregistered">
     <header class="hero-section">
       <div class="hero-content">
-        <h3><RouterLink to="/staff-login">KMUTT ROOTED</RouterLink></h3>
+        <h3><RouterLink to="/staff-login">Thai Sustainable Culture Fest 2026</RouterLink></h3>
         <h1>Thai Sustainable Culture Fest 2026</h1>
         <small>
           โครงการรณรงค์และส่งเสริมค่านิยมความเป็นไทย เพื่อขับเคลื่อนวัฒนธรรมไทยสู่ความยั่งยืน
