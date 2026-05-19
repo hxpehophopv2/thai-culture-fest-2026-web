@@ -1,50 +1,48 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { getMyQr, getMyRegistration } from '@/services/registrationService'
-import { getLineProfile } from '@/services/lineAuthService'
+import { ref, onMounted, computed } from 'vue'
 import LangToggle from '@/components/LangToggle.vue'
+import { useUserData } from '@/composables/useUserData'
 
-const qr = ref(null)
-const lineProfile = ref(null)
-const isLoading = ref(true)
-const bookedActivities = ref([])
+const { registrationData, qrData, profileData, isUserDataLoaded, fetchUserData } = useUserData()
 
-onMounted(async () => {
-  lineProfile.value = getLineProfile()
+const isLoading = ref(!isUserDataLoaded.value)
+
+const qr = computed(() => qrData.value)
+const lineProfile = computed(() => profileData.value)
+
+const bookedActivities = computed(() => {
+  const regData = registrationData.value
+  if (!regData?.bookings) return []
   
-  try {
-    qr.value = await getMyQr()
-  } catch (err) {
-    console.error('Error fetching QR', err)
+  const orderToKey = {
+    1: 'LAB1',
+    2: 'LAB2',
+    3: 'LAB3',
+    4: 'LAB4',
+    5: 'LAB5',
+    6: 'STG'
+  }
+  
+  const formatTime = (dateStr) => {
+    const d = new Date(dateStr)
+    return d.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' })
   }
 
-  try {
-    const regData = await getMyRegistration()
-    if (regData?.bookings) {
-      const orderToKey = {
-        1: 'LAB1',
-        2: 'LAB2',
-        3: 'LAB3',
-        4: 'LAB4',
-        5: 'LAB5',
-        6: 'STG'
-      }
-      
-      const formatTime = (dateStr) => {
-        const d = new Date(dateStr)
-        return d.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' })
-      }
-
-      bookedActivities.value = regData.bookings.map(b => {
-        const activity = b.session.activity
-        const key = orderToKey[activity.sortOrder] || 'ACT'
-        return {
-          id: `${key}-${formatTime(b.session.startTime).replace(':', '.')}`,
-          name: activity.nameTh,
-          time: `${formatTime(b.session.startTime)} - ${formatTime(b.session.endTime)} น.`
-        }
-      })
+  return regData.bookings.map(b => {
+    const activity = b.session.activity
+    const key = orderToKey[activity.sortOrder] || 'ACT'
+    return {
+      id: `${key}-${formatTime(b.session.startTime).replace(':', '.')}`,
+      name: activity.nameTh,
+      time: `${formatTime(b.session.startTime)} - ${formatTime(b.session.endTime)} น.`
     }
+  })
+})
+
+onMounted(async () => {
+  isLoading.value = !isUserDataLoaded.value
+  try {
+    await fetchUserData()
   } catch (err) {
     console.error('Error fetching registration info', err)
   } finally {

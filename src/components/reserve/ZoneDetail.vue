@@ -3,7 +3,8 @@ import { computed, ref, onMounted, watch, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { zones } from '@/data/zonesData.js'
 import { useLocale } from '@/composables/useLocale'
-import { getActivities, getMyRegistration, updateMyRegistration } from '@/services/registrationService'
+import { updateMyRegistration } from '@/services/registrationService'
+import { useUserData } from '@/composables/useUserData'
 
 import LabZoneContent from '@/components/reserve/LabZone.vue'
 import StageZoneContent from '@/components/reserve/StageZone.vue'
@@ -54,8 +55,16 @@ const contentMap = {
   stage: StageZoneContent,
 }
 
-const activities = ref([])
-const myRegistration = ref(null)
+const { registrationData, activitiesData, isUserDataLoaded, fetchUserData } = useUserData()
+
+const activities = computed({
+  get: () => activitiesData.value || [],
+  set: (val) => { activitiesData.value = val }
+})
+const myRegistration = computed({
+  get: () => registrationData.value,
+  set: (val) => { registrationData.value = val }
+})
 
 const mapKeyToOrder = {
   LAB1: 1,
@@ -161,8 +170,7 @@ const confirmReservation = async () => {
     showModal.value = false
     
     // Refresh Data
-    activities.value = await getActivities()
-    myRegistration.value = await getMyRegistration()
+    await fetchUserData(true)
   } catch (err) {
     const errorMsg = err.message || 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้ กรุณาลองใหมี่อีกครั้ง'
     triggerToast(`เกิดข้อผิดพลาดในการจอง / Error booking:\n${errorMsg}`)
@@ -172,24 +180,14 @@ const confirmReservation = async () => {
 }
 
 onMounted(async () => {
-  isLoadingData.value = true
+  isLoadingData.value = !isUserDataLoaded.value
   
   try {
-    myRegistration.value = await getMyRegistration()
-    isUserRegistered.value = true
+    await fetchUserData()
+    isUserRegistered.value = !!registrationData.value
   } catch (err) {
-    if (err.status === 404) {
-      isUserRegistered.value = false
-    } else {
-      console.error('Failed to fetch registration status:', err)
-      isUserRegistered.value = false
-    }
-  }
-
-  try {
-    activities.value = await getActivities()
-  } catch (err) {
-    console.error('Failed to load activities', err)
+    console.error('Failed to load user data', err)
+    isUserRegistered.value = false
   } finally {
     isLoadingData.value = false
   }

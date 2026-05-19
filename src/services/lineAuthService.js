@@ -7,6 +7,10 @@ let authState = {
 }
 
 export async function initLineAuth() {
+  if (authState.profile) {
+    return { redirected: false, ...authState }
+  }
+
   const liffId = import.meta.env.VITE_LIFF_ID
 
   if (!liffId) {
