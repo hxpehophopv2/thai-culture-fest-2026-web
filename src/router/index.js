@@ -1,4 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import ActivitiesView from '@/views/ActivitiesView.vue'
+import Activities from '@/components/reserve/Activities.vue'
+import ZoneDetail from '@/components/reserve/ZoneDetail.vue'
 import liff from '@line/liff'
 
 const router = createRouter({
@@ -20,11 +23,27 @@ const router = createRouter({
       component: () => import('../views/StaffView.vue'),
     },
     {
-      path: '/reserve',
-      name: 'reserve',
-      component: () => import('../views/ReserveView.vue'),
+      path: '/activities',
+      component: ActivitiesView,
+      children: [
+        { path: '', name: 'activities', component: Activities },
+        { path: ':id', name: 'zone-detail', component: ZoneDetail },
+      ],
     },
   ],
+
+  scrollBehavior(to, from, savedPosition) {
+    return new Promise((resolve) => {
+      // หน่วงเวลา 300ms ให้สอดคล้องกับเวลาของ Transition สลับหน้า (0.3s)
+      setTimeout(() => {
+        if (savedPosition) {
+          resolve(savedPosition)
+        } else {
+          resolve({ top: 0 })
+        }
+      }, 300)
+    })
+  },
 })
 
 router.beforeEach(async (to) => {
