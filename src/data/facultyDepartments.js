@@ -35,13 +35,13 @@ export const DEPARTMENT_MAP = {
     { value: 'CHE', th: 'วิศวกรรมเคมี', en: 'Chemical Engineering' },
     { value: 'CE', th: 'วิศวกรรมโยธา', en: 'Civil Engineering' },
     {
-      value: '',
+      value: 'CEI',
       th: 'วิศวกรรมโยธา (หลักสูตรนานาชาติ)',
       en: 'Civil Engineering (International Program)',
     },
     { value: 'CPE', th: 'วิศวกรรมคอมพิวเตอร์', en: 'Computer Engineering' },
     {
-      value: '',
+      value: 'CPEI',
       th: 'วิศวกรรมคอมพิวเตอร์ (หลักสูตรนานาชาติ)',
       en: 'Computer Engineering (International Program)',
     },
@@ -53,85 +53,85 @@ export const DEPARTMENT_MAP = {
     { value: 'EE', th: 'วิศวกรรมไฟฟ้า', en: 'Electrical Engineering' },
     { value: 'ENV', th: 'วิศวกรรมสิ่งแวดล้อม', en: 'Environmental Engineering' },
     {
-      value: '',
+      value: 'ENVI',
       th: 'วิศวกรรมสิ่งแวดล้อม (หลักสูตรนานาชาติ)',
       en: 'Environmental Engineering (International Program)',
     },
     { value: 'ME', th: 'วิศวกรรมเครื่องกล', en: 'Mechanical Engineering' },
     { value: 'PE', th: 'วิศวกรรมการผลิต', en: 'Production Engineering' },
-    { value: '', th: 'วิศวกรรมวัสดุ', en: 'Materials Engineering' },
+    { value: 'MTE', th: 'วิศวกรรมวัสดุ', en: 'Materials Engineering' },
     { value: 'FoE', th: 'วิศวกรรมอาหาร', en: 'Food Engineering' },
     { value: 'BE', th: 'วิศวกรรมชีวภาพ', en: 'Biological Engineering' },
-    { value: 'PE', th: 'วิศวกรรมอุตสาหการ', en: 'Production Engineering' },
-    { value: '', th: 'วิศวกรรมเซมิคอนดักเตอร์', en: 'Semiconductor Engineering' },
+    { value: 'IE', th: 'วิศวกรรมอุตสาหการ', en: 'Industrial Engineering' }, // แก้จาก PE ที่ซ้ำให้เป็น IE
+    { value: 'SMC', th: 'วิศวกรรมเซมิคอนดักเตอร์', en: 'Semiconductor Engineering' },
     {
-      value: '',
+      value: 'ECE',
       th: 'วิศวกรรมไฟฟ้าสื่อสารและอิเล็กทรอนิกส์',
       en: 'Electrical Communication and Electronic Engineering',
     },
     {
-      value: '',
+      value: 'ISEE',
       th: 'วิศวกรรมระบบอุตสาหกรรมและการประกอบการธุรกิจ',
       en: 'Industrial Systems Engineering and Entrepreneurship',
     },
-    { value: '', th: 'วิศวกรรมเครื่องกลและพลังงาน', en: 'Mechanical and Energy Engineering' },
-    { value: '', th: 'วิศวกรรมยานยนต์', en: 'Automotive Engineering' },
+    { value: 'MEE', th: 'วิศวกรรมเครื่องกลและพลังงาน', en: 'Mechanical and Energy Engineering' },
+    { value: 'AE', th: 'วิศวกรรมยานยนต์', en: 'Automotive Engineering' },
     {
-      value: '',
+      value: 'EEPE',
       th: 'วิศวกรรมไฟฟ้า (ระบบไฟฟ้า อิเล็กทรอนิกส์ และพลังงาน)',
       en: 'Electrical Engineering (Power System, Power Electronics and Energy)',
     },
     {
-      value: '',
+      value: 'ECEI',
       th: 'วิศวกรรมอิเล็กทรอนิกส์และสารสนเทศสื่อสาร (หลักสูตรนานาชาติ)',
       en: 'Electrical Communication and Electronic Engineering (International Program)',
     },
-    { value: '', th: 'วิทยาศาสตร์ข้อมูลสุขภาพ', en: 'Health Data Science' },
+    { value: 'HDS', th: 'วิทยาศาสตร์ข้อมูลสุขภาพ', en: 'Health Data Science' },
     {
-      value: '',
+      value: 'SMAT',
       th: 'วิศวกรรมการผลิตอัจฉริยะและเครื่องมือขั้นสูง',
       en: 'Smart Manufacturing and Advanced Tool Engineering',
     },
     {
-      value: '',
+      value: 'AUTOI',
       th: 'วิศวกรรมอัตโนมัติ (หลักสูตรนานาชาติ)',
       en: 'Automation Engineering (International Program)',
     },
-    { value: '', th: 'วิศวกรรมเมคคาทรอนิกส์', en: 'Mechatronics Engineering' },
+    { value: 'MCE', th: 'วิศวกรรมเมคคาทรอนิกส์', en: 'Mechatronics Engineering' },
     {
-      value: '',
+      value: 'AAPM',
       th: 'วิศวกรรมการผลิตชิ้นส่วนยานยนต์และอากาศยาน',
       en: 'Automotive and Aerospace Parts Manufacturing Engineering',
     },
-    { value: '', th: 'วิศวกรรมไฟฟ้าและสารสนเทศ', en: 'Electrical and Information Engineering' },
+    { value: 'EIE', th: 'วิศวกรรมไฟฟ้าและสารสนเทศ', en: 'Electrical and Information Engineering' },
     {
-      value: '',
+      value: 'CEM',
       th: 'วิศวกรรมและการบริหารการก่อสร้าง',
       en: 'Construction Engineering and Management',
     },
     {
-      value: '',
+      value: 'EES',
       th: 'วิศวกรรมสิ่งแวดล้อมและความยั่งยืน',
       en: 'Environmental Engineering and Sustainability',
     },
     {
-      value: '',
+      value: 'IMSE',
       th: 'วิศวกรรมอุตสาหการและระบบการผลิต',
       en: 'Industrial and Manufacturing Systems Engineering',
     },
     {
-      value: '',
+      value: 'IMME',
       th: 'นวัตกรรมการผลิตและวิศวกรรมวัสดุ',
       en: 'Innovative Manufacturing and Materials Engineering',
     },
-    { value: '', th: 'เทคโนโลยีวิศวกรรมโยธา', en: 'Civil Engineering Technology' },
+    { value: 'CET', th: 'เทคโนโลยีวิศวกรรมโยธา', en: 'Civil Engineering Technology' },
     {
-      value: '',
+      value: 'AATE',
       th: 'วิศวกรรมยานยนต์และการขนส่งขั้นสูง (หลักสูตรนานาชาติ)',
       en: 'Automotive and Advanced Transportation Engineering',
     },
     {
-      value: '',
+      value: 'EIET',
       th: 'เทคโนโลยีวิศวกรรมไฟฟ้าและสารสนเทศ',
       en: 'Electrical and Information Engineering Technology',
     },
@@ -145,30 +145,38 @@ export const DEPARTMENT_MAP = {
     { value: 'other', th: 'อื่น ๆ', en: 'Other' },
   ],
   FIET: [
-    { value: '', th: 'เทคโนโลยีบรรจุภัณฑ์และการพิมพ์', en: 'Packaging and Printing Technology' },
-    { value: '', th: 'เทคโนโลยีอุตสาหกรรม', en: 'Industrial Technology' },
+    { value: 'PPT', th: 'เทคโนโลยีบรรจุภัณฑ์และการพิมพ์', en: 'Packaging and Printing Technology' },
+    { value: 'INDT', th: 'เทคโนโลยีอุตสาหกรรม', en: 'Industrial Technology' },
     {
-      value: '',
+      value: 'ACSM',
       th: 'วิทยาการคอมพิวเตอร์ประยุกต์-มัลติมีเดีย',
       en: 'Applied Computer Science-Multimedia',
     },
-    { value: '', th: 'วิศวกรรมเครื่องกล', en: 'Mechanical Engineering' },
-    { value: '', th: 'วิศวกรรมไฟฟ้า', en: 'Electrical Engineering' },
-    { value: '', th: 'วิศวกรรมโยธา', en: 'Civil Engineering ' },
-    { value: '', th: 'วิศวกรรมอุตสาหการ', en: 'Electrical Engineering' },
+    { value: 'FME', th: 'วิศวกรรมเครื่องกล', en: 'Mechanical Engineering' },
+    { value: 'FEE', th: 'วิศวกรรมไฟฟ้า', en: 'Electrical Engineering' },
+    { value: 'FCE', th: 'วิศวกรรมโยธา', en: 'Civil Engineering ' },
+    { value: 'FIE', th: 'วิศวกรรมอุตสาหการ', en: 'Industrial Engineering' }, // ปรับ en ให้ตรงกับสาขา IE
     {
-      value: '',
+      value: 'EDTM',
       th: 'เทคโนโลยีดิจิทัลทางการศึกษาและสื่อสารมวลชน',
       en: 'Educational Digital Technology and Mass Communication',
     },
-    { value: '', th: 'คอมพิวเตอร์และเทคโนโลยีสารสนเทศ', en: 'Computer and Information Technology' },
     {
-      value: '',
+      value: 'CIT',
+      th: 'คอมพิวเตอร์และเทคโนโลยีสารสนเทศ',
+      en: 'Computer and Information Technology',
+    },
+    {
+      value: 'PTPI',
       th: 'เทคโนโลยีบรรจุภัณฑ์และนวัตกรรมการพิมพ์',
       en: 'Packaging Technology and Printing Innovation',
     },
-    { value: '', th: 'นวัตกรรมการเรียนรู้และเทคโนโลยี', en: 'Learning Innovation and Technology' },
-    { value: '', th: 'อื่นๆ', en: 'Other' },
+    {
+      value: 'LIT',
+      th: 'นวัตกรรมการเรียนรู้และเทคโนโลยี',
+      en: 'Learning Innovation and Technology',
+    },
+    { value: 'other', th: 'อื่นๆ', en: 'Other' },
   ],
   SIT: [
     { value: 'IT', th: 'เทคโนโลยีสารสนเทศ', en: 'Information Technology' },
@@ -177,55 +185,59 @@ export const DEPARTMENT_MAP = {
     { value: 'other', th: 'อื่น ๆ', en: 'Other' },
   ],
   ARCH: [
-    { value: '', th: 'สถาปัตยกรรม (หลักสูตรนานาชาติ)', en: 'Architecture (International Program)' },
     {
-      value: '',
+      value: 'ARCI',
+      th: 'สถาปัตยกรรม (หลักสูตรนานาชาติ)',
+      en: 'Architecture (International Program)',
+    },
+    {
+      value: 'INAI',
       th: 'สถาปัตยกรรมภายใน (หลักสูตรนานาชาติ)',
       en: 'Interior Architecture (International Program)',
     },
     {
-      value: '',
+      value: 'DINI',
       th: 'นวัตกรรมการออกแบบ (หลักสูตรนานาชาติ)',
       en: 'Design Innovation (International Program)',
     },
-    { value: '', th: 'การออกแบบอุตสาหกรรม', en: 'Industrial Design' },
+    { value: 'IDD', th: 'การออกแบบอุตสาหกรรม', en: 'Industrial Design' },
     {
-      value: '',
+      value: 'CMDI',
       th: 'ออกแบบนิเทศศิลป์ (หลักสูตรนานาชาติ) ',
       en: 'Communication Design (International Program)',
     },
     {
-      value: '',
+      value: 'DPI',
       th: 'การออกแบบและการวางแผน (หลักสูตรนานาชาติ)',
       en: 'Design and Planning (International Program)',
     },
     {
-      value: '',
+      value: 'LAI',
       th: 'ภูมิสถาปัตยกรรม (หลักสูตรนานาชาติ)',
       en: 'Landscape Architecture (International Program)',
     },
     {
-      value: '',
+      value: 'MIDI',
       th: 'การบูรณาการการออกแบบด้วยพหุปัญญา (หลักสูตรนานาชาติ)',
       en: 'Multiple Intelligences for Design Integration (International Program)',
     },
-    { value: '', th: 'เทคโนโลยีมีเดีย', en: 'Media Technology' },
-    { value: '', th: 'มีเดียทางการแพทย์และวิทยาศาสตร์', en: 'Medical and Science Media' },
-    { value: '', th: 'มีเดียอาตส์', en: 'Media Arts' },
+    { value: 'MDT', th: 'เทคโนโลยีมีเดีย', en: 'Media Technology' },
+    { value: 'MSM', th: 'มีเดียทางการแพทย์และวิทยาศาสตร์', en: 'Medical and Science Media' },
+    { value: 'MDA', th: 'มีเดียอาตส์', en: 'Media Arts' },
     { value: 'other', th: 'อื่น ๆ', en: 'Other' },
   ],
   ENERGY: [
     {
-      value: '',
+      value: 'EMTC',
       th: 'เเทคโนโลยีพลังงานและวัสดุเพื่อความเป็นกลางทางคาร์บอน',
       en: 'Energy and Materials Technologies toward Carbon Neutrality',
     },
-    { value: '', th: 'เทคโนโลยีสิ่งแวดล้อม', en: 'Environmental Technology' }, //ยุติการรับนักศึกษา
-    { value: '', th: 'เทคโนโลยีวัสดุ', en: 'Materials Technology' }, //ยุติการรับนักศึกษา
-    { value: '', th: 'เทคโนโลยีการจัดการพลังงาน', en: 'Energy Management Technology' },
-    { value: '', th: 'เทคโนโลยีอุณหภาพ', en: 'Thermal Technology,' }, //ยุติการรับนักศึกษา
+    { value: 'ENVT', th: 'เทคโนโลยีสิ่งแวดล้อม', en: 'Environmental Technology' }, //ยุติการรับนักศึกษา
+    { value: 'MATT', th: 'เทคโนโลยีวัสดุ', en: 'Materials Technology' }, //ยุติการรับนักศึกษา
+    { value: 'EMGT', th: 'เทคโนโลยีการจัดการพลังงาน', en: 'Energy Management Technology' },
+    { value: 'THT', th: 'เทคโนโลยีอุณหภาพ', en: 'Thermal Technology,' }, //ยุติการรับนักศึกษา
     {
-      value: '',
+      value: 'DDCP',
       th: 'การออกแบบและผลิตแบบบูรณาการ',
       en: 'Design and Development of Competitive Products and Engineering Design',
     }, //ยุติการรับนักศึกษา
@@ -233,37 +245,37 @@ export const DEPARTMENT_MAP = {
   ],
   BIO: [
     {
-      value: '',
+      value: 'IBI',
       th: 'วิทยาศาสตร์ชีวภาพเชิงบูรณาการและนวัตกรรม (หลักสูตรนานาชาติ)',
       en: 'Integrative Biosciences and Innovation (International program)',
     },
     {
-      value: '',
+      value: 'BTI',
       th: 'เทคโนโลยีชีวภาพ (หลักสูตรนานาชาติ)',
       en: 'Biotechnology (International Program)',
     },
     {
-      value: '',
+      value: 'CECI',
       th: 'นิเวศวิทยาการอนุรักษ์ (หลักสูตรนานาชาติ)',
       en: 'Conservation Ecology (International Program)',
     },
     {
-      value: '',
+      value: 'ASTP',
       th: 'วิทยาศาสตร์เกษตรและเทคโนโลยี (วิทยาการหลังการเก็บเกี่ยว) (หลักสูตรนานาชาติ)',
       en: 'AgriScience and Technology (Postharvest) (International Program)',
     },
     {
-      value: '',
+      value: 'BCTI',
       th: 'เทคโนโลยีชีวเคมี (หลักสูตรนานาชาติ)',
       en: 'Biochemical Technology (International Program)',
     },
     {
-      value: '',
+      value: 'BSBI',
       th: 'ชีวสารสนเทศและชีววิทยาระบบ (หลักสูตรนานาชาติ)',
       en: 'Bioinformatics and Systems Biology (International Program)',
     },
     {
-      value: '',
+      value: 'PHTI',
       th: 'เทคโนโลยีหลังการเก็บเกี่ยว (หลักสูตรนานาชาติ)',
       en: 'Postharvest Technology (International Program)',
     },
@@ -277,7 +289,7 @@ export const DEPARTMENT_MAP = {
     },
     { value: 'BC', th: 'สังคมศาสตร์สิ่งแวดล้อม', en: 'Environmental Social Sciences' },
     {
-      value: 'BC',
+      value: 'ALI', // เปลี่ยนจาก BC ที่ซ้ำให้เป็น ALI (Applied Linguistics)
       th: 'ภาษาศาสตร์ประยุกต์ (หลักสูตรนานาชาติ)',
       en: 'Applied Linguistics (International Program)',
     },
@@ -285,41 +297,41 @@ export const DEPARTMENT_MAP = {
   ],
   GMI: [
     {
-      value: '',
+      value: 'EISM',
       th: 'การจัดการความเป็นผู้ประกอบการ นวัตกรรมและความยั่งยืน',
       en: 'Entrepreneurship, Innovation and Sustainability Management',
     },
-    { value: '', th: 'การจัดการนวัตกรรมเชิงบูรณาการ', en: 'Integrated Innovation Management' },
+    { value: 'IIM', th: 'การจัดการนวัตกรรมเชิงบูรณาการ', en: 'Integrated Innovation Management' },
     {
-      value: '',
+      value: 'LSCM',
       th: 'การจัดการโลจิสติกส์และซัพพลายเชน',
       en: 'Logistics and Supply Chain Management',
     },
-    { value: '', th: 'การจัดการ', en: 'Management' },
+    { value: 'MGM', th: 'การจัดการ', en: 'Management' },
     { value: 'other', th: 'อื่น ๆ', en: 'Other' },
   ],
   FIBO: [
     {
-      value: '',
+      value: 'RAE',
       th: 'วิศวกรรมหุ่นยนต์และระบบอัตโนมัติ',
       en: 'Robotics and Automation Engineering',
     },
-    { value: '', th: 'วิทยาการหุ่นยนต์และระบบอัตโนมัติ', en: 'Robotics and Automation' },
+    { value: 'RA', th: 'วิทยาการหุ่นยนต์และระบบอัตโนมัติ', en: 'Robotics and Automation' },
     { value: 'other', th: 'อื่น ๆ', en: 'Other' },
   ],
   JGSEE: [
     {
-      value: '',
+      value: 'SESI',
       th: 'ระบบพลังงานที่ยั่งยืน (หลักสูตรนานาชาติ)',
       en: 'Sustainable Energy Systems (International Program)',
     },
     {
-      value: '',
+      value: 'ETMI',
       th: 'เทคโนโลยีและการจัดการสิ่งแวดล้อม (หลักสูตรนานาชาติ)',
       en: 'Environmental Technology and Management (International Program)',
     },
     {
-      value: '',
+      value: 'ECCS',
       th: 'สิ่งแวดล้อม การเปลี่ยนแปลงภูมิอากาศ และความยั่งยืน (หลักสูตรนานาชาติ)',
       en: 'Environment, Climate Change and Sustainability (International Program)',
     },
@@ -327,23 +339,22 @@ export const DEPARTMENT_MAP = {
   ],
   MULTI: [
     {
-      value: '',
+      value: 'AISE',
       th: 'วิศวกรรมระบบปัญญาประดิษฐ์',
       en: 'Artificial Intelligence Systems Engineering',
     },
     {
-      value: '',
+      value: 'DDI',
       th: 'การออกแบบดิจิทัล (หลักสูตรนานาชาติ)',
       en: 'Digital Design (International Program)',
     },
     {
-      value: '',
+      value: 'CTI',
       th: 'เทคโนโลยีแนวสร้างสรรค์ (หลักสูตรนานาชาติ)',
       en: 'Creative Technology (International Program)',
     },
-    { value: '', th: 'วิทยาศาสตร์และเทคโนโลยี', en: '' }, //ยุติการรับนักศึกษา
+    { value: 'SNT', th: 'วิทยาศาสตร์และเทคโนโลยี', en: 'Science and Technology' }, //ยุติการรับนักศึกษา
     { value: 'other', th: 'อื่น ๆ', en: 'Other' },
   ],
-
-  // คณะที่ไม่มีในนี้จะ fallback เป็น Other อัตโนมัติ (for now)
 }
+// คณะที่ไม่มีในนี้จะ fallback เป็น Other อัตโนมัติ (for now)

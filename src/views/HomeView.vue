@@ -6,7 +6,7 @@ import { useAuth } from '@/composables/useAuth'
 
 import HomeLanding from '@/components/home/HomeLanding.vue'
 
-const isBooting = ref(false)
+const isBooting = ref(true)
 const { isRegistered } = useAuth()
 
 const checkUserStatus = async () => {
@@ -24,7 +24,7 @@ const checkUserStatus = async () => {
   }
 }
 
-// onMounted(checkUserStatus)
+onMounted(checkUserStatus)
 </script>
 
 <template>
