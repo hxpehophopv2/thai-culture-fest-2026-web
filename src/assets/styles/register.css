@@ -123,6 +123,10 @@ section#register-main > main input[type='date'] {
   border: var(--clr-200) 1px solid;
   border-radius: var(--sp-s);
   padding: var(--sp-s);
+
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
 section#register-main > main select {
   padding: var(--sp-s);
@@ -136,7 +140,8 @@ section#register-main > main input[type='tel']:focus,
 section#register-main > main input[type='tel']:active,
 section#register-main > main input[type='date']:focus,
 section#register-main > main input[type='date']:active {
-  box-shadow: 0 0 0 2px var(--clr-pri-500);
+  border-color: var(--clr-pri-500);
+  box-shadow: 0 0 0 1px var(--clr-pri-500);
 }
 
 form#step3-form > p,
