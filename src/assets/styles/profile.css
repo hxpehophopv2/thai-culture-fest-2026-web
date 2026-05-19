@@ -1,0 +1,142 @@
+/* ---------- GENERAL LAYOUT ---------- */
+#profile-view {
+  width: 100%;
+  min-height: 100vh;
+  padding: 0 var(--sp-l) var(--sp-3xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-nav {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--sp-m) 0;
+}
+
+.profile-container {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-l);
+}
+
+.profile-state {
+  display: grid;
+  place-items: center;
+  padding: var(--sp-2xl);
+}
+
+/* ---------- TICKET QR CARD (GLASSMORPHISM) ---------- */
+.ticket-card {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--sp-m);
+  padding: var(--sp-l);
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-l);
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-xs);
+}
+
+.user-info .avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.user-info h2 {
+  font-size: 1.4rem;
+  color: var(--clr-100);
+}
+
+.badge {
+  font-size: 0.8rem;
+  font-weight: bold;
+  background: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+  padding: 4px 12px;
+  border-radius: 100px;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.qr-wrapper img {
+  width: 100%;
+  max-width: 240px;
+  border-radius: var(--sp-s);
+  margin-bottom: var(--sp-s);
+}
+
+.qr-wrapper code {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--clr-200);
+  overflow-wrap: anywhere;
+}
+
+/* ---------- RESERVATIONS LIST ---------- */
+.my-schedules h3 {
+  font-size: 1.2rem;
+  color: var(--clr-100);
+  margin-bottom: var(--sp-m);
+}
+
+.schedule-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-s);
+}
+
+.schedule-item {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--sp-s);
+  padding: var(--sp-m);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-m);
+}
+
+.code-tag {
+  background: var(--clr-100);
+  color: var(--clr-pri-500);
+  font-weight: bold;
+  font-size: 0.85rem;
+  padding: 6px 12px;
+  border-radius: var(--sp-xs);
+  min-width: 75px;
+  text-align: center;
+}
+
+.item-details h4 {
+  font-size: 1rem;
+  color: var(--clr-100);
+  margin-bottom: 2px;
+}
+
+.item-details time {
+  font-size: 0.85rem;
+  color: var(--clr-200);
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--clr-300);
+  padding: var(--sp-l);
+}

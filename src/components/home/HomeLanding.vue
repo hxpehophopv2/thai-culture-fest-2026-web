@@ -2,28 +2,32 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import { ArrowDown, ArrowUp } from '@lucide/vue'
-import LangToggle from '../LangToggle.vue'
+import { useAuth } from '@/composables/useAuth'
 
 import posterHero from '@/assets/images/posterHero.png'
 import Activities from '@/components/reserve/Activities.vue'
+import LangToggle from '../LangToggle.vue'
 
 const router = useRouter()
+const { isRegistered } = useAuth()
 
 const hasScrolled = ref(false)
 const showBackToTop = ref(false)
 
-const goToRegister = () => {
-  router.push('/register')
+// ปรับปรุงฟังก์ชันหลักให้ทำงานแบบ Dynamic ทันที
+const handleCtaAction = () => {
+  if (isRegistered.value) {
+    router.push('/activities') // ถ้าลงทะเบียนแล้ว -> ส่งไปหน้าเลือกกิจกรรม
+  } else {
+    router.push('/register') // ถ้ายังไม่ลงทะเบียน -> ส่งไปหน้าฟอร์มลงทะเบียนงาน
+  }
 }
 
-// Handles scroll-dependent UI states (Scroll indicator & FAB)
 const handleScroll = () => {
   const currentScroll = window.scrollY
-
   if (currentScroll > 50 && !hasScrolled.value) {
     hasScrolled.value = true
   }
-
   showBackToTop.value = currentScroll > window.innerHeight * 0.5
 }
 
@@ -42,18 +46,20 @@ onUnmounted(() => {
 
 <template>
   <nav>
-    <LangToggle />
+    <LangToggle theme="dark" />
   </nav>
   <div id="home-unregistered">
     <header class="hero-section">
       <div class="hero-content">
-        <h2><RouterLink to="/staff-login">KMUTT ROOTED</RouterLink></h2>
+        <h3><RouterLink to="/staff-login">KMUTT ROOTED</RouterLink></h3>
         <h1>Thai Sustainable Culture Fest 2026</h1>
         <small>
           โครงการรณรงค์และส่งเสริมค่านิยมความเป็นไทย เพื่อขับเคลื่อนวัฒนธรรมไทยสู่ความยั่งยืน
         </small>
-        <button type="button" class="primary" @click="goToRegister">ลงทะเบียนเข้าร่วมงาน</button>
       </div>
+      <button type="button" class="primary" @click="handleCtaAction">
+        {{ isRegistered ? 'จองกิจกรรมภายในงาน' : 'ลงทะเบียนเข้าร่วมงาน' }}
+      </button>
 
       <div class="hero-image">
         <img :src="posterHero" alt="Event Poster" />
@@ -79,9 +85,15 @@ onUnmounted(() => {
 
     <footer class="bottom-cta-section">
       <div class="container">
-        <h3>พร้อมที่จะเป็นส่วนหนึ่งของงานหรือยัง?</h3>
-        <button type="button" class="primary large-btn" @click="goToRegister">
-          ลงทะเบียนเข้าร่วมงาน
+        <h3>
+          {{
+            isRegistered
+              ? 'เลือกหัวข้อเวิร์กช็อปที่คุณสนใจ'
+              : 'พร้อมที่จะเป็นส่วนหนึ่งของงานหรือยัง?'
+          }}
+        </h3>
+        <button type="button" class="primary large-btn" @click="handleCtaAction">
+          {{ isRegistered ? 'ดูรอบเวลาและจองกิจกรรม' : 'ลงทะเบียนเข้าร่วมงานตอนนี้' }}
         </button>
       </div>
     </footer>
@@ -91,7 +103,6 @@ onUnmounted(() => {
       class="back-to-top-fab"
       :class="{ 'is-visible': showBackToTop }"
       @click="scrollToTop"
-      aria-label="Back to top"
     >
       <ArrowUp />
     </button>

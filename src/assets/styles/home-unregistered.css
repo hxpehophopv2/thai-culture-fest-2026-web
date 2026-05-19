@@ -16,59 +16,146 @@
 /* ---------- HERO SECTION ---------- */
 .hero-section {
   position: relative;
-  min-height: 10vh;
+  min-height: 90vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: var(--sp-m);
   text-align: center;
-  padding: var(--sp-xl) var(--sp-m) var(--sp-4xl);
-  background: var(--clr-100);
+  padding: var(--sp-2xl) var(--sp-m);
+
+  /* Goal 2: More Interesting. Dynamic Gradient Background */
+  background: linear-gradient(135deg, rgba(226, 232, 240, 1) 0%, rgba(203, 213, 225, 0.6) 100%);
+  overflow: hidden; /* Prevent background effects from leaking */
+}
+
+/* Create abstract shapes behind content for depth/interest */
+.hero-section::before,
+.hero-section::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background: linear-gradient(var(--clr-pri-500) 0%, rgba(24, 42, 125, 0.4) 100%);
+  opacity: 0.1;
+  filter: blur(80px);
+  z-index: 1; /* Below text, above section background */
+}
+
+.hero-section::before {
+  width: 400px;
+  height: 400px;
+  top: -100px;
+  left: -100px;
+}
+.hero-section::after {
+  width: 300px;
+  height: 300px;
+  bottom: -50px;
+  right: -50px;
 }
 
 .hero-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--sp-m);
-  margin-bottom: var(--sp-xl);
+  gap: var(--sp-xs);
   max-width: 800px;
+  position: relative;
+  z-index: 2;
+  animation: fadeInText 1s ease-out forwards;
 }
 
-.hero-content h2 a {
-  color: var(--clr-pri-500);
+@keyframes fadeInText {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-content h3 a {
+  display: block;
+  color: var(--clr-acc-500);
   text-decoration: none;
-  font-weight: bold;
+  font-size: var(--fs-h5);
+  font-weight: var(--fw-h3);
 }
 
 .hero-content h1 {
-  font-size: 2.5rem;
-  color: var(--clr-900);
-  line-height: 1.2;
+  font-size: var(--fs-h2);
+  color: var(--clr-pri-500);
+  line-height: var(--lh-h1);
 }
 
 .hero-content small {
-  font-size: 1.1rem;
+  font-weight: bold;
   color: var(--clr-500);
 }
 
-.hero-image {
-  position: absolute;
-  bottom: 0;
-  z-index: 0;
-  padding: 0 var(--sp-xl);
+/* Style button within the normal flow */
+.hero-content button {
+  margin-top: var(--sp-s);
 }
+
+/* Goal 1: Remove Absolute positioning from image container to stack it below text */
+.hero-image {
+  /* No absolute positioning */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: var(--sp-l); /* Extra space between text flow and image */
+  width: 100%;
+  max-width: 400px; /* Increase max width slightly for desktop */
+
+  /* Blob behind image for interest */
+  position: relative;
+  z-index: 2;
+}
+
+/* Create abstract shape just behind image container */
+.hero-image::before {
+  content: '';
+  position: absolute;
+  width: 120%;
+  height: 120%;
+  top: -10%;
+  left: -10%;
+  border-radius: 60% 40% 70% 30% / 40% 70% 30% 60%;
+  background: linear-gradient(var(--clr-acc-500) 0%, rgba(255, 202, 40, 0.5) 100%);
+  opacity: 0.2;
+  z-index: -1; /* Behind the image, above section shapes */
+  filter: blur(20px);
+}
+
 .hero-image img {
   display: block;
-  max-width: 100%;
+  width: 100%;
+  /* max-width is handled by parent container now */
   height: auto;
   border-radius: var(--sp-m);
+
+  /* Subtle animation (floating) for image interest */
+  animation: floatingImage 4s ease-in-out infinite;
+}
+
+@keyframes floatingImage {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 /* ---------- SCROLL INDICATOR ---------- */
 .scroll-indicator {
   position: absolute;
-  bottom: var(--sp-4xl);
+  bottom: var(--sp-2xl); /* Move indicator relative to overall header, not image bottom */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -131,7 +218,7 @@
 
 /* ---------- BOTTOM CTA SECTION ---------- */
 .bottom-cta-section {
-  padding: var(--sp-3xl) 0;
+  padding: var(--sp-3xl) 0 var(--sp-4xl);
   background: var(--clr-100);
   text-align: center;
 }
@@ -143,7 +230,8 @@
 
 .large-btn {
   padding: var(--sp-m) var(--sp-xl);
-  font-size: 1.2rem;
+  font-size: 1rem;
+  font-weight: bold;
   border-radius: 100px;
 }
 
@@ -175,6 +263,10 @@
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
+}
+
+.back-to-top-fab svg {
+  flex-shrink: 0;
 }
 
 .back-to-top-fab:hover {

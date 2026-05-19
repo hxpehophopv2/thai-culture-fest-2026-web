@@ -2,12 +2,12 @@
 import { ref, onMounted } from 'vue'
 import { getMyRegistration } from '@/services/registrationService'
 import { initLineAuth } from '@/services/lineAuthService'
+import { useAuth } from '@/composables/useAuth'
 
-import HomeUnregistered from '@/components/homeUnregistered/HomeUnregistered.vue'
-import HomeRegistered from '@/components/homeRegistered/HomeRegistered.vue'
+import HomeLanding from '@/components/home/HomeLanding.vue'
 
 const isBooting = ref(false)
-const isRegistered = ref(false)
+const { isRegistered } = useAuth()
 
 const checkUserStatus = async () => {
   isBooting.value = true
@@ -32,10 +32,7 @@ const checkUserStatus = async () => {
     <p>Loading...</p>
   </section>
 
-  <main id="home-view" v-else>
-    <HomeUnregistered v-if="!isRegistered" />
-    <HomeRegistered v-else />
-  </main>
+  <HomeLanding v-else />
 </template>
 
 <style scoped>
