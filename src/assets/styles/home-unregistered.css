@@ -1,0 +1,183 @@
+/* ---------- GENERAL LAYOUT ---------- */
+#home-unregistered {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--sp-l);
+}
+
+/* ---------- HERO SECTION ---------- */
+.hero-section {
+  position: relative;
+  min-height: 10vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--sp-xl) var(--sp-m) var(--sp-4xl);
+  background: var(--clr-100);
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-m);
+  margin-bottom: var(--sp-xl);
+  max-width: 800px;
+}
+
+.hero-content h2 a {
+  color: var(--clr-pri-500);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.hero-content h1 {
+  font-size: 2.5rem;
+  color: var(--clr-900);
+  line-height: 1.2;
+}
+
+.hero-content small {
+  font-size: 1.1rem;
+  color: var(--clr-500);
+}
+
+.hero-image {
+  position: absolute;
+  bottom: 0;
+  z-index: 0;
+  padding: 0 var(--sp-xl);
+}
+.hero-image img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--sp-m);
+}
+
+/* ---------- SCROLL INDICATOR ---------- */
+.scroll-indicator {
+  position: absolute;
+  bottom: var(--sp-4xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-s);
+  color: var(--clr-500);
+  opacity: 1;
+  transition:
+    opacity 0.5s ease,
+    visibility 0.5s ease;
+}
+
+.scroll-indicator.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.scroll-indicator span {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.bounce-anim {
+  animation: bounce 2s infinite cubic-bezier(0.28, 0.84, 0.42, 1);
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-15px);
+  }
+  60% {
+    transform: translateY(-7px);
+  }
+}
+
+/* ---------- EVENT DETAILS SECTION ---------- */
+.event-details-section {
+  padding: var(--sp-3xl) 0;
+  background: var(--clr-200);
+  text-align: center;
+}
+
+.event-details-section h3 {
+  margin-bottom: var(--sp-m);
+  color: var(--clr-pri-500);
+}
+
+/* ---------- ACTIVITIES SECTION ---------- */
+.activities-section {
+  /* กราเดียนต์หรือพื้นหลังหลักของ Activities จะถูกจัดการในคอมโพเนนต์ Activities เอง */
+  width: 100%;
+}
+
+/* ---------- BOTTOM CTA SECTION ---------- */
+.bottom-cta-section {
+  padding: var(--sp-3xl) 0;
+  background: var(--clr-100);
+  text-align: center;
+}
+
+.bottom-cta-section h3 {
+  margin-bottom: var(--sp-l);
+  color: var(--clr-900);
+}
+
+.large-btn {
+  padding: var(--sp-m) var(--sp-xl);
+  font-size: 1.2rem;
+  border-radius: 100px;
+}
+
+/* ---------- BACK TO TOP FAB ---------- */
+.back-to-top-fab {
+  position: fixed;
+  bottom: var(--sp-3xl);
+  right: var(--sp-xl);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--clr-pri-500);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+
+.back-to-top-fab.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top-fab:hover {
+  background: var(--clr-pri-600, #1e3a8a);
+  transform: translateY(-3px);
+}

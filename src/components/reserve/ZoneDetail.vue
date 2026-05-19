@@ -70,7 +70,6 @@ const schedulesData = {
 const availableSlots = computed(() => schedulesData[selectedActivity.value] || [])
 
 const openReserve = (activityKey) => {
-  // 🎯 จุดสกัดกั้นหลัก: ถ้าตรวจสอบแล้วว่ายังไม่ได้ลงทะเบียนงาน ให้เปิดโมดอลแจ้งเตือนลงทะเบียนแทนทันที
   if (!isUserRegistered.value) {
     showAuthModal.value = true
     return
@@ -89,12 +88,11 @@ const confirmReservation = () => {
 }
 
 onMounted(async () => {
-  // ตรวจสอบข้อมูลการลงทะเบียนของ User ทันทีที่เข้าหน้านี้
   try {
     await getMyRegistration()
     isUserRegistered.value = true
   } catch (err) {
-    isUserRegistered.value = false // หากยิงไม่ผ่าน (เช่น ได้ 404) แปลว่ายังไม่เคยลงทะเบียน
+    isUserRegistered.value = false
   }
 
   if (route.query.modal === 'true') {
@@ -106,7 +104,13 @@ onMounted(async () => {
   }
 })
 
-const goBack = () => router.push({ name: 'activities' })
+const goBack = () => {
+  if (window.history.state.back) {
+    router.back()
+  } else {
+    router.push('/')
+  }
+}
 </script>
 
 <template>
