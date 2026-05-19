@@ -107,3 +107,11 @@ export async function submitRegistration(formData, fallbackSessionIds = []) {
   })
   return response.data
 }
+
+export async function updateMyRegistration(payload) {
+  const response = await apiRequest('/api/registration/me', {
+    method: 'PUT',
+    body: payload,
+  })
+  return response.data
+}

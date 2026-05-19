@@ -1,9 +1,9 @@
 <script setup>
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, watch, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { zones } from '@/data/zonesData.js'
 import { useLocale } from '@/composables/useLocale'
-import { getMyRegistration } from '@/services/registrationService' // อิมพอร์ตตัวเช็คสถานะลงทะเบียนมาใช้งาน
+import { getActivities, getMyRegistration, updateMyRegistration } from '@/services/registrationService'
 
 import LabZoneContent from '@/components/reserve/LabZone.vue'
 import StageZoneContent from '@/components/reserve/StageZone.vue'
@@ -14,85 +14,184 @@ const { t } = useLocale()
 
 const zone = computed(() => zones.find((z) => z.id === route.params.id))
 const showModal = ref(false)
-const showAuthModal = ref(false) // สถานะโมดอลแจ้งเตือน (ยังไม่ได้ลงทะเบียน)
-const isUserRegistered = ref(false) // สถานะเช็คว่าลงทะเบียนหรือยัง
-const selectedActivity = ref('') // เก็บค่าเป็นรหัสแทน เช่น 'LAB1', 'STG'
+const showAuthModal = ref(false)
+const isLoadingData = ref(true)
+const isUserRegistered = ref(false)
+const selectedActivity = ref('')
 const selectedSlot = ref(null)
+const isSubmitting = ref(false)
+
+// Custom Toast Notification State
+const showToast = ref(false)
+const toastMessage = ref('')
+let toastTimeout = null
+
+const triggerToast = (msg) => {
+  if (toastTimeout) clearTimeout(toastTimeout)
+  toastMessage.value = msg
+  showToast.value = true
+  toastTimeout = setTimeout(() => {
+    showToast.value = false
+  }, 4000)
+}
+
+// Watch modal state to toggle scrolling and global navigation bar visibility
+watch([showModal, showAuthModal], ([modalOpen, authOpen]) => {
+  if (modalOpen || authOpen) {
+    document.body.classList.add('modal-open')
+  } else {
+    document.body.classList.remove('modal-open')
+  }
+})
+
+onUnmounted(() => {
+  if (toastTimeout) clearTimeout(toastTimeout)
+  document.body.classList.remove('modal-open')
+})
 
 const contentMap = {
   lab: LabZoneContent,
   stage: StageZoneContent,
 }
 
-const activityNames = {
-  LAB1: 'กิจกรรมเวิร์กช็อปร้อยพวงมาลัยไทย',
-  LAB2: 'กิจกรรมเวิร์กช็อปพวงมโหตร',
-  LAB3: 'กิจกรรมเวิร์กช็อปพัดสานไม้ไผ่ไทย',
-  LAB4: 'กิจกรรมเวิร์กช็อปประดิษฐ์เครื่องประดับนาฏศิลป์ไทย',
-  LAB5: 'กิจกรรมการเขียนสี - เขียนหน้าหัวโขน',
-  STG: 'กิจกรรมเสวนาและการแสดง (STAGE ZONE)',
+const activities = ref([])
+const myRegistration = ref(null)
+
+const mapKeyToOrder = {
+  LAB1: 1,
+  LAB2: 2,
+  LAB3: 3,
+  LAB4: 4,
+  LAB5: 5,
+  STG: 6,
 }
 
-const schedulesData = {
-  LAB1: [
-    { id: 'LAB1-1', time: '09.00 - 10.30 น.', capacity: 8, booked: 0 },
-    { id: 'LAB1-2', time: '10.30 - 12.00 น.', capacity: 8, booked: 0 },
-    { id: 'LAB1-3', time: '13.00 - 14.30 น.', capacity: 8, booked: 0 },
-    { id: 'LAB1-4', time: '14.30 - 16.00 น.', capacity: 8, booked: 0 },
-  ],
-  LAB2: [
-    { id: 'LAB2-1', time: '09.00 - 10.00 น.', capacity: 8, booked: 0 },
-    { id: 'LAB2-2', time: '10.00 - 11.00 น.', capacity: 8, booked: 0 },
-    { id: 'LAB2-3', time: '11.00 - 12.00 น.', capacity: 8, booked: 0 },
-    { id: 'LAB2-4', time: '13.00 - 14.00 น.', capacity: 8, booked: 0 },
-    { id: 'LAB2-5', time: '14.00 - 15.00 น.', capacity: 8, booked: 0 },
-    { id: 'LAB2-6', time: '15.00 - 16.00 น.', capacity: 8, booked: 0 },
-  ],
-  LAB3: [
-    { id: 'LAB3-1', time: '09.00 - 10.00 น.', capacity: 8, booked: 0 },
-    { id: 'LAB3-2', time: '10.00 - 11.00 น.', capacity: 8, booked: 0 },
-    { id: 'LAB3-3', time: '11.00 - 12.00 น.', capacity: 8, booked: 0 },
-    { id: 'LAB3-4', time: '13.00 - 14.00 น.', capacity: 8, booked: 0 },
-    { id: 'LAB3-5', time: '14.00 - 15.00 น.', capacity: 8, booked: 0 },
-    { id: 'LAB3-6', time: '15.00 - 16.00 น.', capacity: 8, booked: 0 },
-  ],
-  LAB4: [
-    { id: 'LAB4-1', time: '09.00 - 12.00 น.', capacity: 10, booked: 0 },
-    { id: 'LAB4-2', time: '13.00 - 16.00 น.', capacity: 10, booked: 0 },
-  ],
-  LAB5: [
-    { id: 'LAB5-1', time: '10.00 - 12.00 น.', capacity: 10, booked: 0 },
-    { id: 'LAB5-2', time: '13.00 - 15.00 น.', capacity: 10, booked: 0 },
-  ],
-  STG: [{ id: 'STG', time: '14.00 - 15.30 น.', capacity: 50, booked: 0 }],
+const activityNames = computed(() => {
+  const names = {}
+  for (const [key, order] of Object.entries(mapKeyToOrder)) {
+    const act = activities.value.find((a) => a.sortOrder === order)
+    if (act) {
+      names[key] = act.nameTh
+    }
+  }
+  // Fallback in case not loaded yet
+  return Object.keys(names).length > 0 ? names : {
+    LAB1: 'กิจกรรมเวิร์กช็อปร้อยพวงมาลัยไทย',
+    LAB2: 'กิจกรรมเวิร์กช็อปพวงมโหตร',
+    LAB3: 'กิจกรรมเวิร์กช็อปพัดสานไม้ไผ่ไทย',
+    LAB4: 'กิจกรรมเวิร์กช็อปประดิษฐ์เครื่องประดับนาฏศิลป์ไทย',
+    LAB5: 'กิจกรรมการเขียนสี - เขียนหน้าหัวโขน',
+    STG: 'กิจกรรมเสวนาและการแสดง (STAGE ZONE)',
+  }
+})
+
+const formatTime = (dateStr) => {
+  const d = new Date(dateStr)
+  return d.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' })
 }
 
-const availableSlots = computed(() => schedulesData[selectedActivity.value] || [])
+const availableSlots = computed(() => {
+  if (!selectedActivity.value || !activities.value.length) return []
+  const order = mapKeyToOrder[selectedActivity.value]
+  const act = activities.value.find((a) => a.sortOrder === order)
+  if (!act) return []
+
+  const myBookedSessionIds = (myRegistration.value?.bookings || []).map((b) => b.session.id)
+
+  return act.sessions.map((s) => {
+    const isBookedByMe = myBookedSessionIds.includes(s.id)
+    return {
+      id: s.id,
+      time: `${formatTime(s.startTime)} - ${formatTime(s.endTime)} น.`,
+      capacity: s.capacity,
+      booked: s.bookedCount,
+      isBooked: isBookedByMe,
+      isFull: (s.capacity - s.bookedCount <= 0) && !isBookedByMe,
+    }
+  })
+})
 
 const openReserve = (activityKey) => {
+  if (isLoadingData.value) {
+    return
+  }
   if (!isUserRegistered.value) {
     showAuthModal.value = true
     return
   }
   selectedActivity.value = activityKey || ''
+  
+  // Set selectedSlot to null so no slot is pre-selected as active, preventing weird overlapping selections
   selectedSlot.value = null
+  
   showModal.value = true
 }
 
-const confirmReservation = () => {
+const confirmReservation = async () => {
   if (!selectedSlot.value) return
-  alert(
-    `ยืนยันการจอง: ${activityNames[selectedActivity.value]}\nรหัสรอบ: ${selectedSlot.value.id}\nรอบเวลา: ${selectedSlot.value.time}`,
-  )
-  showModal.value = false
+  
+  isSubmitting.value = true
+  try {
+    const currentBookings = myRegistration.value?.bookings || []
+    const currentSessionIds = currentBookings.map((b) => b.session.id)
+    
+    // If selecting the slot already booked, just close the modal
+    if (currentSessionIds.includes(selectedSlot.value.id)) {
+      showModal.value = false
+      return
+    }
+
+    // Find the target activity being booked/updated
+    const order = mapKeyToOrder[selectedActivity.value]
+    const targetActivity = activities.value.find((a) => a.sortOrder === order)
+    
+    if (!targetActivity) {
+      throw new Error('ไม่พบข้อมูลกิจกรรม / Activity not found')
+    }
+
+    // Filter out any existing booking belonging to this activity to allow reschedule/change of time slot
+    const filteredSessionIds = currentBookings
+      .filter((b) => b.session.activity.id !== targetActivity.id)
+      .map((b) => b.session.id)
+
+    const newSessionIds = [...filteredSessionIds, selectedSlot.value.id]
+    await updateMyRegistration({ selectedSessionIds: newSessionIds })
+    
+    triggerToast(`ยืนยันการจองสำเร็จ / Reservation successful:\n${activityNames.value[selectedActivity.value]}\nรอบเวลา: ${selectedSlot.value.time}`)
+    showModal.value = false
+    
+    // Refresh Data
+    activities.value = await getActivities()
+    myRegistration.value = await getMyRegistration()
+  } catch (err) {
+    const errorMsg = err.message || 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้ กรุณาลองใหมี่อีกครั้ง'
+    triggerToast(`เกิดข้อผิดพลาดในการจอง / Error booking:\n${errorMsg}`)
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
 onMounted(async () => {
+  isLoadingData.value = true
+  
   try {
-    await getMyRegistration()
+    myRegistration.value = await getMyRegistration()
     isUserRegistered.value = true
   } catch (err) {
-    isUserRegistered.value = false
+    if (err.status === 404) {
+      isUserRegistered.value = false
+    } else {
+      console.error('Failed to fetch registration status:', err)
+      isUserRegistered.value = false
+    }
+  }
+
+  try {
+    activities.value = await getActivities()
+  } catch (err) {
+    console.error('Failed to load activities', err)
+  } finally {
+    isLoadingData.value = false
   }
 
   if (route.query.modal === 'true') {
@@ -137,8 +236,11 @@ const goBack = () => {
       <div class="detail-content">
         <h3>{{ t(zone.title) }}</h3>
 
+        <div v-if="isLoadingData" class="loading-activities">
+          <p>กำลังโหลดข้อมูลสิทธิ์การจอง / Checking registration status...</p>
+        </div>
         <component
-          v-if="contentMap[zone.id]"
+          v-else-if="contentMap[zone.id]"
           :is="contentMap[zone.id]"
           @open-reserve="openReserve"
         />
@@ -169,11 +271,14 @@ const goBack = () => {
                 :key="slot.id"
                 class="slot-btn"
                 :class="{ selected: selectedSlot?.id === slot.id }"
-                :disabled="slot.capacity - slot.booked <= 0"
+                :disabled="slot.isFull || slot.isBooked"
                 @click="selectedSlot = slot"
               >
                 <span class="time">{{ slot.time }}</span>
-                <span class="capacity" :class="{ full: slot.capacity - slot.booked <= 0 }">
+                <span v-if="slot.isBooked" class="capacity" style="color: var(--clr-pri-500); font-weight: bold;">
+                  จองแล้ว / Booked
+                </span>
+                <span v-else class="capacity" :class="{ full: slot.isFull }">
                   {{
                     slot.capacity - slot.booked > 0
                       ? `เหลือ ${slot.capacity - slot.booked} ที่นั่ง`
@@ -219,6 +324,18 @@ const goBack = () => {
             <button class="primary register-btn" @click="router.push('/register')">
               ลงทะเบียนตอนนี้
             </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- Beautiful Custom Toast Notification -->
+    <Transition name="toast-fade">
+      <div v-if="showToast" class="custom-toast" @click="showToast = false">
+        <div class="toast-content">
+          <div class="toast-icon">✨</div>
+          <div class="toast-text">
+            <p v-for="line in toastMessage.split('\n')" :key="line">{{ line }}</p>
           </div>
         </div>
       </div>
@@ -438,12 +555,85 @@ const goBack = () => {
   background: #c62828;
 }
 
+.loading-activities {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--sp-xl) 0;
+  color: var(--clr-200);
+  font-style: italic;
+}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.2s ease;
 }
 .fade-enter-from,
 .fade-leave-to {
+  opacity: 0;
+}
+
+/* Beautiful Custom Glassmorphic Toast */
+.custom-toast {
+  position: fixed;
+  top: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(26, 80, 133, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--sp-m, 12px);
+  padding: 14px 20px;
+  color: white;
+  z-index: 10000;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  width: min(90%, 380px);
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.toast-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.toast-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.toast-text {
+  flex: 1;
+}
+
+.toast-text p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.toast-text p:first-child {
+  font-weight: bold;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+
+/* Toast Transition with Bounce */
+.toast-fade-enter-active {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.toast-fade-leave-active {
+  transition: all 0.3s ease;
+}
+.toast-fade-enter-from {
+  transform: translate(-50%, -60px);
+  opacity: 0;
+}
+.toast-fade-leave-to {
+  transform: translate(-50%, -20px);
   opacity: 0;
 }
 </style>

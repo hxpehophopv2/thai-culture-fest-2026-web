@@ -1,9 +1,9 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { QrcodeStream } from 'vue-qrcode-reader'
 import LangToggle from '@/components/LangToggle.vue'
 import { useLocale } from '@/composables/useLocale'
-import { Copy, Check, User, LogOut } from '@lucide/vue'
+import { Check, Copy, LogOut, User } from '@lucide/vue'
 import { EditAlt } from '@boxicons/vue'
 import { scanCheckin } from '@/services/staffService'
 
@@ -11,7 +11,6 @@ const emit = defineEmits(['logout'])
 
 const { t } = useLocale()
 
-// States
 const isCameraReady = ref(false)
 const isProcessing = ref(false)
 const showManualModal = ref(false)
@@ -23,35 +22,9 @@ const zoneCode = ref('')
 const zoneName = ref('Loading...')
 const staffName = ref('Loading...')
 const isCopied = ref(false)
-
-// Scan Result Popup State
-const showResultPopup = ref(false)
-const scanResult = ref({
-  type: 'success', // 'success', 'warning', 'error'
-  title: '',
-  message: '',
-  detail: ''
-})
-let popupTimeout = null
-
-// QR Scanner config — explicitly set format for mobile compatibility
-const qrFormats = ['qr_code']
-
-// Prefer rear camera on mobile
-const cameraConstraints = { facingMode: 'environment' }
-
-onMounted(() => {
-  const boothCodeFromStorage = localStorage.getItem('staff_booth_code') || localStorage.getItem('staff_zone') || 'UNKNOWN'
-  const nameFromStorage = localStorage.getItem('staff_fullname') || 'Staff Member'
-  const activityFromStorage = localStorage.getItem('staff_activity_name') || 'Unknown Zone'
-
-  zoneCode.value = boothCodeFromStorage
-  staffName.value = nameFromStorage
-  zoneName.value = activityFromStorage
-})
+const scanResult = ref(null)
 
 const i18n = {
-  scanTitle: { 'th-TH': 'สแกน QR Code', 'en-US': 'Scan QR Code' },
   manualBtn: { 'th-TH': 'กรอกรหัสเอง', 'en-US': 'Manual Entry' },
   modalTitle: { 'th-TH': 'กรอกรหัสผู้เข้าร่วม', 'en-US': 'Enter Participant Code' },
   modalPlc: { 'th-TH': 'เช่น A3K9F', 'en-US': 'e.g. A3K9F' },
@@ -63,46 +36,45 @@ const i18n = {
   copiedToast: { 'th-TH': 'คัดลอกรหัสโซนแล้ว', 'en-US': 'Zone code copied!' },
 }
 
-// LOGOUT TRIGGER
+onMounted(() => {
+  zoneCode.value =
+    localStorage.getItem('staff_booth_code') || localStorage.getItem('staff_zone') || 'UNKNOWN'
+  staffName.value = localStorage.getItem('staff_fullname') || 'Staff Member'
+  zoneName.value = localStorage.getItem('staff_activity_name') || zoneCode.value
+})
+
 const triggerLogout = () => {
   isDropdownOpen.value = false
   showLogoutModal.value = true
 }
 
-// LOGOUT CONFIRM
 const confirmLogOut = () => {
   showLogoutModal.value = false
   emit('logout')
 }
 
-// COPY LOGIC
 const copyZoneCode = async () => {
   try {
     await navigator.clipboard.writeText(zoneCode.value)
     isCopied.value = true
     setTimeout(() => {
       isCopied.value = false
-    }, 2000) // 2s
+    }, 2000)
   } catch (err) {
-    console.error('Failed to copy text: ', err)
+    scanError.value = err.message
   }
 }
 
-// DETECT CODE
 const onDetect = (detectedCodes) => {
   if (isProcessing.value) return
-  if (detectedCodes && detectedCodes.length > 0) {
-    const code = detectedCodes[0].rawValue
-    console.log('Scanned Code:', code)
+  if (detectedCodes?.length > 0) {
     isProcessing.value = true
-    handleProcessCode(code)
+    handleProcessCode(detectedCodes[0].rawValue)
   }
 }
 
-// IF ERROR
 const onError = (err) => {
   scanError.value = err.message
-  console.error('QR Scanner Error:', err)
 }
 
 const onCameraReady = () => {
@@ -110,63 +82,29 @@ const onCameraReady = () => {
 }
 
 const submitManualCode = () => {
-  if (!manualCode.value.trim()) return
+  if (!manualCode.value.trim() || isProcessing.value) return
 
-  console.log('Manual Code:', manualCode.value)
-  handleProcessCode(manualCode.value)
-
+  isProcessing.value = true
+  handleProcessCode(manualCode.value.trim())
   showManualModal.value = false
   manualCode.value = ''
 }
 
-// Helper to show popup
-const showPopup = (type, title, message, detail = '') => {
-  scanResult.value = { type, title, message, detail }
-  showResultPopup.value = true
-
-  // Auto-dismiss after 8 seconds (longer for readability)
-  if (popupTimeout) clearTimeout(popupTimeout)
-  popupTimeout = setTimeout(() => {
-    showResultPopup.value = false
-  }, 8000)
-}
-
-// WHAT TO DO WITH THE CODE
 const handleProcessCode = async (code) => {
   try {
     const result = await scanCheckin(code)
-    
-    // Determine the type based on backend result code
-    let type = 'success'
-    let title = 'สำเร็จ'
-    
-    if (['wrong_base', 'wrong_time', 'already_stamped', 'gate_already'].includes(result.result)) {
-      type = 'warning'
-      title = 'แจ้งเตือน'
-    } else if (['no_booking', 'rejected', 'not_gate_checked_in'].includes(result.result)) {
-      type = 'error'
-      title = 'ปฏิเสธ'
-    } else if (result.result === 'checked_in' || result.result === 'gate_checked_in') {
-      type = 'success'
-      title = 'เช็คอินสำเร็จ'
+    scanResult.value = {
+      type: ['checked_in', 'gate_checked_in'].includes(result.result) ? 'success' : 'warning',
+      message: result.message || `Result: ${result.result}`,
+      detail: code,
     }
-    
-    // Fallback message if message is undefined
-    const message = result.message || `Result: ${result.result}`
-    
-    let detailText = `Code: ${code}`
-    if (result.person) {
-      const shortCodeStr = result.person.shortCode ? ` | รหัส: ${result.person.shortCode}` : ''
-      detailText = `${result.person.name}${shortCodeStr}`
-    }
-    
-    showPopup(type, title, message, detailText)
-
   } catch (err) {
-    console.error('Scan API error:', err)
-    showPopup('error', 'เกิดข้อผิดพลาด', err.message || 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้', `Code: ${code}`)
+    scanResult.value = {
+      type: 'error',
+      message: err.message || 'ไม่สามารถเช็คอินได้',
+      detail: code,
+    }
   } finally {
-    // Allow next scan after 1.5 seconds
     setTimeout(() => {
       isProcessing.value = false
     }, 1500)
@@ -183,18 +121,14 @@ const handleProcessCode = async (code) => {
         @click="isDropdownOpen = false"
       ></div>
     </Transition>
+
     <nav>
       <LangToggle theme="light" />
       <div class="user-menu-wrapper">
-        <button
-          class="user-avatar-btn"
-          @click="isDropdownOpen = !isDropdownOpen"
-          aria-label="User Profile"
-        >
+        <button class="user-avatar-btn" @click="isDropdownOpen = !isDropdownOpen" aria-label="User Profile">
           <User :size="20" />
         </button>
 
-        <!-- Dropdown Menu -->
         <Transition name="dropdown-slide">
           <div v-if="isDropdownOpen" class="profile-dropdown">
             <div class="dropdown-header">
@@ -215,19 +149,11 @@ const handleProcessCode = async (code) => {
       </div>
     </nav>
 
-    <!-- Camera Section -->
     <div class="camera-container">
-      <qrcode-stream
-        :formats="qrFormats"
-        :constraints="cameraConstraints"
-        @detect="onDetect"
-        @error="onError"
-        @camera-on="onCameraReady"
-      >
+      <qrcode-stream @detect="onDetect" @error="onError" @camera-on="onCameraReady">
         <div class="scan-overlay">
-          <small class="scan-text">SCANNING FOR</small>
+          <small class="scan-text">{{ isProcessing ? 'PROCESSING' : 'SCANNING FOR' }}</small>
 
-          <!-- Zone Badge -->
           <div class="zone-badge">
             <span class="z-name">{{ zoneName }}</span>
             <div class="z-divider"></div>
@@ -247,27 +173,23 @@ const handleProcessCode = async (code) => {
         </div>
       </qrcode-stream>
 
-      <!-- Error if !Permission -->
       <div v-if="scanError" class="cam-error-msg">
         <p>{{ t(i18n.camError) }}</p>
         <small>{{ scanError }}</small>
       </div>
     </div>
 
-    <!-- Toast Notification -->
     <Transition name="toast-slide">
       <div v-if="isCopied" class="copy-toast">
         {{ t(i18n.copiedToast) }}
       </div>
     </Transition>
 
-    <!-- Manual Entry -->
     <button class="fab-manual" @click="showManualModal = true">
       <EditAlt pack="filled" />
       {{ t(i18n.manualBtn) }}
     </button>
 
-    <!-- Modal Manual Entry -->
     <Transition name="fade">
       <div v-if="showManualModal" class="modal-backdrop" @click.self="showManualModal = false">
         <div class="modal-container">
@@ -279,7 +201,7 @@ const handleProcessCode = async (code) => {
             class="manual-input"
             maxlength="6"
             autocapitalize="characters"
-            style="text-transform: uppercase; letter-spacing: 0.3em; font-weight: 700;"
+            style="text-transform: uppercase; letter-spacing: 0.3em; font-weight: 700"
             @keyup.enter="submitManualCode"
           />
           <div class="modal-actions">
@@ -294,7 +216,6 @@ const handleProcessCode = async (code) => {
       </div>
     </Transition>
 
-    <!-- Modal Confirm Logout -->
     <Transition name="fade">
       <div v-if="showLogoutModal" class="modal-backdrop" @click.self="showLogoutModal = false">
         <div class="confirm-container">
@@ -311,20 +232,12 @@ const handleProcessCode = async (code) => {
       </div>
     </Transition>
 
-    <!-- Modal Scan Result -->
-    <Transition name="slide-up">
-      <div v-if="showResultPopup" class="scan-result-popup" :class="`popup-${scanResult.type}`">
-        <div class="result-icon">
-          <Check v-if="scanResult.type === 'success'" :size="32" />
-          <span v-else-if="scanResult.type === 'warning'" style="font-size: 24px; font-weight: bold;">!</span>
-          <span v-else-if="scanResult.type === 'error'" style="font-size: 24px; font-weight: bold;">✕</span>
-        </div>
-        <div class="result-content">
-          <h4>{{ scanResult.title }}</h4>
-          <p>{{ scanResult.message }}</p>
-          <small v-if="scanResult.detail">{{ scanResult.detail }}</small>
-        </div>
-        <button class="close-popup-btn" @click="showResultPopup = false" aria-label="Close">✕</button>
+    <Transition name="fade">
+      <div v-if="scanResult" class="scan-result" :class="`scan-result-${scanResult.type}`">
+        <strong>{{ scanResult.type === 'success' ? 'เช็คอินสำเร็จ' : 'ผลการสแกน' }}</strong>
+        <p>{{ scanResult.message }}</p>
+        <small>{{ scanResult.detail }}</small>
+        <button type="button" @click="scanResult = null">ปิด</button>
       </div>
     </Transition>
   </section>
@@ -332,4 +245,37 @@ const handleProcessCode = async (code) => {
 
 <style scoped>
 @import url('@/assets/styles/staffScanner.css');
+
+.scan-result {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 100000;
+  width: min(360px, calc(100vw - 2rem));
+  padding: 1rem;
+  border-radius: 1rem;
+  color: var(--clr-900);
+  background: var(--clr-100);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
+}
+
+.scan-result-success {
+  border-left: 6px solid #20a464;
+}
+
+.scan-result-warning {
+  border-left: 6px solid #e0a320;
+}
+
+.scan-result-error {
+  border-left: 6px solid var(--clr-sem-err);
+}
+
+.scan-result p {
+  margin: 0.5rem 0;
+}
+
+.scan-result button {
+  margin-top: 0.5rem;
+}
 </style>

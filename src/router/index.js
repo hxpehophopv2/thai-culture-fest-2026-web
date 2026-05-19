@@ -30,6 +30,11 @@ const router = createRouter({
         { path: ':id', name: 'zone-detail', component: ZoneDetail },
       ],
     },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('../views/ProfileView.vue'),
+    },
   ],
 
   scrollBehavior(to, from, savedPosition) {
@@ -60,7 +65,9 @@ router.beforeEach(async (to) => {
           if (liff.isLoggedIn()) {
             return '/register'
           }
-        } catch {}
+        } catch {
+          return undefined
+        }
       }
     }
   }

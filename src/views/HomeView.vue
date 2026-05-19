@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { getMyRegistration } from '@/services/registrationService'
 import { initLineAuth } from '@/services/lineAuthService'
 import { useAuth } from '@/composables/useAuth'
@@ -17,7 +17,7 @@ const checkUserStatus = async () => {
 
     await getMyRegistration()
     isRegistered.value = true
-  } catch (err) {
+  } catch {
     isRegistered.value = false
   } finally {
     isBooting.value = false

@@ -85,3 +85,7 @@
   font-weight: 700;
   letter-spacing: 0.2px;
 }
+
+body.modal-open .global-nav {
+  display: none !important;
+}

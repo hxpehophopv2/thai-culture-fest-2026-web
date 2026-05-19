@@ -2,17 +2,19 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLocale } from '@/composables/useLocale'
+import { staffLogin } from '@/services/staffService'
 
 const emit = defineEmits(['login-success'])
 
 const router = useRouter()
 const { t } = useLocale()
 
-// Fields
 const fullname = ref('')
 const zoneCodeArray = ref(Array(7).fill(''))
 const inputRefs = ref([])
 const showError = ref(false)
+const errorMsg = ref('')
+const isSubmitting = ref(false)
 
 const isZoneCodeValid = computed(() => {
   return zoneCodeArray.value.every((char) => char !== '')
@@ -66,20 +68,32 @@ const handlePaste = (event) => {
   inputRefs.value[nextIndex]?.focus()
 }
 
-const handleLogin = () => {
+const handleLogin = async () => {
   if (!fullname.value.trim() || !isZoneCodeValid.value) {
     showError.value = true
+    errorMsg.value = t(i18n.errorRequired)
     return
   }
 
   showError.value = false
+  errorMsg.value = ''
+  isSubmitting.value = true
 
   const finalZoneCode = `${zoneCodeArray.value.slice(0, 3).join('')}-${zoneCodeArray.value.slice(3).join('')}`
 
-  emit('login-success', {
-    fullname: fullname.value.trim(),
-    zoneCode: finalZoneCode,
-  })
+  try {
+    const data = await staffLogin(finalZoneCode)
+    emit('login-success', {
+      ...data,
+      fullname: fullname.value.trim(),
+      boothCode: finalZoneCode,
+    })
+  } catch (err) {
+    showError.value = true
+    errorMsg.value = err.message || 'Login failed'
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
 const goBack = () => {
@@ -93,6 +107,7 @@ const i18n = {
   zoneCodeLabel: { 'th-TH': 'รหัส ZONE ที่ดูแล', 'en-US': 'Assigned Zone Code' },
   errorRequired: { 'th-TH': 'กรุณากรอกข้อมูลให้ครบถ้วน', 'en-US': 'This field is required' },
   loginBtn: { 'th-TH': 'เข้าสู่ระบบ / เริ่มสแกน', 'en-US': 'Login / Start Scanning' },
+  loginBtnLoading: { 'th-TH': 'กำลังเข้าสู่ระบบ...', 'en-US': 'Logging in...' },
   backBtn: { 'th-TH': 'ย้อนกลับ', 'en-US': 'Back' },
 }
 </script>
@@ -112,8 +127,8 @@ const i18n = {
             :class="{ 'error-border': showError && !fullname.trim() }"
           />
           <small
-            class="error-text"
             v-if="showError && !fullname.trim()"
+            class="error-text"
             style="color: var(--clr-sem-err)"
           >
             {{ t(i18n.errorRequired) }}
@@ -152,9 +167,16 @@ const i18n = {
           </small>
         </div>
 
+        <p
+          v-if="showError && errorMsg && fullname.trim() && isZoneCodeValid"
+          style="color: var(--clr-sem-err); text-align: center; font-size: 0.9em"
+        >
+          {{ errorMsg }}
+        </p>
+
         <div class="form-actions">
-          <button type="submit" class="primary">
-            {{ t(i18n.loginBtn) }}
+          <button type="submit" class="primary" :disabled="isSubmitting">
+            {{ isSubmitting ? t(i18n.loginBtnLoading) : t(i18n.loginBtn) }}
           </button>
 
           <button type="button" class="secondary" @click="goBack">

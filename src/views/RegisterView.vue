@@ -74,11 +74,7 @@ const goToHomeUnregistered = () => {
 }
 
 const getFallbackSessionIds = () => {
-  const firstAvailableSession = activities.value
-    .flatMap((activity) => activity.sessions || [])
-    .find((session) => !session.isFull)
-
-  return firstAvailableSession ? [firstAvailableSession.id] : []
+  return []
 }
 
 const registerIn = async () => {
@@ -87,9 +83,6 @@ const registerIn = async () => {
 
   try {
     const selectedSessionIds = getFallbackSessionIds()
-    if (selectedSessionIds.length === 0) {
-      throw new Error('ยังไม่มีรอบกิจกรรมที่เปิดให้ลงทะเบียน')
-    }
 
     const finalFaculty =
       regisData.value.faculty === 'other' ? regisData.value.facultyOther : regisData.value.faculty

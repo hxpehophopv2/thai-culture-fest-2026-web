@@ -1,25 +1,52 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getMyQr } from '@/services/registrationService'
+import { getMyQr, getMyRegistration } from '@/services/registrationService'
 import { getLineProfile } from '@/services/lineAuthService'
 import LangToggle from '@/components/LangToggle.vue'
 
 const qr = ref(null)
 const lineProfile = ref(null)
 const isLoading = ref(true)
-
-// TODO: Fetch user's booked activities from API
-const bookedActivities = ref([
-  { id: 'LAB1-1', name: 'เวิร์กช็อปร้อยพวงมาลัยไทย', time: '09.00 - 10.30 น.' },
-  { id: 'STG', name: 'กิจกรรมเสวนา “เด็กวิทย์หัวใจศิลป์”', time: '14.00 - 15.30 น.' },
-])
+const bookedActivities = ref([])
 
 onMounted(async () => {
   lineProfile.value = getLineProfile()
+  
   try {
     qr.value = await getMyQr()
   } catch (err) {
     console.error('Error fetching QR', err)
+  }
+
+  try {
+    const regData = await getMyRegistration()
+    if (regData?.bookings) {
+      const orderToKey = {
+        1: 'LAB1',
+        2: 'LAB2',
+        3: 'LAB3',
+        4: 'LAB4',
+        5: 'LAB5',
+        6: 'STG'
+      }
+      
+      const formatTime = (dateStr) => {
+        const d = new Date(dateStr)
+        return d.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' })
+      }
+
+      bookedActivities.value = regData.bookings.map(b => {
+        const activity = b.session.activity
+        const key = orderToKey[activity.sortOrder] || 'ACT'
+        return {
+          id: `${key}-${formatTime(b.session.startTime).replace(':', '.')}`,
+          name: activity.nameTh,
+          time: `${formatTime(b.session.startTime)} - ${formatTime(b.session.endTime)} น.`
+        }
+      })
+    }
+  } catch (err) {
+    console.error('Error fetching registration info', err)
   } finally {
     isLoading.value = false
   }

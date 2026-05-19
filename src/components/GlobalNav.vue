@@ -3,8 +3,11 @@ import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Home, Ticket, UserRound } from '@lucide/vue'
 
+import { useAuth } from '@/composables/useAuth'
+
 const route = useRoute()
 const router = useRouter()
+const { isRegistered } = useAuth()
 
 // Nav items configuration
 const navItems = [
@@ -21,13 +24,18 @@ const activeIndex = computed(() => {
   return 0 // Fallback to Home
 })
 
+// Hide navigation on staff page, registration form, or if user is not registered yet
+const isHiddenRoute = computed(() => {
+  return ['/staff-login', '/register'].includes(route.path) || !isRegistered.value
+})
+
 const navigate = (path) => {
   router.push(path)
 }
 </script>
 
 <template>
-  <nav class="global-nav" :style="{ '--active-idx': activeIndex }">
+  <nav v-if="!isHiddenRoute" class="global-nav" :style="{ '--active-idx': activeIndex }">
     <div class="nav-container">
       <div class="nav-indicator"></div>
 
