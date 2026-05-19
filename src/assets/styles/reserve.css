@@ -1,5 +1,21 @@
 /* ---------- MAIN LAYOUT ---------- */
 #reserve-layout {
+  min-height: 100vh;
+  position: relative;
+  background: var(--clr-100);
+}
+
+.reserve-nav {
+  position: relative;
+  z-index: 20;
+  padding: var(--sp-m) var(--sp-l);
+  display: flex;
+  justify-content: flex-end;
+  background: #3182de; /* ทำให้ Nav กลืนไปกับพื้นหลัง */
+}
+
+/* ย้ายสีพื้นหลังฟ้ามาไว้ที่ตัวคอมโพเนนต์ Activities โดยตรง */
+#reserve {
   background: #3182de;
   background: -webkit-linear-gradient(
     180deg,
@@ -19,38 +35,30 @@
     rgba(42, 105, 168, 1) 50%,
     rgba(24, 42, 125, 1) 100%
   );
-  min-height: 100vh;
-  position: relative;
-  color: white;
-  font-family: sans-serif;
-  overflow-x: hidden;
-}
 
-.reserve-nav {
-  position: relative;
-  z-index: 20;
-  padding: var(--sp-m) var(--sp-l);
-  display: flex;
-  justify-content: flex-end;
-}
-
-#reserve {
-  padding: 0 var(--sp-l) var(--sp-xl);
+  padding: var(--sp-2xl) var(--sp-l) var(--sp-3xl);
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
+
+  /* สำคัญ: ป้องกันฟองอากาศล้นไป Section อื่นในหน้า Home */
+  overflow: hidden;
+  width: 100%;
+  color: white;
+  font-family: sans-serif;
   z-index: 10;
 }
 
 #reserve h3 {
+  font-family: ClashGrotesk-Bold, sans-serif;
+  line-height: var(--lh-h1);
+  font-size: var(--fs-h4);
   text-align: center;
   margin-bottom: var(--sp-xl);
-  font-size: 1.5rem;
   position: relative;
   z-index: 10;
 }
-
 /* ---------- BACKGROUND BUBBLES ---------- */
 .bubbles-bg {
   position: absolute;

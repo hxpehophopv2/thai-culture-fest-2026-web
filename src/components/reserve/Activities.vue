@@ -3,14 +3,15 @@ import { useRouter } from 'vue-router'
 import { zones } from '@/data/zonesData.js'
 import { useLocale } from '@/composables/useLocale'
 
-// Import ไอคอนทั้งหมดที่ต้องใช้
+// นำเข้า CSS ของ Reserve เพื่อให้ติดตัวคอมโพเนนต์นี้ไปทุกที่
+import '@/assets/styles/reserve.css'
+
 import { Theater, Drama } from '@lucide/vue'
 import { TShirt, MedicalFlask, Running, Store } from '@boxicons/vue'
 
 const router = useRouter()
 const { t } = useLocale()
 
-// สร้าง Object เพื่อจับคู่ String กับ Component จริง
 const iconMap = {
   Theater,
   MedicalFlask,
@@ -25,13 +26,19 @@ const goToZone = (zoneId) => {
 }
 
 const goToReserve = (event, zoneId) => {
-  event.stopPropagation() // ไม่ให้ bubble ขึ้นไปที่การ์ด
+  event.stopPropagation()
   router.push({ name: 'zone-detail', params: { id: zoneId }, query: { modal: 'true' } })
 }
 </script>
 
 <template>
   <main id="reserve">
+    <div class="bubbles-bg">
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+    </div>
+
     <h3>ACTIVITIES & RESERVATIONS</h3>
 
     <div
