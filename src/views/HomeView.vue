@@ -8,7 +8,7 @@ import HomeLanding from '@/components/home/HomeLanding.vue'
 
 import liff from '@line/liff'
 
-const { isUserDataLoaded, fetchUserData } = useUserData()
+const { isUserDataLoaded, fetchUserData, registrationData } = useUserData()
 const isBooting = ref(!isUserDataLoaded.value)
 const { isRegistered } = useAuth()
 
@@ -20,7 +20,7 @@ const checkUserStatus = async () => {
 
     if (liff.isLoggedIn()) {
       await fetchUserData()
-      isRegistered.value = true
+      isRegistered.value = !!registrationData.value
     } else {
       isRegistered.value = false
     }

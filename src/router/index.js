@@ -79,23 +79,17 @@ router.beforeEach(async (to) => {
     const { isRegistered } = useAuth()
 
     if (liff.isLoggedIn()) {
-      try {
-        await fetchUserData()
+      await fetchUserData()
+      
+      if (registrationData.value) {
         isRegistered.value = true
-
         if (to.path === '/register') {
           return '/'
         }
-      } catch (err) {
-        if (err.status === 404) {
-          isRegistered.value = false
-          registrationData.value = null
-
-          if (to.path !== '/register' && to.path !== '/' && !to.path.startsWith('/activities')) {
-            return '/register'
-          }
-        } else {
-          throw err
+      } else {
+        isRegistered.value = false
+        if (to.path !== '/register' && to.path !== '/' && !to.path.startsWith('/activities')) {
+          return '/register'
         }
       }
     } else {
