@@ -10,13 +10,13 @@ const isLoggedIn = ref(false)
 const checkStaffAuth = async () => {
   isBooting.value = true
   try {
-    const token = localStorage.getItem('staff_token')
-    if (token) {
+    const sessionId = localStorage.getItem('staff_session_id')
+    if (sessionId) {
       isLoggedIn.value = true
     } else {
       isLoggedIn.value = false
     }
-  } catch (err) {
+  } catch {
     isLoggedIn.value = false
   } finally {
     isBooting.value = false
@@ -25,19 +25,22 @@ const checkStaffAuth = async () => {
 
 // Handle login success made at StaffLogin
 const handleLoginSuccess = (staffData) => {
-  // Simulated Token for staffs
-  localStorage.setItem('staff_token', 'active_session')
+  localStorage.setItem('staff_session_id', staffData.staffSessionId)
   localStorage.setItem('staff_fullname', staffData.fullname)
-  localStorage.setItem('staff_zone', staffData.zoneCode)
+  localStorage.setItem('staff_booth_code', staffData.boothCode)
+  localStorage.setItem('staff_zone', staffData.activity?.zone || '')
+  localStorage.setItem('staff_activity_name', staffData.activity?.nameTh || staffData.activity?.name || '')
 
   isLoggedIn.value = true
 }
 
 // Handle logout made at StaffScannerActive
 const handleLogout = () => {
-  localStorage.removeItem('staff_token')
+  localStorage.removeItem('staff_session_id')
   localStorage.removeItem('staff_fullname')
+  localStorage.removeItem('staff_booth_code')
   localStorage.removeItem('staff_zone')
+  localStorage.removeItem('staff_activity_name')
 
   isLoggedIn.value = false
 }

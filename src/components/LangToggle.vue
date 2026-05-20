@@ -3,7 +3,7 @@ import { useLocale } from '@/composables/useLocale'
 
 const { locale, toggleLocale } = useLocale()
 
-const props = defineProps({
+defineProps({
   theme: {
     type: String,
     default: 'dark',

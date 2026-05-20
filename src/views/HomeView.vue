@@ -1,45 +1,39 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { getMyRegistration } from '@/services/registrationService'
+import { onMounted, ref } from 'vue'
 import { initLineAuth } from '@/services/lineAuthService'
-import HomeUnregistered from '@/components/homeUnregistered/homeUnregistered.vue'
-import HomeRegistered from '@/components/homeRegistered/HomeRegistered.vue'
+import { useAuth } from '@/composables/useAuth'
+import { useUserData } from '@/composables/useUserData'
 
-const isBooting = ref(false)
-const isRegistered = ref(false)
+import HomeLanding from '@/components/home/HomeLanding.vue'
+
+const { isUserDataLoaded, fetchUserData } = useUserData()
+const isBooting = ref(!isUserDataLoaded.value)
+const { isRegistered } = useAuth()
 
 const checkUserStatus = async () => {
-  isBooting.value = true
+  isBooting.value = !isUserDataLoaded.value
   try {
     const auth = await initLineAuth()
-    if (auth.redirected) return // Stop if LINE is redirecting
+    if (auth.redirected) return
 
-    // Try to fetch the registration
-    await getMyRegistration()
-    // If succeeds, registered
+    await fetchUserData()
     isRegistered.value = true
-  } catch (err) {
-    // If error, not registered
+  } catch {
     isRegistered.value = false
   } finally {
     isBooting.value = false
   }
 }
 
-// onMounted(checkUserStatus)
+onMounted(checkUserStatus)
 </script>
 
 <template>
-  <!-- Loading State -->
   <section v-if="isBooting" class="loading-screen">
     <p>Loading...</p>
   </section>
-  <section id="home-view" v-else>
-    <!-- Show Login View (Not logged in) -->
-    <HomeUnregistered v-if="!isRegistered" />
-    <!-- Show Scanner View (Logged in) -->
-    <HomeRegistered v-else />
-  </section>
+
+  <HomeLanding v-else />
 </template>
 
 <style scoped>

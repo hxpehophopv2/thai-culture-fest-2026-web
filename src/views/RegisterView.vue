@@ -74,11 +74,7 @@ const goToHomeUnregistered = () => {
 }
 
 const getFallbackSessionIds = () => {
-  const firstAvailableSession = activities.value
-    .flatMap((activity) => activity.sessions || [])
-    .find((session) => !session.isFull)
-
-  return firstAvailableSession ? [firstAvailableSession.id] : []
+  return []
 }
 
 const registerIn = async () => {
@@ -87,9 +83,13 @@ const registerIn = async () => {
 
   try {
     const selectedSessionIds = getFallbackSessionIds()
-    if (selectedSessionIds.length === 0) {
-      throw new Error('ยังไม่มีรอบกิจกรรมที่เปิดให้ลงทะเบียน')
-    }
+
+    const finalFaculty =
+      regisData.value.faculty === 'other' ? regisData.value.facultyOther : regisData.value.faculty
+    const finalDepartment =
+      regisData.value.department === 'other'
+        ? regisData.value.departmentOther
+        : regisData.value.department
 
     const payload = {
       nationality: regisData.value.nationality,
@@ -102,10 +102,9 @@ const registerIn = async () => {
       phoneNumber: regisData.value.phoneNumber,
       participantType: selectedType.value,
       organization: regisData.value.organization ?? null,
-      faculty: regisData.value.faculty ?? null,
-      facultyOther: regisData.value.facultyOther ?? null,
-      department: regisData.value.department ?? null,
-      departmentOther: regisData.value.departmentOther ?? null,
+      faculty: finalFaculty ?? null,
+      department: finalDepartment ?? null,
+
       consent: pdpaConsent.value && mediaConsent.value,
       selectedSessionIds,
     }

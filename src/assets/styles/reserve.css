@@ -1,0 +1,242 @@
+/* ---------- MAIN LAYOUT ---------- */
+#reserve-layout {
+  min-height: 100vh;
+  position: relative;
+  background: var(--clr-100);
+}
+
+.reserve-nav {
+  position: relative;
+  z-index: 20;
+  padding: var(--sp-m) var(--sp-l);
+  display: flex;
+  justify-content: flex-end;
+  background: #3182de; /* ทำให้ Nav กลืนไปกับพื้นหลัง */
+}
+
+/* ย้ายสีพื้นหลังฟ้ามาไว้ที่ตัวคอมโพเนนต์ Activities โดยตรง */
+#reserve {
+  background: #3182de;
+  background: -webkit-linear-gradient(
+    180deg,
+    rgba(49, 130, 222, 1) 0%,
+    rgba(42, 105, 168, 1) 50%,
+    rgba(24, 42, 125, 1) 100%
+  );
+  background: -moz-linear-gradient(
+    180deg,
+    rgba(49, 130, 222, 1) 0%,
+    rgba(42, 105, 168, 1) 50%,
+    rgba(24, 42, 125, 1) 100%
+  );
+  background: linear-gradient(
+    180deg,
+    rgba(49, 130, 222, 1) 0%,
+    rgba(42, 105, 168, 1) 50%,
+    rgba(24, 42, 125, 1) 100%
+  );
+
+  padding: var(--sp-2xl) var(--sp-l) var(--sp-3xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+
+  /* สำคัญ: ป้องกันฟองอากาศล้นไป Section อื่นในหน้า Home */
+  overflow: hidden;
+  width: 100%;
+  color: white;
+  font-family: sans-serif;
+  z-index: 10;
+}
+
+#reserve h3 {
+  font-family: ClashGrotesk-Bold, sans-serif;
+  line-height: var(--lh-h1);
+  font-size: var(--fs-h4);
+  text-align: center;
+  margin-bottom: var(--sp-xl);
+  position: relative;
+  z-index: 10;
+}
+/* ---------- BACKGROUND BUBBLES ---------- */
+.bubbles-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  animation: floatBubble infinite ease-in-out alternate;
+}
+
+.bubble:nth-child(1) {
+  width: 40vmax;
+  height: 40vmax;
+  top: 2%;
+  left: -10%;
+  background: rgba(255, 255, 255, 0.2);
+  animation-duration: 8s;
+}
+
+.bubble:nth-child(2) {
+  width: 50vmax;
+  height: 50vmax;
+  bottom: 18%;
+  right: -10%;
+  background: rgba(255, 255, 255, 0.4);
+  animation-duration: 12s;
+}
+
+.bubble:nth-child(3) {
+  width: 35vmax;
+  height: 35vmax;
+  top: 40%;
+  left: 30%;
+  background: rgba(255, 255, 255, 0.25);
+  animation-duration: 10s;
+}
+
+@keyframes floatBubble {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(-20px, -30px) scale(1.1);
+  }
+}
+
+/* ---------- ZONE CARD ---------- */
+#reserve .zone-card {
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: var(--sp-l);
+  border-radius: var(--sp-m);
+  overflow: hidden;
+  position: relative;
+  z-index: 10;
+  cursor: pointer;
+
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  -webkit-box-shadow: 0 8px 16px 0 rgba(24, 42, 125, 0.2);
+  box-shadow: 0 8px 16px 0 rgba(24, 42, 125, 0.2);
+
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+
+  transition:
+    filter 100ms ease-out,
+    transform 100ms ease-out;
+}
+
+#reserve .zone-card:hover,
+#reserve .zone-card:active {
+  filter: brightness(1.1);
+  transform: scale(1.01);
+}
+
+#reserve .zone-card .card-header {
+  position: relative;
+  overflow: hidden;
+}
+
+#reserve .zone-card .card-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 100%);
+  z-index: 50;
+  pointer-events: none;
+}
+
+#reserve .zone-card img.zone-img {
+  width: 100%;
+  display: block;
+  filter: brightness(0.8) contrast(1.2);
+}
+
+#reserve .zone-card h4 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  padding: var(--sp-s) var(--sp-m);
+  color: var(--clr-100);
+  font-size: 1.2rem;
+  width: 100%;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  gap: var(--sp-s);
+}
+
+#reserve .zone-card h4 span {
+  display: inline-flex;
+  width: 1.75em;
+  height: 1.75em;
+  justify-content: center;
+  align-items: center;
+  background: var(--clr-100);
+  color: var(--clr-900);
+  border-radius: 50%;
+}
+
+#reserve .zone-card .card-footer {
+  padding: var(--sp-m);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-s);
+}
+
+#reserve .zone-card .card-footer p,
+#reserve .zone-card .card-footer small {
+  color: var(--clr-200);
+}
+
+#reserve .zone-card .card-footer p {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#reserve .zone-card .card-footer small {
+  line-height: 1.4;
+  font-style: italic;
+}
+
+/* ---------- BUTTON ---------- */
+#reserve .zone-card button {
+  background: var(--clr-120);
+  color: var(--clr-100);
+  border: 1px solid var(--clr-130);
+  padding: var(--sp-s) var(--sp-m);
+  border-radius: var(--sp-s);
+  cursor: pointer;
+  font-weight: bold;
+  align-self: flex-end;
+  transform: scale(1);
+  transition: all 0.3s ease;
+}
+
+#reserve .zone-card button:hover,
+#reserve .zone-card button:active {
+  background: var(--clr-100);
+  color: var(--clr-pri-500);
+  border-color: var(--clr-100);
+  transform: scale(1.05);
+}

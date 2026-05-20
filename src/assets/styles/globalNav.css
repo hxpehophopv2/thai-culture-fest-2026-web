@@ -1,0 +1,91 @@
+/* ---------- WRAPPER & POSITIONING ---------- */
+.global-nav {
+  position: fixed;
+  bottom: var(--sp-l);
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 2 * var(--sp-l));
+  max-width: 420px;
+  z-index: 9999;
+  padding: 0;
+}
+
+/* ---------- GLASSMORPHISM CONTAINER ---------- */
+.nav-container {
+  display: flex;
+  position: relative;
+  background: rgba(26, 80, 133, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 100px;
+  padding: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+/* ---------- SLIDING INDICATOR ---------- */
+.nav-indicator {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  width: calc((100% - 16px) / 3); /* 3 เมนู หาร 3 */
+  background: white;
+  border-radius: 100px;
+  z-index: 0;
+
+  /* หัวใจหลักของ Animation: เลื่อนตาม --active-idx พร้อมจังหวะเด้งดึ๋ง */
+  transform: translateX(calc(100% * var(--active-idx)));
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ---------- NAV ITEMS (RADIO LABELS) ---------- */
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  padding: 8px 0;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.7); /* สีเทาอ่อนตอนไม่ได้เลือก */
+  transition: color 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ซ่อน Radio Input แต่ยังคงไว้ให้ Screen Reader และระบบ Form */
+.nav-item input[type='radio'] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* ---------- ACTIVE STATE STYLING ---------- */
+.nav-item.is-active {
+  /* เมื่อถูกเลือกและมีวงกลมสีขาวเลื่อนมาทับ ตัวหนังสือ+ไอคอนจะเปลี่ยนเป็นสีน้ำเงินเข้ม */
+  color: var(--clr-pri-500, #1a4f85);
+}
+
+.icon-wrapper {
+  margin-bottom: 2px;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ทำให้ไอคอนเด้งขึ้นนิดนึงตอนถูกเลือก */
+.nav-item.is-active .icon-wrapper {
+  transform: translateY(-2px);
+}
+
+.label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+body.modal-open .global-nav {
+  display: none !important;
+}
