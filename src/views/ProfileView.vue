@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import LangToggle from '@/components/LangToggle.vue'
 import { useUserData } from '@/composables/useUserData'
+import LoadingScreen from '@/components/LoadingScreen.vue'
 
 const { registrationData, qrData, profileData, isUserDataLoaded, fetchUserData } = useUserData()
 
@@ -13,28 +14,32 @@ const lineProfile = computed(() => profileData.value)
 const bookedActivities = computed(() => {
   const regData = registrationData.value
   if (!regData?.bookings) return []
-  
+
   const orderToKey = {
     1: 'LAB1',
     2: 'LAB2',
     3: 'LAB3',
     4: 'LAB4',
     5: 'LAB5',
-    6: 'STG'
-  }
-  
-  const formatTime = (dateStr) => {
-    const d = new Date(dateStr)
-    return d.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' })
+    6: 'STG',
   }
 
-  return regData.bookings.map(b => {
+  const formatTime = (dateStr) => {
+    const d = new Date(dateStr)
+    return d.toLocaleTimeString('th-TH', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'Asia/Bangkok',
+    })
+  }
+
+  return regData.bookings.map((b) => {
     const activity = b.session.activity
     const key = orderToKey[activity.sortOrder] || 'ACT'
     return {
       id: `${key}-${formatTime(b.session.startTime).replace(':', '.')}`,
       name: activity.nameTh,
-      time: `${formatTime(b.session.startTime)} - ${formatTime(b.session.endTime)} น.`
+      time: `${formatTime(b.session.startTime)} - ${formatTime(b.session.endTime)} น.`,
     }
   })
 })
@@ -57,9 +62,7 @@ onMounted(async () => {
       <LangToggle />
     </nav>
 
-    <section v-if="isLoading" class="profile-state">
-      <p>Loading your profile...</p>
-    </section>
+    <LoadingScreen v-if="isLoading" text="กำลังโหลดโปรไฟล์" />
 
     <div v-else class="profile-container">
       <section v-if="qr" class="ticket-card">

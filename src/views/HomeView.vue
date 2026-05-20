@@ -5,6 +5,7 @@ import { useAuth } from '@/composables/useAuth'
 import { useUserData } from '@/composables/useUserData'
 
 import HomeLanding from '@/components/home/HomeLanding.vue'
+import LoadingScreen from '@/components/LoadingScreen.vue'
 
 import liff from '@line/liff'
 
@@ -31,21 +32,10 @@ const checkUserStatus = async () => {
   }
 }
 
-onMounted(checkUserStatus)
+// onMounted(checkUserStatus)
 </script>
 
 <template>
-  <section v-if="isBooting" class="loading-screen">
-    <p>Loading...</p>
-  </section>
-
+  <LoadingScreen v-if="isBooting" text="กำลังตรวจสอบข้อมูล..." />
   <HomeLanding v-else />
 </template>
-
-<style scoped>
-.loading-screen {
-  display: grid;
-  place-items: center;
-  min-height: 100vh;
-}
-</style>

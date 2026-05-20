@@ -63,6 +63,18 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
+  const DEV_MODE_BYPASS = false // เปลี่ยนเป็น false เมื่อต้องการเชื่อมต่อ LINE จริงๆ
+
+  if (DEV_MODE_BYPASS) {
+    const { isRegistered } = useAuth()
+
+    // เปลี่ยนค่านี้เป็น true ถ้าอยากดูหน้าเว็บในมุมมอง registered
+    isRegistered.value = false
+
+    return true // อนุญาตให้ผ่านเข้าเว็บได้เลย โดยไม่ต้องรันโค้ดเช็ค LINE ด้านล่าง
+  }
+
+  // -----------------------------------------------------------------
   if (to.path === '/staff-login') {
     return
   }
@@ -74,7 +86,6 @@ router.beforeEach(async (to) => {
     if (auth.redirected) {
       return false
     }
-
     const { fetchUserData, registrationData } = useUserData()
     const { isRegistered } = useAuth()
 
