@@ -5,6 +5,7 @@ import ZoneDetail from '@/components/reserve/ZoneDetail.vue'
 import { initLineAuth } from '@/services/lineAuthService'
 import { useUserData } from '@/composables/useUserData'
 import { useAuth } from '@/composables/useAuth'
+import liff from '@line/liff'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,17 +26,26 @@ const router = createRouter({
       component: () => import('../views/StaffView.vue'),
     },
     {
-      path: '/activities',
-      component: ActivitiesView,
-      children: [
-        { path: '', name: 'activities', component: Activities },
-        { path: ':id', name: 'zone-detail', component: ZoneDetail },
-      ],
-    },
-    {
       path: '/profile',
       name: 'profile',
       component: () => import('../views/ProfileView.vue'),
+    },
+    {
+      path: '/activities',
+      component: ActivitiesView,
+      children: [
+        {
+          path: '',
+          name: 'activities',
+          component: Activities,
+        },
+        {
+          path: ':zoneId',
+          name: 'zone-detail',
+          component: ZoneDetail,
+          props: true,
+        },
+      ],
     },
   ],
 
@@ -58,7 +68,9 @@ router.beforeEach(async (to) => {
   }
 
   try {
-    const auth = await initLineAuth(to.fullPath)
+    // Only force login if NOT on public routes (Home page "/" or paths starting with "/activities")
+    const isPublicRoute = to.path === '/' || to.path.startsWith('/activities')
+    const auth = await initLineAuth(to.fullPath, !isPublicRoute)
     if (auth.redirected) {
       return false
     }
@@ -66,26 +78,32 @@ router.beforeEach(async (to) => {
     const { fetchUserData, registrationData } = useUserData()
     const { isRegistered } = useAuth()
 
-    try {
-      await fetchUserData()
-      isRegistered.value = true
+    if (liff.isLoggedIn()) {
+      try {
+        await fetchUserData()
+        isRegistered.value = true
 
-      if (to.path === '/register') {
-        return '/'
-      }
-    } catch (err) {
-      if (err.status === 404) {
-        isRegistered.value = false
-        registrationData.value = null
-
-        /* * 🎯 แก้ไขจุดนี้: อนุญาตให้ผู้ใช้ที่ยังไม่ลงทะเบียนเข้าหน้าใด ๆ ก็ตามที่ขึ้นต้นด้วย /activities ได้
-         * แต่ถ้าพยายามจะไปหน้าอื่นที่ต้องล็อกอิน (เช่น /profile) ระบบจะยังเตะไปหน้าลงทะเบียนตามเดิม
-         */
-        if (to.path !== '/register' && to.path !== '/' && !to.path.startsWith('/activities')) {
-          return '/register'
+        if (to.path === '/register') {
+          return '/'
         }
-      } else {
-        throw err
+      } catch (err) {
+        if (err.status === 404) {
+          isRegistered.value = false
+          registrationData.value = null
+
+          if (to.path !== '/register' && to.path !== '/' && !to.path.startsWith('/activities')) {
+            return '/register'
+          }
+        } else {
+          throw err
+        }
+      }
+    } else {
+      isRegistered.value = false
+      registrationData.value = null
+
+      if (to.path !== '/register' && to.path !== '/' && !to.path.startsWith('/activities')) {
+        return '/register'
       }
     }
   } catch (error) {

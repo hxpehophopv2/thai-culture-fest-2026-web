@@ -6,6 +6,8 @@ import { useUserData } from '@/composables/useUserData'
 
 import HomeLanding from '@/components/home/HomeLanding.vue'
 
+import liff from '@line/liff'
+
 const { isUserDataLoaded, fetchUserData } = useUserData()
 const isBooting = ref(!isUserDataLoaded.value)
 const { isRegistered } = useAuth()
@@ -13,11 +15,15 @@ const { isRegistered } = useAuth()
 const checkUserStatus = async () => {
   isBooting.value = !isUserDataLoaded.value
   try {
-    const auth = await initLineAuth()
+    const auth = await initLineAuth(undefined, false)
     if (auth.redirected) return
 
-    await fetchUserData()
-    isRegistered.value = true
+    if (liff.isLoggedIn()) {
+      await fetchUserData()
+      isRegistered.value = true
+    } else {
+      isRegistered.value = false
+    }
   } catch {
     isRegistered.value = false
   } finally {
