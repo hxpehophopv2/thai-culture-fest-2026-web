@@ -5,6 +5,7 @@ import ZoneDetail from '@/components/reserve/ZoneDetail.vue'
 import { initLineAuth } from '@/services/lineAuthService'
 import { useUserData } from '@/composables/useUserData'
 import { useAuth } from '@/composables/useAuth'
+import liff from '@line/liff'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,17 +26,26 @@ const router = createRouter({
       component: () => import('../views/StaffView.vue'),
     },
     {
-      path: '/activities',
-      component: ActivitiesView,
-      children: [
-        { path: '', name: 'activities', component: Activities },
-        { path: ':id', name: 'zone-detail', component: ZoneDetail },
-      ],
-    },
-    {
       path: '/profile',
       name: 'profile',
       component: () => import('../views/ProfileView.vue'),
+    },
+    {
+      path: '/activities',
+      component: ActivitiesView,
+      children: [
+        {
+          path: '',
+          name: 'activities',
+          component: Activities,
+        },
+        {
+          path: ':id',
+          name: 'zone-detail',
+          component: ZoneDetail,
+          props: true,
+        },
+      ],
     },
   ],
 
@@ -70,29 +80,35 @@ router.beforeEach(async (to) => {
   }
 
   try {
-    const auth = await initLineAuth(to.fullPath)
+    // Only force login if NOT on public routes (Home page "/" or paths starting with "/activities")
+    const isPublicRoute = to.path === '/' || to.path.startsWith('/activities')
+    const auth = await initLineAuth(to.fullPath, !isPublicRoute)
     if (auth.redirected) {
       return false
     }
     const { fetchUserData, registrationData } = useUserData()
     const { isRegistered } = useAuth()
 
-    try {
+    if (liff.isLoggedIn()) {
       await fetchUserData()
-      isRegistered.value = true
-
-      if (to.path === '/register') {
-        return '/'
-      }
-    } catch (err) {
-      if (err.status === 404) {
+      
+      if (registrationData.value) {
+        isRegistered.value = true
+        if (to.path === '/register') {
+          return '/'
+        }
+      } else {
         isRegistered.value = false
-        registrationData.value = null
         if (to.path !== '/register' && to.path !== '/' && !to.path.startsWith('/activities')) {
           return '/register'
         }
-      } else {
-        throw err
+      }
+    } else {
+      isRegistered.value = false
+      registrationData.value = null
+
+      if (to.path !== '/register' && to.path !== '/' && !to.path.startsWith('/activities')) {
+        return '/register'
       }
     }
   } catch (error) {
