@@ -59,11 +59,15 @@ const { registrationData, activitiesData, isUserDataLoaded, fetchUserData } = us
 
 const activities = computed({
   get: () => activitiesData.value || [],
-  set: (val) => { activitiesData.value = val }
+  set: (val) => {
+    activitiesData.value = val
+  },
 })
 const myRegistration = computed({
   get: () => registrationData.value,
-  set: (val) => { registrationData.value = val }
+  set: (val) => {
+    registrationData.value = val
+  },
 })
 
 const mapKeyToOrder = {
@@ -84,19 +88,25 @@ const activityNames = computed(() => {
     }
   }
   // Fallback in case not loaded yet
-  return Object.keys(names).length > 0 ? names : {
-    LAB1: 'กิจกรรมเวิร์กช็อปร้อยพวงมาลัยไทย',
-    LAB2: 'กิจกรรมเวิร์กช็อปพวงมโหตร',
-    LAB3: 'กิจกรรมเวิร์กช็อปพัดสานไม้ไผ่ไทย',
-    LAB4: 'กิจกรรมเวิร์กช็อปประดิษฐ์เครื่องประดับนาฏศิลป์ไทย',
-    LAB5: 'กิจกรรมการเขียนสี - เขียนหน้าหัวโขน',
-    STG: 'กิจกรรมเสวนาและการแสดง (STAGE ZONE)',
-  }
+  return Object.keys(names).length > 0
+    ? names
+    : {
+        LAB1: 'กิจกรรมเวิร์กช็อปร้อยพวงมาลัยไทย',
+        LAB2: 'กิจกรรมเวิร์กช็อปพวงมโหตร',
+        LAB3: 'กิจกรรมเวิร์กช็อปพัดสานไม้ไผ่ไทย',
+        LAB4: 'กิจกรรมเวิร์กช็อปประดิษฐ์เครื่องประดับนาฏศิลป์ไทย',
+        LAB5: 'กิจกรรมการเขียนสี - เขียนหน้าหัวโขน',
+        STG: 'กิจกรรมเสวนาและการแสดง (STAGE ZONE)',
+      }
 })
 
 const formatTime = (dateStr) => {
   const d = new Date(dateStr)
-  return d.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' })
+  return d.toLocaleTimeString('th-TH', {
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'Asia/Bangkok',
+  })
 }
 
 const availableSlots = computed(() => {
@@ -115,7 +125,7 @@ const availableSlots = computed(() => {
       capacity: s.capacity,
       booked: s.bookedCount,
       isBooked: isBookedByMe,
-      isFull: (s.capacity - s.bookedCount <= 0) && !isBookedByMe,
+      isFull: s.capacity - s.bookedCount <= 0 && !isBookedByMe,
     }
   })
 })
@@ -129,21 +139,21 @@ const openReserve = (activityKey) => {
     return
   }
   selectedActivity.value = activityKey || ''
-  
+
   // Set selectedSlot to null so no slot is pre-selected as active, preventing weird overlapping selections
   selectedSlot.value = null
-  
+
   showModal.value = true
 }
 
 const confirmReservation = async () => {
   if (!selectedSlot.value) return
-  
+
   isSubmitting.value = true
   try {
     const currentBookings = myRegistration.value?.bookings || []
     const currentSessionIds = currentBookings.map((b) => b.session.id)
-    
+
     // If selecting the slot already booked, just close the modal
     if (currentSessionIds.includes(selectedSlot.value.id)) {
       showModal.value = false
@@ -153,7 +163,7 @@ const confirmReservation = async () => {
     // Find the target activity being booked/updated
     const order = mapKeyToOrder[selectedActivity.value]
     const targetActivity = activities.value.find((a) => a.sortOrder === order)
-    
+
     if (!targetActivity) {
       throw new Error('ไม่พบข้อมูลกิจกรรม / Activity not found')
     }
@@ -165,10 +175,12 @@ const confirmReservation = async () => {
 
     const newSessionIds = [...filteredSessionIds, selectedSlot.value.id]
     await updateMyRegistration({ selectedSessionIds: newSessionIds })
-    
-    triggerToast(`ยืนยันการจองสำเร็จ / Reservation successful:\n${activityNames.value[selectedActivity.value]}\nรอบเวลา: ${selectedSlot.value.time}`)
+
+    triggerToast(
+      `ยืนยันการจองสำเร็จ / Reservation successful:\n${activityNames.value[selectedActivity.value]}\nรอบเวลา: ${selectedSlot.value.time}`,
+    )
     showModal.value = false
-    
+
     // Refresh Data
     await fetchUserData(true)
   } catch (err) {
@@ -181,7 +193,7 @@ const confirmReservation = async () => {
 
 onMounted(async () => {
   isLoadingData.value = !isUserDataLoaded.value
-  
+
   try {
     await fetchUserData()
     isUserRegistered.value = !!registrationData.value
@@ -273,7 +285,11 @@ const goBack = () => {
                 @click="selectedSlot = slot"
               >
                 <span class="time">{{ slot.time }}</span>
-                <span v-if="slot.isBooked" class="capacity" style="color: var(--clr-pri-500); font-weight: bold;">
+                <span
+                  v-if="slot.isBooked"
+                  class="capacity"
+                  style="color: var(--clr-pri-500); font-weight: bold"
+                >
                   จองแล้ว / Booked
                 </span>
                 <span v-else class="capacity" :class="{ full: slot.isFull }">
@@ -343,7 +359,7 @@ const goBack = () => {
 
 <style scoped>
 .zone-detail-wrapper {
-  padding: 0 var(--sp-l) var(--sp-xl);
+  padding: 0 var(--sp-l) var(--sp-3xl);
   display: flex;
   justify-content: center;
   position: relative;

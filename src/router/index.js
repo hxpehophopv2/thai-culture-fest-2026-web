@@ -53,6 +53,18 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
+  const DEV_MODE_BYPASS = false // เปลี่ยนเป็น false เมื่อต้องการเชื่อมต่อ LINE จริงๆ
+
+  if (DEV_MODE_BYPASS) {
+    const { isRegistered } = useAuth()
+
+    // เปลี่ยนค่านี้เป็น true ถ้าอยากดูหน้าเว็บในมุมมอง registered
+    isRegistered.value = false
+
+    return true // อนุญาตให้ผ่านเข้าเว็บได้เลย โดยไม่ต้องรันโค้ดเช็ค LINE ด้านล่าง
+  }
+
+  // -----------------------------------------------------------------
   if (to.path === '/staff-login') {
     return
   }
@@ -62,7 +74,6 @@ router.beforeEach(async (to) => {
     if (auth.redirected) {
       return false
     }
-
     const { fetchUserData, registrationData } = useUserData()
     const { isRegistered } = useAuth()
 
@@ -77,10 +88,6 @@ router.beforeEach(async (to) => {
       if (err.status === 404) {
         isRegistered.value = false
         registrationData.value = null
-
-        /* * 🎯 แก้ไขจุดนี้: อนุญาตให้ผู้ใช้ที่ยังไม่ลงทะเบียนเข้าหน้าใด ๆ ก็ตามที่ขึ้นต้นด้วย /activities ได้
-         * แต่ถ้าพยายามจะไปหน้าอื่นที่ต้องล็อกอิน (เช่น /profile) ระบบจะยังเตะไปหน้าลงทะเบียนตามเดิม
-         */
         if (to.path !== '/register' && to.path !== '/' && !to.path.startsWith('/activities')) {
           return '/register'
         }
