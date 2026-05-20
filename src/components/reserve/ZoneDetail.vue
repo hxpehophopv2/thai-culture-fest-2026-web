@@ -208,7 +208,7 @@ const confirmReservation = async () => {
     } else if (rawMsg.includes('Failed to fetch') || rawMsg.includes('NetworkError') || rawMsg.includes('ติดต่อ')) {
       friendlyMsg = 'ไม่สามารถเชื่อมต่อได้ กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองใหม่'
     } else {
-      friendlyMsg = 'กรุณาลองใหม่อีกครั้ง'
+      friendlyMsg = rawMsg || 'กรุณาลองใหม่อีกครั้ง'
     }
     triggerToast(`${title}\n${friendlyMsg}`, type)
   } finally {
