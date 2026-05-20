@@ -22,7 +22,13 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        background-color: #fbfdfe;
+        background: #3182de;
+        background: linear-gradient(
+          180deg,
+          rgba(49, 130, 222, 1) 0%,
+          rgba(42, 105, 168, 1) 50%,
+          rgba(24, 42, 125, 1) 100%
+        );
         z-index: 999999;
         transition: opacity 0.35s ease;
       }
@@ -30,28 +36,31 @@
         opacity: 0;
         pointer-events: none;
       }
-      .initial-loader-spinner {
-        width: 40px;
-        height: 40px;
-        border: 3px solid rgba(1, 54, 108, 0.1);
-        border-radius: 50%;
-        border-top-color: #01366c;
-        animation: initial-spin 0.8s linear infinite;
-        margin-bottom: 12px;
+      .initial-loader-anim {
+        width: 150px;
+        height: 75px;
+        background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 150"><path fill="none" stroke="%23FBFDFE" stroke-width="16" stroke-linecap="round" stroke-dasharray="300 385" stroke-dashoffset="0" d="M275 75c0 31-27 50-50 50-58 0-92-100-150-100-28 0-50 22-50 50s23 50 50 50c58 0 92-100 150-100 24 0 50 19 50 50Z"><animate attributeName="stroke-dashoffset" calcMode="spline" dur="2" values="685;-685" keySplines="0 0 1 1" repeatCount="indefinite"></animate></path></svg>');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        margin-bottom: 1rem;
       }
       .initial-loader-text {
-        color: #61656f;
+        color: #fbfdfe;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-        font-size: 14px;
-        font-weight: 500;
+        font-size: 16px;
+        font-weight: bold;
+        letter-spacing: 0.5px;
         margin: 0;
+        animation: pulse-text-initial 1.5s infinite ease-in-out alternate;
       }
-      @keyframes initial-spin {
-        to { transform: rotate(360deg); }
+      @keyframes pulse-text-initial {
+        0% { opacity: 0.5; transform: scale(0.98); }
+        100% { opacity: 1; transform: scale(1); }
       }
     </style>
-    <div class="initial-loader-spinner"></div>
-    <p class="initial-loader-text">Loading...</p>
+    <div class="initial-loader-anim"></div>
+    <p class="initial-loader-text">กำลังตรวจสอบข้อมูล...</p>
   </div>
 
   <div id="app"></div>
