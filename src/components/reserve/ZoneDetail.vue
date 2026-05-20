@@ -186,29 +186,37 @@ const confirmReservation = async () => {
     await fetchUserData(true)
   } catch (err) {
     const rawMsg = err.message || ''
+    const errorCode = err.payload?.error?.code || ''
     // Map technical error messages to friendly Thai
     let friendlyMsg
-    let type = 'error'
+    let type = 'warn'
     let title = 'จองไม่สำเร็จ'
     
-    if (rawMsg.includes('SESSION_FULL') || rawMsg.includes('เต็ม') || rawMsg.includes('full')) {
+    if (errorCode === 'SESSION_FULL' || rawMsg.includes('เต็ม') || rawMsg.includes('full')) {
       friendlyMsg = 'รอบนี้เต็มแล้ว กรุณาเลือกรอบอื่น'
-      type = 'warn'
       title = 'รอบกิจกรรมเต็ม'
-    } else if (rawMsg.includes('TIME_OVERLAP') || rawMsg.includes('ซ้อนทับ') || rawMsg.includes('conflict')) {
+    } else if (errorCode === 'TIME_OVERLAP' || rawMsg.includes('ทับซ้อน') || rawMsg.includes('ซ้อนทับ') || rawMsg.includes('conflict')) {
       friendlyMsg = 'เวลาซ้อนกับกิจกรรมอื่นที่จองไว้ กรุณาเลือกรอบอื่น'
-      type = 'warn'
       title = 'เวลาชนกัน'
-    } else if (rawMsg.includes('DUPLICATE') || rawMsg.includes('more than once') || rawMsg.includes('already_registered') || rawMsg.includes('ALREADY_REGISTERED')) {
+    } else if (errorCode === 'DUPLICATE_ACTIVITY' || rawMsg.includes('DUPLICATE') || rawMsg.includes('more than once')) {
       friendlyMsg = 'คุณได้ทำการจองกิจกรรมนี้ไปแล้ว (จองได้สูงสุด 1 รอบต่อกิจกรรม)'
-      type = 'warn'
       title = 'ไม่สามารถจองซ้ำได้'
-    } else if (rawMsg.includes('NOT_FOUND') || rawMsg.includes('ไม่พบ')) {
+    } else if (errorCode === 'ALREADY_REGISTERED' || rawMsg.includes('ALREADY_REGISTERED')) {
+      friendlyMsg = 'คุณได้ลงทะเบียนไปแล้ว กรุณาใช้ฟังก์ชันแก้ไขแทน'
+      title = 'ลงทะเบียนซ้ำ'
+    } else if (errorCode === 'NOT_FOUND' || rawMsg.includes('ไม่พบ') || rawMsg.includes('NOT_FOUND')) {
       friendlyMsg = 'ไม่พบข้อมูลรอบกิจกรรม กรุณาลองใหม่'
+      title = 'ไม่พบข้อมูล'
+    } else if (errorCode === 'VALIDATION_ERROR' || err.status === 400) {
+      friendlyMsg = 'ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบและลองใหม่อีกครั้ง'
+      title = 'ข้อมูลไม่ถูกต้อง'
     } else if (rawMsg.includes('Failed to fetch') || rawMsg.includes('NetworkError') || rawMsg.includes('ติดต่อ')) {
       friendlyMsg = 'ไม่สามารถเชื่อมต่อได้ กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองใหม่'
+      type = 'error'
+      title = 'เชื่อมต่อไม่ได้'
     } else {
-      friendlyMsg = rawMsg || 'กรุณาลองใหม่อีกครั้ง'
+      friendlyMsg = 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง'
+      type = 'error'
     }
     triggerToast(`${title}\n${friendlyMsg}`, type)
   } finally {
