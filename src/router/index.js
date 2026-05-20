@@ -5,6 +5,7 @@ import ZoneDetail from '@/components/reserve/ZoneDetail.vue'
 import { initLineAuth } from '@/services/lineAuthService'
 import { useUserData } from '@/composables/useUserData'
 import { useAuth } from '@/composables/useAuth'
+import liff from '@line/liff'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,17 +26,26 @@ const router = createRouter({
       component: () => import('../views/StaffView.vue'),
     },
     {
-      path: '/activities',
-      component: ActivitiesView,
-      children: [
-        { path: '', name: 'activities', component: Activities },
-        { path: ':id', name: 'zone-detail', component: ZoneDetail },
-      ],
-    },
-    {
       path: '/profile',
       name: 'profile',
       component: () => import('../views/ProfileView.vue'),
+    },
+    {
+      path: '/activities',
+      component: ActivitiesView,
+      children: [
+        {
+          path: '',
+          name: 'activities',
+          component: Activities,
+        },
+        {
+          path: ':id',
+          name: 'zone-detail',
+          component: ZoneDetail,
+          props: true,
+        },
+      ],
     },
   ],
 
@@ -53,39 +63,52 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
+  const DEV_MODE_BYPASS = false // เปลี่ยนเป็น false เมื่อต้องการเชื่อมต่อ LINE จริงๆ
+
+  if (DEV_MODE_BYPASS) {
+    const { isRegistered } = useAuth()
+
+    // เปลี่ยนค่านี้เป็น true ถ้าอยากดูหน้าเว็บในมุมมอง registered
+    isRegistered.value = false
+
+    return true // อนุญาตให้ผ่านเข้าเว็บได้เลย โดยไม่ต้องรันโค้ดเช็ค LINE ด้านล่าง
+  }
+
+  // -----------------------------------------------------------------
   if (to.path === '/staff-login') {
     return
   }
 
   try {
-    const auth = await initLineAuth(to.fullPath)
+    // Only force login if NOT on public routes (Home page "/" or paths starting with "/activities")
+    const isPublicRoute = to.path === '/' || to.path.startsWith('/activities')
+    const auth = await initLineAuth(to.fullPath, !isPublicRoute)
     if (auth.redirected) {
       return false
     }
-
     const { fetchUserData, registrationData } = useUserData()
     const { isRegistered } = useAuth()
 
-    try {
+    if (liff.isLoggedIn()) {
       await fetchUserData()
-      isRegistered.value = true
-
-      if (to.path === '/register') {
-        return '/'
-      }
-    } catch (err) {
-      if (err.status === 404) {
+      
+      if (registrationData.value) {
+        isRegistered.value = true
+        if (to.path === '/register') {
+          return '/'
+        }
+      } else {
         isRegistered.value = false
-        registrationData.value = null
-
-        /* * 🎯 แก้ไขจุดนี้: อนุญาตให้ผู้ใช้ที่ยังไม่ลงทะเบียนเข้าหน้าใด ๆ ก็ตามที่ขึ้นต้นด้วย /activities ได้
-         * แต่ถ้าพยายามจะไปหน้าอื่นที่ต้องล็อกอิน (เช่น /profile) ระบบจะยังเตะไปหน้าลงทะเบียนตามเดิม
-         */
         if (to.path !== '/register' && to.path !== '/' && !to.path.startsWith('/activities')) {
           return '/register'
         }
-      } else {
-        throw err
+      }
+    } else {
+      isRegistered.value = false
+      registrationData.value = null
+
+      if (to.path !== '/register' && to.path !== '/' && !to.path.startsWith('/activities')) {
+        return '/register'
       }
     }
   } catch (error) {

@@ -5,19 +5,26 @@ import { useAuth } from '@/composables/useAuth'
 import { useUserData } from '@/composables/useUserData'
 
 import HomeLanding from '@/components/home/HomeLanding.vue'
+import LoadingScreen from '@/components/LoadingScreen.vue'
 
-const { isUserDataLoaded, fetchUserData } = useUserData()
+import liff from '@line/liff'
+
+const { isUserDataLoaded, fetchUserData, registrationData } = useUserData()
 const isBooting = ref(!isUserDataLoaded.value)
 const { isRegistered } = useAuth()
 
 const checkUserStatus = async () => {
   isBooting.value = !isUserDataLoaded.value
   try {
-    const auth = await initLineAuth()
+    const auth = await initLineAuth(undefined, false)
     if (auth.redirected) return
 
-    await fetchUserData()
-    isRegistered.value = true
+    if (liff.isLoggedIn()) {
+      await fetchUserData()
+      isRegistered.value = !!registrationData.value
+    } else {
+      isRegistered.value = false
+    }
   } catch {
     isRegistered.value = false
   } finally {
@@ -25,21 +32,10 @@ const checkUserStatus = async () => {
   }
 }
 
-onMounted(checkUserStatus)
+// onMounted(checkUserStatus)
 </script>
 
 <template>
-  <section v-if="isBooting" class="loading-screen">
-    <p>Loading...</p>
-  </section>
-
+  <LoadingScreen v-if="isBooting" text="กำลังตรวจสอบข้อมูล..." />
   <HomeLanding v-else />
 </template>
-
-<style scoped>
-.loading-screen {
-  display: grid;
-  place-items: center;
-  min-height: 100vh;
-}
-</style>

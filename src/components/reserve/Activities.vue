@@ -1,15 +1,15 @@
 <script setup>
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { zones } from '@/data/zonesData.js'
 import { useLocale } from '@/composables/useLocale'
-
-// นำเข้า CSS ของ Reserve เพื่อให้ติดตัวคอมโพเนนต์นี้ไปทุกที่
+import LangToggle from '../LangToggle.vue'
 import '@/assets/styles/reserve.css'
 
 import { Theater, Drama } from '@lucide/vue'
 import { TShirt, MedicalFlask, Running, Store } from '@boxicons/vue'
 
 const router = useRouter()
+const route = useRoute()
 const { t } = useLocale()
 
 const iconMap = {
@@ -20,6 +20,8 @@ const iconMap = {
   Running,
   Store,
 }
+
+const isMainActivitiesPage = () => route.path === '/activities'
 
 const goToZone = (zoneId) => {
   router.push({ name: 'zone-detail', params: { id: zoneId } })
@@ -32,41 +34,48 @@ const goToReserve = (event, zoneId) => {
 </script>
 
 <template>
-  <main id="reserve">
+  <main id="reserve-layout">
     <div class="bubbles-bg">
-      <div class="bubble"></div>
-      <div class="bubble"></div>
-      <div class="bubble"></div>
+      <div class="orb"></div>
+      <div class="orb"></div>
+      <div class="orb"></div>
     </div>
 
-    <h3>ACTIVITIES & RESERVATIONS</h3>
+    <nav class="hero-nav" v-if="isMainActivitiesPage()">
+      <LangToggle theme="light" />
+    </nav>
+    <main id="reserve">
+      <h3>ACTIVITIES & RESERVATIONS</h3>
 
-    <div
-      v-for="zone in zones"
-      :key="zone.id"
-      class="zone-card"
-      role="button"
-      tabindex="0"
-      @click="goToZone(zone.id)"
-      @keydown.enter="goToZone(zone.id)"
-    >
-      <div class="card-header">
-        <h4>
-          <span><component :is="iconMap[zone.icon]" /></span>
-          {{ t(zone.title) }}
-        </h4>
-        <img class="zone-img" :src="zone.image" alt="" />
+      <div
+        v-for="zone in zones"
+        :key="zone.id"
+        class="zone-card"
+        role="button"
+        tabindex="0"
+        @click="goToZone(zone.id)"
+        @keydown.enter="goToZone(zone.id)"
+      >
+        <div class="card-header">
+          <h4>
+            <span><component :is="iconMap[zone.icon]" /></span>
+            {{ t(zone.title) }}
+          </h4>
+          <img class="zone-img" :src="zone.image" alt="" />
+        </div>
+        <div class="card-footer">
+          <p>{{ t(zone.description) }}</p>
+
+          <template v-if="zone.requiresReservation">
+            <button v-if="zone.id === 'lab'" @click.stop="goToZone(zone.id)">
+              View Activities
+            </button>
+            <button v-else @click="goToReserve($event, zone.id)">Reserve Now</button>
+          </template>
+
+          <small v-else class="zone-status"> This zone does not require pre-registration </small>
+        </div>
       </div>
-      <div class="card-footer">
-        <p>{{ t(zone.description) }}</p>
-
-        <template v-if="zone.requiresReservation">
-          <button v-if="zone.id === 'lab'" @click.stop="goToZone(zone.id)">View Activities</button>
-          <button v-else @click="goToReserve($event, zone.id)">Reserve Now</button>
-        </template>
-
-        <small v-else class="zone-status"> This zone does not require pre-registration </small>
-      </div>
-    </div>
+    </main>
   </main>
 </template>

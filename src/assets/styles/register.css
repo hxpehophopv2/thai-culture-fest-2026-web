@@ -117,9 +117,9 @@ section#register-main > main input[type='date'] {
   appearance: none;
   min-width: 0;
   width: 100%;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--clr-900, #111);
-  min-height: 40px;
+  min-height: 42px;
   /* -------------------------------------- */
 
   background: var(--clr-100);

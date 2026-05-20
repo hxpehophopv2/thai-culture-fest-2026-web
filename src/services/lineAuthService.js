@@ -6,7 +6,7 @@ let authState = {
   profile: null,
 }
 
-export async function initLineAuth(redirectPath = '/register') {
+export async function initLineAuth(redirectPath = '/register', forceLogin = true) {
   if (authState.profile) {
     return { redirected: false, ...authState }
   }
@@ -24,8 +24,12 @@ export async function initLineAuth(redirectPath = '/register') {
   await initPromise
 
   if (!liff.isLoggedIn()) {
-    liff.login({ redirectUri: `${window.location.origin}${redirectPath}` })
-    return { redirected: true, accessToken: '', profile: null }
+    if (forceLogin) {
+      liff.login({ redirectUri: `${window.location.origin}${redirectPath}` })
+      return { redirected: true, accessToken: '', profile: null }
+    } else {
+      return { redirected: false, accessToken: '', profile: null, loggedIn: false }
+    }
   }
 
   authState = {

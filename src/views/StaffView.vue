@@ -29,7 +29,10 @@ const handleLoginSuccess = (staffData) => {
   localStorage.setItem('staff_fullname', staffData.fullname)
   localStorage.setItem('staff_booth_code', staffData.boothCode)
   localStorage.setItem('staff_zone', staffData.activity?.zone || '')
-  localStorage.setItem('staff_activity_name', staffData.activity?.nameTh || staffData.activity?.name || '')
+  localStorage.setItem(
+    'staff_activity_name',
+    staffData.activity?.nameTh || staffData.activity?.name || '',
+  )
 
   isLoggedIn.value = true
 }
@@ -50,9 +53,7 @@ onMounted(checkStaffAuth)
 
 <template>
   <!-- Loading State -->
-  <section v-if="isBooting" class="loading-screen">
-    <p>Loading Staff System...</p>
-  </section>
+  <LoadingScreen v-if="isBooting" text="กำลังโหลดระบบสตาฟ..." />
   <section v-else>
     <!-- Show Login View (Not logged in) -->
     <StaffLogin

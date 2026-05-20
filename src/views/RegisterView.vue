@@ -8,6 +8,7 @@ import RegisterMain from '@/components/register/registerMain.vue'
 import RegisterFooter from '@/components/register/registerFooter.vue'
 import ConfirmDiscard from '@/components/register/confirmDiscard.vue'
 import ConfirmSubmit from '@/components/register/confirmSubmit.vue'
+import LoadingScreen from '@/components/LoadingScreen.vue'
 import {
   getActivities,
   getMyRegistration,
@@ -177,9 +178,7 @@ onMounted(bootstrap)
     <LangToggle />
   </nav>
   <section class="register">
-    <section v-if="isBooting" class="line-state">
-      <p>Connecting LINE...</p>
-    </section>
+    <LoadingScreen v-if="isBooting" text="กำลังเชื่อมต่อกับ LINE..." />
 
     <section v-else>
       <registerHeader :step="registerStep" />
