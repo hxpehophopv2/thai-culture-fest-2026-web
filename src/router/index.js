@@ -40,7 +40,7 @@ const router = createRouter({
           component: Activities,
         },
         {
-          path: ':zoneId',
+          path: ':id',
           name: 'zone-detail',
           component: ZoneDetail,
           props: true,
