@@ -117,7 +117,6 @@ const registerIn = async () => {
     showingConfirmSubmit.value = false
 
     router.push('/')
-
   } catch (err) {
     submitError.value = err.message
     showingConfirmSubmit.value = false
