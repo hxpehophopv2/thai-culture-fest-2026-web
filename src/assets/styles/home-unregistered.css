@@ -242,6 +242,10 @@
   margin: 0 0 var(--sp-xs);
   color: var(--clr-pri-600);
 }
+.detail-item .label + p {
+  font-weight: normal;
+  color: var(--clr-600);
+}
 
 .nav-link {
   display: flex;
