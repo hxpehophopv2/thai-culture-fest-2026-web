@@ -33,9 +33,12 @@ const triggerToast = (msg, type = 'success') => {
   toastMessage.value = msg
   toastType.value = type
   showToast.value = true
-  toastTimeout = setTimeout(() => {
-    showToast.value = false
-  }, type === 'error' ? 5000 : 4000)
+  toastTimeout = setTimeout(
+    () => {
+      showToast.value = false
+    },
+    type === 'error' ? 5000 : 4000,
+  )
 }
 
 // Watch modal state to toggle scrolling and global navigation bar visibility
@@ -191,26 +194,43 @@ const confirmReservation = async () => {
     let friendlyMsg
     let type = 'warn'
     let title = 'จองไม่สำเร็จ'
-    
+
     if (errorCode === 'SESSION_FULL' || rawMsg.includes('เต็ม') || rawMsg.includes('full')) {
       friendlyMsg = 'รอบนี้เต็มแล้ว กรุณาเลือกรอบอื่น'
       title = 'รอบกิจกรรมเต็ม'
-    } else if (errorCode === 'TIME_OVERLAP' || rawMsg.includes('ทับซ้อน') || rawMsg.includes('ซ้อนทับ') || rawMsg.includes('conflict')) {
+    } else if (
+      errorCode === 'TIME_OVERLAP' ||
+      rawMsg.includes('ทับซ้อน') ||
+      rawMsg.includes('ซ้อนทับ') ||
+      rawMsg.includes('conflict')
+    ) {
       friendlyMsg = 'เวลาซ้อนกับกิจกรรมอื่นที่จองไว้ กรุณาเลือกรอบอื่น'
       title = 'เวลาชนกัน'
-    } else if (errorCode === 'DUPLICATE_ACTIVITY' || rawMsg.includes('DUPLICATE') || rawMsg.includes('more than once')) {
+    } else if (
+      errorCode === 'DUPLICATE_ACTIVITY' ||
+      rawMsg.includes('DUPLICATE') ||
+      rawMsg.includes('more than once')
+    ) {
       friendlyMsg = 'คุณได้ทำการจองกิจกรรมนี้ไปแล้ว (จองได้สูงสุด 1 รอบต่อกิจกรรม)'
       title = 'ไม่สามารถจองซ้ำได้'
     } else if (errorCode === 'ALREADY_REGISTERED' || rawMsg.includes('ALREADY_REGISTERED')) {
       friendlyMsg = 'คุณได้ลงทะเบียนไปแล้ว กรุณาใช้ฟังก์ชันแก้ไขแทน'
       title = 'ลงทะเบียนซ้ำ'
-    } else if (errorCode === 'NOT_FOUND' || rawMsg.includes('ไม่พบ') || rawMsg.includes('NOT_FOUND')) {
+    } else if (
+      errorCode === 'NOT_FOUND' ||
+      rawMsg.includes('ไม่พบ') ||
+      rawMsg.includes('NOT_FOUND')
+    ) {
       friendlyMsg = 'ไม่พบข้อมูลรอบกิจกรรม กรุณาลองใหม่'
       title = 'ไม่พบข้อมูล'
     } else if (errorCode === 'VALIDATION_ERROR' || err.status === 400) {
       friendlyMsg = 'ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบและลองใหม่อีกครั้ง'
       title = 'ข้อมูลไม่ถูกต้อง'
-    } else if (rawMsg.includes('Failed to fetch') || rawMsg.includes('NetworkError') || rawMsg.includes('ติดต่อ')) {
+    } else if (
+      rawMsg.includes('Failed to fetch') ||
+      rawMsg.includes('NetworkError') ||
+      rawMsg.includes('ติดต่อ')
+    ) {
       friendlyMsg = 'ไม่สามารถเชื่อมต่อได้ กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองใหม่'
       type = 'error'
       title = 'เชื่อมต่อไม่ได้'
@@ -299,7 +319,7 @@ const goBack = () => {
               {{
                 selectedActivity
                   ? activityNames[selectedActivity]
-                  : 'จองที่นั่ง — ' + (zone ? t(zone.title) : '')
+                  : 'จองที่นั่ง - ' + (zone ? t(zone.title) : '')
               }}
             </h5>
             <button class="close-btn" @click="showModal = false">✕</button>
@@ -509,6 +529,7 @@ const goBack = () => {
   cursor: pointer;
   color: var(--clr-500);
   padding: 0;
+  box-shadow: none;
 }
 
 .instruction {

@@ -149,7 +149,7 @@
 .badge {
   font-size: 0.6rem;
   font-weight: normal;
-  background: rgba(76, 175, 80, 0.2);
+  background: rgb(76, 175, 80);
   color: #4caf50;
   padding: 4px 12px;
   border-radius: 100px;
