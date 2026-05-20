@@ -6,6 +6,29 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  overflow: hidden;
+
+  /* Reserve style blue-purple gradient background */
+  background: #3182de;
+  background: -webkit-linear-gradient(
+    180deg,
+    rgba(49, 130, 222, 1) 0%,
+    rgba(42, 105, 168, 1) 50%,
+    rgba(24, 42, 125, 1) 100%
+  );
+  background: -moz-linear-gradient(
+    180deg,
+    rgba(49, 130, 222, 1) 0%,
+    rgba(42, 105, 168, 1) 50%,
+    rgba(24, 42, 125, 1) 100%
+  );
+  background: linear-gradient(
+    180deg,
+    rgba(49, 130, 222, 1) 0%,
+    rgba(42, 105, 168, 1) 50%,
+    rgba(24, 42, 125, 1) 100%
+  );
 }
 
 .profile-nav {
@@ -14,6 +37,8 @@
   display: flex;
   justify-content: flex-end;
   padding: var(--sp-m) 0;
+  position: relative;
+  z-index: 10;
 }
 
 .profile-container {
@@ -22,6 +47,59 @@
   display: flex;
   flex-direction: column;
   gap: var(--sp-l);
+  position: relative;
+  z-index: 10;
+}
+
+/* ---------- BACKGROUND ORBS ---------- */
+.bubbles-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.4;
+  animation: float 15s infinite ease-in-out;
+}
+
+.orb:nth-child(1) {
+  width: 400px;
+  height: 400px;
+  background: #97bbf7;
+  top: -100px;
+  left: -100px;
+}
+.orb:nth-child(2) {
+  width: 300px;
+  height: 300px;
+  background: #8b5cf6;
+  bottom: 100px;
+  right: -50px;
+}
+.orb:nth-child(3) {
+  width: 250px;
+  height: 250px;
+  background: #06b6d4;
+  top: 40%;
+  left: 60%;
+  animation-delay: -5s;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-30px) scale(1.1);
+  }
 }
 
 .profile-state {
@@ -30,10 +108,10 @@
   padding: var(--sp-2xl);
 }
 
-/* ---------- TICKET QR CARD (GLASSMORPHISM) ---------- */
+/* ---------- TICKET QR CARD ---------- */
 .ticket-card {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--clr-120);
+  border: 1px solid var(--clr-130);
   border-radius: var(--sp-m);
   padding: var(--sp-l);
   text-align: center;
@@ -62,32 +140,41 @@
 }
 
 .user-info h2 {
+  font-family: 'IBM Plex Sans Thai', sans-serif;
   font-size: 1.4rem;
   color: var(--clr-100);
+  margin-top: var(--sp-m);
 }
 
 .badge {
-  font-size: 0.8rem;
-  font-weight: bold;
+  font-size: 0.6rem;
+  font-weight: normal;
   background: rgba(76, 175, 80, 0.2);
   color: #4caf50;
   padding: 4px 12px;
   border-radius: 100px;
-  border: 1px solid rgba(76, 175, 80, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+  letter-spacing: 0.5px;
 }
 
 .qr-wrapper img {
   width: 100%;
-  max-width: 240px;
+  max-width: 300px;
   border-radius: var(--sp-s);
-  margin-bottom: var(--sp-s);
+  margin-bottom: var(--sp-xs);
 }
 
 .qr-wrapper code {
-  display: block;
-  font-size: 0.8rem;
-  color: var(--clr-200);
-  overflow-wrap: anywhere;
+  display: inline-block;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--clr-100);
+  border-radius: 6px;
+  letter-spacing: 2px;
+  margin-top: 8px;
+  text-transform: uppercase;
+  font-family: 'ClashGrotesk-Bold', monospace;
 }
 
 /* ---------- RESERVATIONS LIST ---------- */
@@ -120,11 +207,11 @@
   font-size: 0.85rem;
   padding: 6px 12px;
   border-radius: var(--sp-xs);
-  min-width: 75px;
+  min-width: 64px;
   text-align: center;
 }
 
-.item-details h4 {
+.item-details p {
   font-size: 1rem;
   color: var(--clr-100);
   margin-bottom: 2px;

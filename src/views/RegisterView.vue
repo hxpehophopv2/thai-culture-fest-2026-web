@@ -15,8 +15,10 @@ import {
   submitRegistration,
 } from '@/services/registrationService'
 import { initLineAuth } from '@/services/lineAuthService'
+import { useUserData } from '@/composables/useUserData'
 
 const router = useRouter()
+const { fetchUserData } = useUserData()
 const registerStep = ref(1)
 const selectedType = ref('')
 const step1Error = ref(false)
@@ -111,9 +113,11 @@ const registerIn = async () => {
     }
 
     await submitRegistration(payload, selectedSessionIds)
+    await fetchUserData(true)
     showingConfirmSubmit.value = false
 
     router.push('/')
+
   } catch (err) {
     submitError.value = err.message
     showingConfirmSubmit.value = false

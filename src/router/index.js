@@ -91,7 +91,7 @@ router.beforeEach(async (to) => {
 
     if (liff.isLoggedIn()) {
       await fetchUserData()
-      
+
       if (registrationData.value) {
         isRegistered.value = true
         if (to.path === '/register') {
@@ -113,6 +113,19 @@ router.beforeEach(async (to) => {
     }
   } catch (error) {
     console.error('LIFF Router Auth Guard Error:', error)
+  }
+})
+
+// Dismiss initial loading screen after first navigation
+let isFirstNavigation = true
+router.afterEach(() => {
+  if (isFirstNavigation) {
+    isFirstNavigation = false
+    const loader = document.getElementById('initial-loader')
+    if (loader) {
+      loader.classList.add('fade-out')
+      setTimeout(() => loader.remove(), 400)
+    }
   }
 })
 

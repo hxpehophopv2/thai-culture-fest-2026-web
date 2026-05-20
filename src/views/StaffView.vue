@@ -11,7 +11,7 @@ const checkStaffAuth = async () => {
   isBooting.value = true
   try {
     const sessionId = localStorage.getItem('staff_session_id')
-    if (sessionId) {
+    if (sessionId && sessionId !== 'undefined') {
       isLoggedIn.value = true
     } else {
       isLoggedIn.value = false
@@ -25,7 +25,8 @@ const checkStaffAuth = async () => {
 
 // Handle login success made at StaffLogin
 const handleLoginSuccess = (staffData) => {
-  localStorage.setItem('staff_session_id', staffData.staffSessionId)
+  const sessionId = staffData.sessionId || staffData.staffSessionId
+  localStorage.setItem('staff_session_id', sessionId)
   localStorage.setItem('staff_fullname', staffData.fullname)
   localStorage.setItem('staff_booth_code', staffData.boothCode)
   localStorage.setItem('staff_zone', staffData.activity?.zone || '')

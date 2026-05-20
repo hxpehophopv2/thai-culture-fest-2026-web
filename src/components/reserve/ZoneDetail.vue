@@ -25,15 +25,17 @@ const isSubmitting = ref(false)
 // Custom Toast Notification State
 const showToast = ref(false)
 const toastMessage = ref('')
+const toastType = ref('success') // 'success' | 'error'
 let toastTimeout = null
 
-const triggerToast = (msg) => {
+const triggerToast = (msg, type = 'success') => {
   if (toastTimeout) clearTimeout(toastTimeout)
   toastMessage.value = msg
+  toastType.value = type
   showToast.value = true
   toastTimeout = setTimeout(() => {
     showToast.value = false
-  }, 4000)
+  }, type === 'error' ? 5000 : 4000)
 }
 
 // Watch modal state to toggle scrolling and global navigation bar visibility
@@ -165,7 +167,7 @@ const confirmReservation = async () => {
     const targetActivity = activities.value.find((a) => a.sortOrder === order)
 
     if (!targetActivity) {
-      throw new Error('ไม่พบข้อมูลกิจกรรม / Activity not found')
+      throw new Error('ไม่พบกิจกรรมนี้')
     }
 
     // Filter out any existing booking belonging to this activity to allow reschedule/change of time slot
@@ -175,7 +177,6 @@ const confirmReservation = async () => {
 
     const newSessionIds = [...filteredSessionIds, selectedSlot.value.id]
     await updateMyRegistration({ selectedSessionIds: newSessionIds })
-
     triggerToast(
       `ยืนยันการจองสำเร็จ / Reservation successful:\n${activityNames.value[selectedActivity.value]}\nรอบเวลา: ${selectedSlot.value.time}`,
     )
@@ -184,8 +185,40 @@ const confirmReservation = async () => {
     // Refresh Data
     await fetchUserData(true)
   } catch (err) {
-    const errorMsg = err.message || 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้ กรุณาลองใหมี่อีกครั้ง'
-    triggerToast(`เกิดข้อผิดพลาดในการจอง / Error booking:\n${errorMsg}`)
+    const rawMsg = err.message || ''
+    const errorCode = err.payload?.error?.code || ''
+    // Map technical error messages to friendly Thai
+    let friendlyMsg
+    let type = 'warn'
+    let title = 'จองไม่สำเร็จ'
+    
+    if (errorCode === 'SESSION_FULL' || rawMsg.includes('เต็ม') || rawMsg.includes('full')) {
+      friendlyMsg = 'รอบนี้เต็มแล้ว กรุณาเลือกรอบอื่น'
+      title = 'รอบกิจกรรมเต็ม'
+    } else if (errorCode === 'TIME_OVERLAP' || rawMsg.includes('ทับซ้อน') || rawMsg.includes('ซ้อนทับ') || rawMsg.includes('conflict')) {
+      friendlyMsg = 'เวลาซ้อนกับกิจกรรมอื่นที่จองไว้ กรุณาเลือกรอบอื่น'
+      title = 'เวลาชนกัน'
+    } else if (errorCode === 'DUPLICATE_ACTIVITY' || rawMsg.includes('DUPLICATE') || rawMsg.includes('more than once')) {
+      friendlyMsg = 'คุณได้ทำการจองกิจกรรมนี้ไปแล้ว (จองได้สูงสุด 1 รอบต่อกิจกรรม)'
+      title = 'ไม่สามารถจองซ้ำได้'
+    } else if (errorCode === 'ALREADY_REGISTERED' || rawMsg.includes('ALREADY_REGISTERED')) {
+      friendlyMsg = 'คุณได้ลงทะเบียนไปแล้ว กรุณาใช้ฟังก์ชันแก้ไขแทน'
+      title = 'ลงทะเบียนซ้ำ'
+    } else if (errorCode === 'NOT_FOUND' || rawMsg.includes('ไม่พบ') || rawMsg.includes('NOT_FOUND')) {
+      friendlyMsg = 'ไม่พบข้อมูลรอบกิจกรรม กรุณาลองใหม่'
+      title = 'ไม่พบข้อมูล'
+    } else if (errorCode === 'VALIDATION_ERROR' || err.status === 400) {
+      friendlyMsg = 'ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบและลองใหม่อีกครั้ง'
+      title = 'ข้อมูลไม่ถูกต้อง'
+    } else if (rawMsg.includes('Failed to fetch') || rawMsg.includes('NetworkError') || rawMsg.includes('ติดต่อ')) {
+      friendlyMsg = 'ไม่สามารถเชื่อมต่อได้ กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองใหม่'
+      type = 'error'
+      title = 'เชื่อมต่อไม่ได้'
+    } else {
+      friendlyMsg = 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง'
+      type = 'error'
+    }
+    triggerToast(`${title}\n${friendlyMsg}`, type)
   } finally {
     isSubmitting.value = false
   }
@@ -305,6 +338,7 @@ const goBack = () => {
             <ul class="booking-rules">
               <li>* ระบบจะไม่อนุญาตให้จองในเวลาที่ซ้อนทับกับกิจกรรมอื่น</li>
               <li>* สามารถเปลี่ยนแปลงหรือยกเลิกรอบได้ล่วงหน้า 1 วันก่อนวันงาน</li>
+              <li>* สามารถแก้ไขได้โดยการเลือกเวลาที่ต้องการจองและกดยืนยันอีกครั้ง</li>
             </ul>
           </div>
 
@@ -343,17 +377,23 @@ const goBack = () => {
       </div>
     </Transition>
 
-    <!-- Beautiful Custom Toast Notification -->
-    <Transition name="toast-fade">
-      <div v-if="showToast" class="custom-toast" @click="showToast = false">
-        <div class="toast-content">
-          <div class="toast-icon">✨</div>
-          <div class="toast-text">
-            <p v-for="line in toastMessage.split('\n')" :key="line">{{ line }}</p>
+    <!-- Custom Toast Notification -->
+    <Teleport to="body">
+      <Transition name="toast-fade">
+        <div v-if="showToast" class="custom-toast" :class="toastType" @click="showToast = false">
+          <div class="toast-content">
+            <div class="toast-icon">
+              <span v-if="toastType === 'success'">✅</span>
+              <span v-else-if="toastType === 'warn'">⚠️</span>
+              <span v-else>❌</span>
+            </div>
+            <div class="toast-text">
+              <p v-for="(line, idx) in toastMessage.split('\n')" :key="idx">{{ line }}</p>
+            </div>
           </div>
         </div>
-      </div>
-    </Transition>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -435,6 +475,8 @@ const goBack = () => {
   border-radius: var(--sp-m);
   padding: var(--sp-l);
   width: min(90%, 450px);
+  max-height: 85vh;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: var(--sp-m);
@@ -587,24 +629,40 @@ const goBack = () => {
   opacity: 0;
 }
 
-/* Beautiful Custom Glassmorphic Toast */
+/* Custom Toast Notification */
 .custom-toast {
   position: fixed;
   top: 32px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(26, 80, 133, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: var(--sp-m, 12px);
   padding: 14px 20px;
   color: white;
-  z-index: 10000;
+  z-index: 999999;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   width: min(90%, 380px);
   cursor: pointer;
   box-sizing: border-box;
+}
+
+/* Success toast - green */
+.custom-toast.success {
+  background: rgba(28, 120, 55, 0.95);
+  border: 1px solid rgba(40, 167, 69, 0.5);
+}
+
+/* Warning toast - yellow */
+.custom-toast.warn {
+  background: rgba(215, 154, 0, 0.95);
+  border: 1px solid var(--clr-sem-warn, #ffc107);
+}
+
+/* Error toast - red */
+.custom-toast.error {
+  background: rgba(180, 30, 45, 0.95);
+  border: 1px solid var(--clr-sem-err, #dc3545);
 }
 
 .toast-content {
@@ -616,6 +674,7 @@ const goBack = () => {
 .toast-icon {
   font-size: 1.6rem;
   line-height: 1;
+  flex-shrink: 0;
 }
 
 .toast-text {

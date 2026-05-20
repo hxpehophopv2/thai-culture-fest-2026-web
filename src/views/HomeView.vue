@@ -28,11 +28,12 @@ const checkUserStatus = async () => {
   } catch {
     isRegistered.value = false
   } finally {
+    await new Promise((resolve) => setTimeout(resolve, 1000))
     isBooting.value = false
   }
 }
 
-// onMounted(checkUserStatus)
+onMounted(checkUserStatus)
 </script>
 
 <template>

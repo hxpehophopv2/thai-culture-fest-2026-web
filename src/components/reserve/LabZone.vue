@@ -8,7 +8,7 @@ const emit = defineEmits(['open-reserve'])
 
 <template>
   <div class="lab-content">
-    <p class="highlight-text">
+    <p>
       สัมผัสเสน่ห์ของงานหัตถศิลป์ไทยผ่านกิจกรรมเวิร์กช็อป ที่เปิดโอกาสให้ผู้เข้าร่วมได้ลงมือทำ
       เรียนรู้ และสร้างผลงานด้วยตนเอง
     </p>
@@ -70,13 +70,6 @@ const emit = defineEmits(['open-reserve'])
   color: var(--clr-100);
 }
 
-.highlight-text {
-  color: #ffca28; /* ปรับสีให้สว่างขึ้นบนพื้นหลังสีน้ำเงิน */
-  font-weight: bold;
-  margin-bottom: var(--sp-m);
-  line-height: 1.5;
-}
-
 .workshop-list {
   padding-left: 0; /* เอา padding ออกเพราะเราจะใส่กรอบให้แต่ละ item */
   display: flex;
@@ -107,8 +100,7 @@ const emit = defineEmits(['open-reserve'])
 }
 
 .item-info h5::before {
-  content: counter(workshop-counter) '.'; /* ใส่ตัวเลขกลับมาแบบ custom */
-  color: var(--clr-pri-500);
+  content: counter(workshop-counter) '.';
 }
 
 .item-info p {
