@@ -598,7 +598,7 @@ const i18n = {
   margin: 0 !important;
   box-sizing: border-box;
   z-index: 1 !important;
-  font-size: 14px !important;
+  font-size: 16px !important;
 }
 
 :deep(.iti__dropdown-content),

@@ -150,7 +150,7 @@
   font-size: 0.6rem;
   font-weight: normal;
   background: rgb(76, 175, 80);
-  color: #4caf50;
+  color: var(--clr-100);
   padding: 4px 12px;
   border-radius: 100px;
   border: 1px solid rgba(255, 255, 255, 0.3);
