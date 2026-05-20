@@ -2,7 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import ActivitiesView from '@/views/ActivitiesView.vue'
 import Activities from '@/components/reserve/Activities.vue'
 import ZoneDetail from '@/components/reserve/ZoneDetail.vue'
-import liff from '@line/liff'
+import { initLineAuth } from '@/services/lineAuthService'
+import { useUserData } from '@/composables/useUserData'
+import { useAuth } from '@/composables/useAuth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -52,24 +54,46 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
-  if (to.path === '/') {
-    const params = new URLSearchParams(window.location.search)
-    const hasLiffCallback =
-      params.has('liffClientId') || params.has('code') || params.has('liffRedirectUri')
+  // 1. Skip auth check for staff page
+  if (to.path === '/staff-login') {
+    return
+  }
 
-    if (hasLiffCallback) {
-      const liffId = import.meta.env.VITE_LIFF_ID
-      if (liffId) {
-        try {
-          await liff.init({ liffId })
-          if (liff.isLoggedIn()) {
-            return '/register'
-          }
-        } catch {
-          return undefined
+  try {
+    // 2. Initialize LIFF and authenticate with the target path as redirect URI
+    const auth = await initLineAuth(to.fullPath)
+    if (auth.redirected) {
+      return false // Halt navigation, redirecting to LINE Login
+    }
+
+    const { fetchUserData, registrationData } = useUserData()
+    const { isRegistered } = useAuth()
+
+    // 3. Pre-fetch user data to populate the profile and ticket QR code
+    try {
+      await fetchUserData()
+      isRegistered.value = true
+
+      // If registered and trying to go to /register, redirect to Home
+      if (to.path === '/register') {
+        return '/'
+      }
+    } catch (err) {
+      // If the error is 404 (Not Registered), handle redirection
+      if (err.status === 404) {
+        isRegistered.value = false
+        registrationData.value = null
+
+        // If not registered and not on register or home page, redirect to Register
+        if (to.path !== '/register' && to.path !== '/') {
+          return '/register'
         }
+      } else {
+        throw err // Other API errors
       }
     }
+  } catch (error) {
+    console.error('LIFF Router Auth Guard Error:', error)
   }
 })
 
