@@ -116,4 +116,17 @@ router.beforeEach(async (to) => {
   }
 })
 
+// Dismiss initial loading screen after first navigation
+let isFirstNavigation = true
+router.afterEach(() => {
+  if (isFirstNavigation) {
+    isFirstNavigation = false
+    const loader = document.getElementById('initial-loader')
+    if (loader) {
+      loader.classList.add('fade-out')
+      setTimeout(() => loader.remove(), 400)
+    }
+  }
+})
+
 export default router

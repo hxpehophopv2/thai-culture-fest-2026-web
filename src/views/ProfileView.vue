@@ -58,6 +58,12 @@ onMounted(async () => {
 
 <template>
   <div id="profile-view">
+    <div class="bubbles-bg">
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+    </div>
+
     <nav class="profile-nav">
       <LangToggle />
     </nav>
@@ -68,13 +74,13 @@ onMounted(async () => {
       <section v-if="qr" class="ticket-card">
         <div class="user-info">
           <img :src="lineProfile?.pictureUrl" alt="Line Profile" class="avatar" />
-          <h2>{{ lineProfile?.displayName }}</h2>
+          <h2>{{ registrationData?.firstName ? `${registrationData.firstName} ${registrationData.lastName}` : (lineProfile?.displayName || 'Participant') }}</h2>
           <span class="badge">Registered Participant</span>
         </div>
 
         <div class="qr-wrapper">
           <img :src="qr.dataUrl" alt="Registration QR code" />
-          <code>{{ qr.qrData }}</code>
+          <code>{{ registrationData?.shortCode || qr.shortCode || qr.qrData }}</code>
         </div>
       </section>
 
