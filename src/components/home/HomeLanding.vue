@@ -58,7 +58,7 @@ onMounted(() => {
         // ถ้าอยากให้มันเล่นซ้ำตอนเลื่อนกลับขึ้นไป ให้เอา else ออก
       })
     },
-    { threshold: 0.2 },
+    { threshold: 0.1 },
   )
 
   document.querySelectorAll('.animate-on-scroll').forEach((el) => observer.observe(el))

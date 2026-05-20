@@ -32,7 +32,7 @@ const checkUserStatus = async () => {
   }
 }
 
-// onMounted(checkUserStatus)
+onMounted(checkUserStatus)
 </script>
 
 <template>

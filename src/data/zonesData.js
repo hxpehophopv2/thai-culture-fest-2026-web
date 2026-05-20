@@ -1,11 +1,16 @@
 import khonZoneImage from '@/assets/images/KHON_ZONE.png'
+import stageZoneImage from '@/assets/images/STAGE_ZONE.png'
+import labZoneImage from '@/assets/images/LAB_ZONE.png'
+import identityZoneImage from '@/assets/images/IDENTITY_ZONE.png'
+import playZoneImage from '@/assets/images/PLAY_ZONE.png'
+import marketZoneImage from '@/assets/images/MARKET_ZONE.png'
 
 export const zones = [
   {
     id: 'stage',
     requiresReservation: true,
     icon: 'Theater',
-    image: 'https://picsum.photos/1280/720?random=1',
+    image: stageZoneImage,
     title: { 'th-TH': 'STAGE ZONE', 'en-US': 'STAGE ZONE' },
     description: {
       'th-TH':
@@ -18,7 +23,7 @@ export const zones = [
     id: 'lab',
     requiresReservation: true,
     icon: 'MedicalFlask',
-    image: 'https://picsum.photos/1280/720?random=2',
+    image: labZoneImage,
     title: { 'th-TH': 'LAB ZONE', 'en-US': 'LAB ZONE' },
     description: {
       'th-TH':
@@ -31,7 +36,7 @@ export const zones = [
     id: 'identity',
     requiresReservation: false,
     icon: 'TShirt',
-    image: 'https://picsum.photos/1280/720?random=3',
+    image: identityZoneImage,
     title: { 'th-TH': 'IDENTITY ZONE', 'en-US': 'IDENTITY ZONE' },
     description: {
       'th-TH':
@@ -57,7 +62,7 @@ export const zones = [
     id: 'play',
     requiresReservation: false,
     icon: 'Running',
-    image: 'https://picsum.photos/1280/720?random=5',
+    image: playZoneImage,
     title: { 'th-TH': 'PLAY ZONE', 'en-US': 'PLAY ZONE' },
     description: {
       'th-TH':
@@ -70,7 +75,7 @@ export const zones = [
     id: 'market',
     requiresReservation: false,
     icon: 'Store',
-    image: 'https://picsum.photos/1280/720?random=6',
+    image: marketZoneImage,
     title: { 'th-TH': 'MARKET ZONE', 'en-US': 'MARKET ZONE' },
     description: {
       'th-TH': 'พื้นที่ตลาดอาหาร ขนมและเครื่องดื่มไทย',
