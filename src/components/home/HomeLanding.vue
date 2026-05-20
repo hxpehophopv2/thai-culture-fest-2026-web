@@ -78,7 +78,7 @@ onUnmounted(() => {
       </nav>
 
       <div class="hero-content">
-        <h3 class="stagger-item"><RouterLink to="/staff-login">KMUTT ROOTED</RouterLink></h3>
+        <h3 class="stagger-item"><RouterLink to="#">KMUTT ROOTED</RouterLink></h3>
         <h1 class="stagger-item">Thai Sustainable Culture Fest 2026</h1>
         <small class="stagger-item">
           โครงการรณรงค์และส่งเสริมค่านิยมความเป็นไทย เพื่อขับเคลื่อนวัฒนธรรมไทยสู่ความยั่งยืน
