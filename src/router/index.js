@@ -63,7 +63,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
-  const DEV_MODE_BYPASS = true // เปลี่ยนเป็น false เมื่อต้องการเชื่อมต่อ LINE จริงๆ
+  const DEV_MODE_BYPASS = false // เปลี่ยนเป็น false เมื่อต้องการเชื่อมต่อ LINE จริงๆ
 
   if (DEV_MODE_BYPASS) {
     const { isRegistered } = useAuth()

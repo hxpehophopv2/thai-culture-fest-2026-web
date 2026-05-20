@@ -37,7 +37,7 @@ const bookedActivities = computed(() => {
     const activity = b.session.activity
     const key = orderToKey[activity.sortOrder] || 'ACT'
     return {
-      id: `${key}-${formatTime(b.session.startTime).replace(':', '.')}`,
+      id: key,
       name: activity.nameTh,
       time: `${formatTime(b.session.startTime)} - ${formatTime(b.session.endTime)} น.`,
     }
@@ -58,14 +58,14 @@ onMounted(async () => {
 
 <template>
   <div id="profile-view">
-    <div class="bubbles-bg">
-      <div class="bubble"></div>
-      <div class="bubble"></div>
-      <div class="bubble"></div>
+    <div class="orb-bg">
+      <div class="orb"></div>
+      <div class="orb"></div>
+      <div class="orb"></div>
     </div>
 
     <nav class="profile-nav">
-      <LangToggle />
+      <LangToggle theme="light" />
     </nav>
 
     <LoadingScreen v-if="isLoading" text="กำลังโหลดโปรไฟล์" />
@@ -74,7 +74,13 @@ onMounted(async () => {
       <section v-if="qr" class="ticket-card">
         <div class="user-info">
           <img :src="lineProfile?.pictureUrl" alt="Line Profile" class="avatar" />
-          <h2>{{ registrationData?.firstName ? `${registrationData.firstName} ${registrationData.lastName}` : (lineProfile?.displayName || 'Participant') }}</h2>
+          <h2>
+            {{
+              registrationData?.firstName
+                ? `${registrationData.firstName} ${registrationData.lastName}`
+                : lineProfile?.displayName || 'Participant'
+            }}
+          </h2>
           <span class="badge">Registered Participant</span>
         </div>
 
@@ -90,7 +96,7 @@ onMounted(async () => {
           <div v-for="act in bookedActivities" :key="act.id" class="schedule-item">
             <span class="code-tag">{{ act.id }}</span>
             <div class="item-details">
-              <h4>{{ act.name }}</h4>
+              <p>{{ act.name }}</p>
               <time>{{ act.time }}</time>
             </div>
           </div>
