@@ -156,12 +156,13 @@
 /* ---------- SCROLL INDICATOR ---------- */
 .scroll-indicator {
   position: absolute;
-  bottom: var(--sp-2xl); /* Move indicator relative to overall header, not image bottom */
+  bottom: var(--sp-3xl);
+  z-index: 5;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--sp-s);
-  color: var(--clr-500);
+  color: var(--clr-100);
   opacity: 1;
   transition:
     opacity 0.5s ease,

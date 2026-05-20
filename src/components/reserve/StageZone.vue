@@ -8,7 +8,7 @@ const emit = defineEmits(['open-reserve'])
 
 <template>
   <div class="stage-content">
-    <p class="highlight-text">
+    <p>
       พื้นที่ที่นำเสนอศิลปวัฒนธรรมไทยในรูปแบบร่วมสมัย ผ่านการแสดงนาฏศิลป์ การแสดงโขน
       และกิจกรรมเสวนาสร้างแรงบันดาลใจ เปิดโอกาสให้ผู้เข้าร่วมงานได้สัมผัส เรียนรู้
       และมองเห็นคุณค่าของวัฒนธรรมไทยในมุมมองใหม่ที่เข้าถึงง่ายและใกล้ชิดกับคนรุ่นปัจจุบันมากยิ่งขึ้น
@@ -41,13 +41,6 @@ const emit = defineEmits(['open-reserve'])
   color: var(--clr-100);
 }
 
-.highlight-text {
-  color: #ffca28; /* ปรับสีให้สว่างขึ้นอ่านง่าย */
-  font-weight: bold;
-  margin-bottom: var(--sp-l);
-  line-height: 1.6;
-}
-
 /* จัดตารางเวลาให้อยู่ในกรอบดูเป็นสัดส่วน */
 .schedule-box {
   background: rgba(0, 0, 0, 0.2);
@@ -65,8 +58,6 @@ const emit = defineEmits(['open-reserve'])
 .schedule-box time {
   display: inline-block;
   font-size: 0.9rem;
-  color: #4caf50;
-  font-weight: bold;
   margin-bottom: var(--sp-m);
 }
 
