@@ -41,7 +41,6 @@ const router = createRouter({
 
   scrollBehavior(to, from, savedPosition) {
     return new Promise((resolve) => {
-      // หน่วงเวลา 300ms ให้สอดคล้องกับเวลาของ Transition สลับหน้า (0.3s)
       setTimeout(() => {
         if (savedPosition) {
           resolve(savedPosition)
@@ -54,42 +53,39 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
-  // 1. Skip auth check for staff page
   if (to.path === '/staff-login') {
     return
   }
 
   try {
-    // 2. Initialize LIFF and authenticate with the target path as redirect URI
     const auth = await initLineAuth(to.fullPath)
     if (auth.redirected) {
-      return false // Halt navigation, redirecting to LINE Login
+      return false
     }
 
     const { fetchUserData, registrationData } = useUserData()
     const { isRegistered } = useAuth()
 
-    // 3. Pre-fetch user data to populate the profile and ticket QR code
     try {
       await fetchUserData()
       isRegistered.value = true
 
-      // If registered and trying to go to /register, redirect to Home
       if (to.path === '/register') {
         return '/'
       }
     } catch (err) {
-      // If the error is 404 (Not Registered), handle redirection
       if (err.status === 404) {
         isRegistered.value = false
         registrationData.value = null
 
-        // If not registered and not on register or home page, redirect to Register
-        if (to.path !== '/register' && to.path !== '/') {
+        /* * 🎯 แก้ไขจุดนี้: อนุญาตให้ผู้ใช้ที่ยังไม่ลงทะเบียนเข้าหน้าใด ๆ ก็ตามที่ขึ้นต้นด้วย /activities ได้
+         * แต่ถ้าพยายามจะไปหน้าอื่นที่ต้องล็อกอิน (เช่น /profile) ระบบจะยังเตะไปหน้าลงทะเบียนตามเดิม
+         */
+        if (to.path !== '/register' && to.path !== '/' && !to.path.startsWith('/activities')) {
           return '/register'
         }
       } else {
-        throw err // Other API errors
+        throw err
       }
     }
   } catch (error) {

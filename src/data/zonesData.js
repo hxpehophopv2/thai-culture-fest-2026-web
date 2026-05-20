@@ -1,3 +1,5 @@
+import khonZoneImage from '@/assets/images/KHON_ZONE.png'
+
 export const zones = [
   {
     id: 'stage',
@@ -42,7 +44,7 @@ export const zones = [
     id: 'khon',
     requiresReservation: false,
     icon: 'Drama',
-    image: 'https://picsum.photos/1280/720?random=4',
+    image: khonZoneImage,
     title: { 'th-TH': 'KHON ZONE', 'en-US': 'KHON ZONE' },
     description: {
       'th-TH':
