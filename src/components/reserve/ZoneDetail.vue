@@ -248,6 +248,49 @@ const confirmReservation = async () => {
   }
 }
 
+const hasBookingForSelectedActivity = computed(() => {
+  if (!selectedActivity.value || !myRegistration.value?.bookings) return false
+  const order = mapKeyToOrder[selectedActivity.value]
+  return myRegistration.value.bookings.some((b) => b.session.activity.sortOrder === order)
+})
+
+const cancelReservation = async () => {
+  isSubmitting.value = true
+  try {
+    const currentBookings = myRegistration.value?.bookings || []
+    
+    // Find the target activity being cancelled
+    const order = mapKeyToOrder[selectedActivity.value]
+    const targetActivity = activities.value.find((a) => a.sortOrder === order)
+
+    if (!targetActivity) {
+      throw new Error('ไม่พบกิจกรรมนี้')
+    }
+
+    // Filter out the booking for this activity
+    const newSessionIds = currentBookings
+      .filter((b) => b.session.activity.id !== targetActivity.id)
+      .map((b) => b.session.id)
+
+    // Call updateMyRegistration with the new session IDs (with this activity removed)
+    await updateMyRegistration({ selectedSessionIds: newSessionIds })
+    
+    triggerToast(
+      `ยกเลิกการจองสำเร็จ / Reservation cancelled:\n${activityNames.value[selectedActivity.value]}`,
+      'success'
+    )
+    showModal.value = false
+
+    // Refresh Data
+    await fetchUserData(true)
+  } catch (err) {
+    console.error('Failed to cancel reservation', err)
+    triggerToast(`ยกเลิกไม่สำเร็จ / Cancellation failed:\n${err.message || 'เกิดข้อผิดพลาด'}`, 'error')
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
 onMounted(async () => {
   isLoadingData.value = !isUserDataLoaded.value
 
@@ -262,10 +305,10 @@ onMounted(async () => {
   }
 
   if (route.query.modal === 'true') {
+    const activityKey = route.query.activity || (route.params.id === 'stage' ? 'STG' : '')
     router.replace({ params: route.params })
     setTimeout(() => {
-      const defaultKey = route.params.id === 'stage' ? 'STG' : ''
-      openReserve(defaultKey)
+      openReserve(activityKey)
     }, 350)
   }
 })
@@ -325,9 +368,11 @@ const goBack = () => {
           <div class="modal-header">
             <h5>
               {{
-                selectedActivity
-                  ? activityNames[selectedActivity]
-                  : 'จองที่นั่ง - ' + (zone ? t(zone.title) : '')
+                hasBookingForSelectedActivity
+                  ? 'แก้ไขการจอง - ' + (selectedActivity ? activityNames[selectedActivity] : '')
+                  : (selectedActivity
+                      ? activityNames[selectedActivity]
+                      : 'จองที่นั่ง - ' + (zone ? t(zone.title) : ''))
               }}
             </h5>
             <button class="close-btn" @click="showModal = false">✕</button>
@@ -371,6 +416,15 @@ const goBack = () => {
           </div>
 
           <div class="modal-actions">
+            <button
+              v-if="hasBookingForSelectedActivity"
+              class="danger"
+              style="margin-right: auto;"
+              :disabled="isSubmitting"
+              @click="cancelReservation"
+            >
+              ยกเลิกการจอง
+            </button>
             <button class="secondary" @click="showModal = false">ยกเลิก</button>
             <button class="primary" :disabled="!selectedSlot" @click="confirmReservation">
               ยืนยันการจอง
@@ -661,6 +715,20 @@ const goBack = () => {
 }
 .modal-actions button.register-btn:hover {
   background: #c62828;
+}
+
+/* ปุ่มยกเลิกการจอง */
+.modal-actions button.danger {
+  background: var(--clr-sem-err, #e53935);
+  color: white;
+  transition: 0.2s;
+}
+.modal-actions button.danger:hover {
+  background: #c62828;
+}
+.modal-actions button.danger:disabled {
+  background: var(--clr-300);
+  cursor: not-allowed;
 }
 
 .loading-activities {
