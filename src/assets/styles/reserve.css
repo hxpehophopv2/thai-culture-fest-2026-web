@@ -43,7 +43,8 @@
 }
 
 #reserve h3 {
-  font-family: ClashGrotesk-Bold, sans-serif;
+  font-family: ClashGrotesk-Bold, 'IBM Plex Sans Thai', sans-serif;
+  font-weight: 700;
   line-height: var(--lh-h1);
   font-size: var(--fs-h4);
   text-align: center;

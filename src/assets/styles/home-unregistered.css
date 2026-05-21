@@ -209,7 +209,8 @@
 }
 
 .event-details-section h3 {
-  font-family: ClashGrotesk-Bold, sans-serif;
+  font-family: ClashGrotesk-Bold, 'IBM Plex Sans Thai', sans-serif;
+  font-weight: 700;
   text-align: center;
   line-height: var(--lh-h1);
   margin-bottom: var(--sp-xl);

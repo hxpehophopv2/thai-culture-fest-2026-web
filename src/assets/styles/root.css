@@ -148,12 +148,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 h1 {
-  font-family: ClashGrotesk-Bold, sans-serif;
+  font-family: ClashGrotesk-Bold, 'IBM Plex Sans Thai', sans-serif;
   font-size: var(--fs-h1);
   line-height: var(--lh-h1);
 }
 h2 {
-  font-family: ClashGrotesk-Bold, sans-serif;
+  font-family: ClashGrotesk-Bold, 'IBM Plex Sans Thai', sans-serif;
   font-size: var(--fs-h2);
   line-height: var(--lh-h2);
 }
