@@ -205,7 +205,7 @@ const workshopsList = [
     background-color 0.2s;
 }
 
-.item-reserve-btn:hover {
+.item-reserve-btn:hover:not(:disabled) {
   transform: scale(1.05);
   background: white;
 }
