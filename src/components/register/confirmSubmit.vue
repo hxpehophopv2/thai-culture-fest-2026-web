@@ -36,9 +36,13 @@ const emit = defineEmits(['submit', 'stay'])
             </path>
           </svg>
 
-          <span class="btn-text">
-            {{ isSubmitting ? t({ 'th-TH': 'กำลังส่ง...', 'en-US': 'Submitting...' }) : t({ 'th-TH': 'ยืนยัน', 'en-US': 'Confirm' }) }}
-          </span>
+          <p class="btn-text">
+            {{ 
+              isSubmitting 
+                ? t({ 'th-TH': 'กำลังส่ง...', 'en-US': 'Submitting...' }) 
+                : t({ 'th-TH': 'ยืนยัน', 'en-US': 'Confirm' }) 
+            }}
+          </p>
         </button>
         <button class="secondary" @click="() => emit('stay')" :disabled="isSubmitting">
           <p>{{ t({ 'th-TH': 'ไม่', 'en-US': 'No' }) }}</p>

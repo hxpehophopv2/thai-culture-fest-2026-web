@@ -1,6 +1,9 @@
 <script setup>
 import { ref } from 'vue'
-import { Phone, MapPin, X } from '@lucide/vue'
+import { Phone, MapPin, X, Camera, Info } from '@lucide/vue'
+import { useLocale } from '@/composables/useLocale'
+
+const { t } = useLocale()
 
 const currentYear = new Date().getFullYear()
 const activeModal = ref(null)
@@ -12,6 +15,50 @@ const openModal = (type) => {
 const closeModal = () => {
   activeModal.value = null
 }
+
+// --- i18n Dictionary ---
+const i18n = {
+  description: {
+    'th-TH': 'โครงการรณรงค์และส่งเสริมค่านิยมความเป็นไทย เพื่อขับเคลื่อนวัฒนธรรมไทยสู่ความยั่งยืน',
+    'en-US': 'A campaign to promote Thai values and drive Thai culture towards sustainability',
+  },
+  contactTitle: {
+    'th-TH': 'ติดต่อทีมงาน',
+    'en-US': 'Contact Us',
+  },
+  punch: {
+    'th-TH': '(พั้นซ์)',
+    'en-US': '(Punch)',
+  },
+  fern: {
+    'th-TH': '(เฟิร์น)',
+    'en-US': '(Fern)',
+  },
+  address: {
+    'th-TH': '126 ถ.ประชาอุทิศ แขวงบางมด เขตทุ่งครุ กรุงเทพมหานคร 10140',
+    'en-US': '126 Pracha Uthit Rd., Bang Mod, Thung Khru, Bangkok 10140',
+  },
+  privacyTitle: {
+    'th-TH': 'ยินยอมการใช้ข้อมูล (Consent for Data Usage)',
+    'en-US': 'Consent for Data Usage',
+  },
+  privacyDesc: {
+    'th-TH':
+      'ข้าพเจ้ายินยอมให้ผู้จัดงานเก็บรวบรวม ใช้ และประมวลผลข้อมูลส่วนบุคคลที่ให้ไว้ในแบบฟอร์มนี้ เพื่อวัตถุประสงค์ในการลงทะเบียน การยืนยันตัวตน การจัดกิจกรรม การติดต่อสื่อสาร และการบริหารจัดการงาน KMUTT ROOTED เท่านั้น',
+    'en-US':
+      'I consent to the collection, use, and processing of my personal data provided in this form for registration, identity verification, event communication, and event management purposes for KMUTT ROOTED only.',
+  },
+  termsTitle: {
+    'th-TH': 'ยินยอมการบันทึกภาพ (Consent for Photo/Video)',
+    'en-US': 'Consent for Photo/Video',
+  },
+  termsDesc: {
+    'th-TH':
+      'ข้าพเจ้ายินยอมให้ผู้จัดงานบันทึกภาพนิ่ง วิดีโอ หรือเสียงของข้าพเจ้าในระหว่างการเข้าร่วมกิจกรรม และนำไปใช้เพื่อการประชาสัมพันธ์ รายงานผลกิจกรรม หรือเผยแพร่ผ่านช่องทางของมหาวิทยาลัยและผู้จัดงาน โดยไม่ใช้ในเชิงพาณิชย์',
+    'en-US':
+      'I consent to the organizer capturing my photos, videos, or audio during the event and using them for public relations, event reporting, or publication through the university and organizer channels, without commercial use.',
+  },
+}
 </script>
 
 <template>
@@ -21,36 +68,41 @@ const closeModal = () => {
         <div class="footer-section brand-section">
           <h3 class="footer-title">KMUTT ROOTED</h3>
           <p class="footer-subtitle">Thai Sustainable Culture Fest 2026</p>
-          <p class="footer-desc">
-            โครงการรณรงค์และส่งเสริมค่านิยมความเป็นไทย เพื่อขับเคลื่อนวัฒนธรรมไทยสู่ความยั่งยืน
-          </p>
+          <p class="footer-desc">{{ t(i18n.description) }}</p>
         </div>
 
         <div class="footer-section contact-section">
-          <h4 class="section-title">ติดต่อทีมงาน</h4>
+          <h4 class="section-title">{{ t(i18n.contactTitle) }}</h4>
           <div class="contact-item">
             <Phone class="contact-icon" />
             <div>
-              <p>093-926-2583 <span>(พั้นซ์)</span></p>
+              <p>
+                093-926-2583 <span>{{ t(i18n.punch) }}</span>
+              </p>
             </div>
           </div>
           <div class="contact-item">
             <Phone class="contact-icon" />
             <div>
-              <p>061-396-0779 <span>(เฟิร์น)</span></p>
+              <p>
+                061-396-0779 <span>{{ t(i18n.fern) }}</span>
+              </p>
             </div>
           </div>
           <div class="contact-item mt-s">
             <MapPin class="contact-icon" />
             <div>
-              <p>KMUTT Bangmod Campus</p>
+              <p>{{ t(i18n.address) }}</p>
             </div>
           </div>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <p>&copy; {{ currentYear }} KMUTT ROOTED Team. All rights reserved.</p>
+        <div class="">
+          <p>Designed & Developed by Teeruch Songtalay, Jeerayut Rattanamanee</p>
+          <p>&copy; {{ currentYear }} KMUTT ROOTED Team. All rights reserved.</p>
+        </div>
         <div class="legal-links">
           <span>Version 0.9.4</span>
           <span class="divider">|</span>
@@ -69,44 +121,22 @@ const closeModal = () => {
           </button>
 
           <div v-if="activeModal === 'privacy'" class="modal-content">
-            <h4>Consent for Data Usage / ยินยอมการใช้ข้อมูล</h4>
-            <div class="lang-block">
-              <span class="lang-badge">TH</span>
-              <p>
-                ข้าพเจ้ายินยอมให้ผู้จัดงานเก็บรวบรวม ใช้
-                และประมวลผลข้อมูลส่วนบุคคลที่ให้ไว้ในแบบฟอร์มนี้ เพื่อวัตถุประสงค์ในการลงทะเบียน
-                การยืนยันตัวตน การจัดกิจกรรม การติดต่อสื่อสาร และการบริหารจัดการงาน KMUTT ROOTED
-                เท่านั้น
-              </p>
+            <div class="modal-icon">
+              <Info :size="128" :strokeWidth="4" absoluteStrokeWidth />
             </div>
+            <h4>{{ t(i18n.privacyTitle) }}</h4>
             <div class="lang-block">
-              <span class="lang-badge">EN</span>
-              <p>
-                I consent to the collection, use, and processing of my personal data provided in
-                this form for registration, identity verification, event communication, and event
-                management purposes for KMUTT ROOTED only.
-              </p>
+              <p>{{ t(i18n.privacyDesc) }}</p>
             </div>
           </div>
 
           <div v-if="activeModal === 'terms'" class="modal-content">
-            <h4>Consent for Photo/Video / ยินยอมการบันทึกภาพ</h4>
-            <div class="lang-block">
-              <span class="lang-badge">TH</span>
-              <p>
-                ข้าพเจ้ายินยอมให้ผู้จัดงานบันทึกภาพนิ่ง วิดีโอ
-                หรือเสียงของข้าพเจ้าในระหว่างการเข้าร่วมกิจกรรม และนำไปใช้เพื่อการประชาสัมพันธ์
-                รายงานผลกิจกรรม หรือเผยแพร่ผ่านช่องทางของมหาวิทยาลัยและผู้จัดงาน
-                โดยไม่ใช้ในเชิงพาณิชย์
-              </p>
+            <div class="modal-icon">
+              <Camera :size="128" :strokeWidth="4" absoluteStrokeWidth />
             </div>
+            <h4>{{ t(i18n.termsTitle) }}</h4>
             <div class="lang-block">
-              <span class="lang-badge">EN</span>
-              <p>
-                I consent to the organizer capturing my photos, videos, or audio during the event
-                and using them for public relations, event reporting, or publication through the
-                university and organizer channels, without commercial use.
-              </p>
+              <p>{{ t(i18n.termsDesc) }}</p>
             </div>
           </div>
         </div>
@@ -118,7 +148,7 @@ const closeModal = () => {
 <style scoped>
 /* ---------- GLOBAL FOOTER ---------- */
 .global-footer {
-  background: linear-gradient(180deg, var(--clr-900, #0f172a) 0%, #020617 100%);
+  background: linear-gradient(135deg, var(--clr-800, #0f172a) 0%, #020617 100%);
   color: var(--clr-100, #f8fafc);
   padding: var(--sp-2xl) var(--sp-s) calc(var(--sp-4xl) + env(safe-area-inset-bottom));
   font-family: sans-serif;
@@ -158,7 +188,7 @@ const closeModal = () => {
 
 @media (min-width: 1024px) {
   .footer-grid {
-    grid-template-columns: 2fr 1fr 1.5fr;
+    grid-template-columns: 2fr 2fr 0.5fr;
     gap: var(--sp-xl);
   }
 }
@@ -196,7 +226,7 @@ const closeModal = () => {
 .section-title::after {
   content: '';
   position: absolute;
-  bottom: -4px;
+  bottom: -2px;
   left: 0;
   width: 50%;
   height: 2px;
@@ -229,14 +259,9 @@ const closeModal = () => {
 /* ---------- CONTACT SECTION ---------- */
 .contact-item {
   display: flex;
-  align-items: center;
   gap: var(--sp-s);
   margin-bottom: var(--sp-s);
   color: var(--clr-300, #cbd5e1);
-}
-
-.mt-s {
-  margin-top: var(--sp-m);
 }
 
 .contact-icon {
@@ -336,52 +361,46 @@ const closeModal = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: none;
 }
 
 .close-icon {
   width: 20px;
   height: 20px;
-  color: #64748b;
+  color: var(--clr-500);
   transition: color 0.2s ease;
 }
 
 .close-btn:hover .close-icon {
-  color: #1e293b;
+  color: var(--clr-700);
+}
+
+.modal-icon {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--clr-pri-500);
+  margin-bottom: var(--sp-m);
 }
 
 .modal-content h4 {
+  text-align: center;
   font-size: 1.2rem;
   font-weight: 700;
-  color: #1e3a8a;
-  margin: 0 0 var(--sp-l);
-  padding-right: var(--sp-l);
+  color: var(--clr-pri-500);
+  margin: 0 0 var(--sp-m);
   line-height: 1.4;
+}
+.modal-content p {
+  color: var(--clr-500);
 }
 
 .lang-block {
   margin-bottom: var(--sp-l);
 }
-
 .lang-block:last-child {
   margin-bottom: 0;
-}
-
-.lang-badge {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: bold;
-  background: #e2e8f0;
-  color: #475569;
-  padding: 2px 6px;
-  border-radius: 6px;
-  margin-bottom: var(--sp-xs);
-}
-
-.lang-block p {
-  margin: 0;
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: #334155;
 }
 
 /* ---------- MODAL ANIMATION ---------- */
