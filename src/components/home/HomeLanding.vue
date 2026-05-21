@@ -7,6 +7,7 @@ import { useAuth } from '@/composables/useAuth'
 import posterHero from '@/assets/images/posterHero.png'
 import Activities from '@/components/reserve/Activities.vue'
 import LangToggle from '../LangToggle.vue'
+import GlobalFooter from '@/components/GlobalFooter.vue'
 
 const router = useRouter()
 const { isRegistered } = useAuth()
@@ -84,9 +85,11 @@ onUnmounted(() => {
           โครงการรณรงค์และส่งเสริมค่านิยมความเป็นไทย เพื่อขับเคลื่อนวัฒนธรรมไทยสู่ความยั่งยืน
         </small>
 
-        <button type="button" class="primary cta-button stagger-item" @click="handleCtaAction">
-          {{ isRegistered ? 'จองกิจกรรมภายในงาน' : 'ลงทะเบียนเข้าร่วมงาน' }}
-        </button>
+        <div class="stagger-item">
+          <button type="button" class="primary cta-button" @click="handleCtaAction">
+            {{ isRegistered ? 'จองกิจกรรมภายในงาน' : 'ลงทะเบียนเข้าร่วมงาน' }}
+          </button>
+        </div>
       </div>
 
       <div class="hero-image">
@@ -131,11 +134,7 @@ onUnmounted(() => {
     <footer class="bottom-cta-section animate-on-scroll">
       <div class="container cta-card">
         <h3 class="cta-title">
-          {{
-            isRegistered
-              ? 'เลือกหัวข้อเวิร์กช็อปที่คุณสนใจ'
-              : 'พร้อมที่จะสร้างการเปลี่ยนแปลงหรือยัง?'
-          }}
+          {{ isRegistered ? 'เลือกหัวข้อเวิร์กช็อปที่คุณสนใจ' : 'พร้อมยังที่จะไทยแบบตัวมัม?' }}
         </h3>
         <button
           type="button"
@@ -154,6 +153,8 @@ onUnmounted(() => {
     >
       <ArrowUp />
     </button>
+
+    <GlobalFooter />
   </div>
 </template>
 

@@ -73,7 +73,7 @@ const goToReserve = (event, zoneId) => {
             <button v-else @click="goToReserve($event, zone.id)">Reserve Now</button>
           </template>
 
-          <small v-else class="zone-status"> This zone does not require pre-registration </small>
+          <small v-else class="zone-status"> This zone does not require pre-reservation </small>
         </div>
       </div>
     </main>
