@@ -59,7 +59,7 @@ const emit = defineEmits(['open-reserve'])
             ด้วยเทคนิคช่างสิบหมู่แบบดั้งเดิม...
           </p>
         </div>
-        <button class="item-reserve-btn" @click="emit('open-reserve', 'LAB5')">Reserve</button>
+        <button class="item-reserve-btn" disabled>Coming soon ..</button>
       </li>
     </ol>
   </div>
@@ -124,9 +124,16 @@ const emit = defineEmits(['open-reserve'])
   align-self: flex-start; /* ปุ่มชิดซ้ายบนมือถือ */
 }
 
-.item-reserve-btn:hover {
+.item-reserve-btn:hover:not(:disabled) {
   transform: scale(1.05);
   background: white;
+}
+
+.item-reserve-btn:disabled {
+  background: var(--clr-500);
+  color: var(--clr-200);
+  cursor: not-allowed;
+  opacity: 0.8;
 }
 
 /* ถ้าหน้าจอใหญ่ขึ้น ให้ปุ่มไปอยู่ด้านขวา */
