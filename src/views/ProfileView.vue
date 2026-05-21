@@ -1,8 +1,11 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import LangToggle from '@/components/LangToggle.vue'
 import { useUserData } from '@/composables/useUserData'
 import LoadingScreen from '@/components/LoadingScreen.vue'
+
+const router = useRouter()
 
 const { registrationData, qrData, profileData, isUserDataLoaded, fetchUserData } = useUserData()
 
@@ -43,6 +46,11 @@ const bookedActivities = computed(() => {
     }
   })
 })
+
+const editBooking = (act) => {
+  const zoneId = act.id === 'STG' ? 'stage' : 'lab'
+  router.push(`/activities/${zoneId}?modal=true&activity=${act.id}`)
+}
 
 onMounted(async () => {
   isLoading.value = !isUserDataLoaded.value
@@ -93,11 +101,21 @@ onMounted(async () => {
       <section class="my-schedules">
         <h3>My Reservations</h3>
         <div v-if="bookedActivities.length > 0" class="schedule-grid">
-          <div v-for="act in bookedActivities" :key="act.id" class="schedule-item">
+          <div
+            v-for="act in bookedActivities"
+            :key="act.id"
+            class="schedule-item clickable"
+            @click="editBooking(act)"
+          >
             <span class="code-tag">{{ act.id }}</span>
             <div class="item-details">
               <p>{{ act.name }}</p>
               <time>{{ act.time }}</time>
+            </div>
+            <div class="arrow-indicator">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m9 18 6-6-6-6"/>
+              </svg>
             </div>
           </div>
         </div>
@@ -109,4 +127,33 @@ onMounted(async () => {
 
 <style scoped>
 @import url('@/assets/styles/profile.css');
+
+.schedule-item.clickable {
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  position: relative;
+  padding-right: 40px !important;
+}
+
+.schedule-item.clickable:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.arrow-indicator {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.7);
+  transition: transform 0.2s ease, color 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.schedule-item.clickable:hover .arrow-indicator {
+  color: white;
+  transform: translateY(-50%) translateX(2px);
+}
 </style>
