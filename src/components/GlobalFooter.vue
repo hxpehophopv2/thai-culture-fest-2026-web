@@ -104,7 +104,7 @@ const i18n = {
           <p>&copy; {{ currentYear }} KMUTT ROOTED Team. All rights reserved.</p>
         </div>
         <div class="legal-links">
-          <span>Version 0.9.4</span>
+          <span>Version 1.0.0</span>
           <span class="divider">|</span>
           <a href="#" @click.prevent="openModal('privacy')">Privacy Policy</a>
           <span class="divider">|</span>

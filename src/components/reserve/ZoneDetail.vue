@@ -509,10 +509,10 @@ const goBack = () => {
           </div>
 
           <div class="modal-actions">
-            <button class="secondary" @click="showModal = false">{{ t(i18n.cancel) }}</button>
             <button class="primary" :disabled="!selectedSlot" @click="confirmReservation">
               {{ t(i18n.confirmBooking) }}
             </button>
+            <button class="secondary" @click="showModal = false">{{ t(i18n.cancel) }}</button>
             <button
               v-if="hasBookingForSelectedActivity"
               class="danger"
