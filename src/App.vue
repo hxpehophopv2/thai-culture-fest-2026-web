@@ -27,7 +27,7 @@ const checkUserStatus = async () => {
   } catch {
     isRegistered.value = false
   } finally {
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 500))
     isBooting.value = false
   }
 }

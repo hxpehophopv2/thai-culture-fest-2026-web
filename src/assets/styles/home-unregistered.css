@@ -513,8 +513,10 @@
 }
 .hero-content .cta-button {
   animation-delay: 0.4s;
-
   transition: all 150ms ease-out;
+}
+.cta-button span {
+  font-weight: bold;
 }
 
 /* Event Details Staggering */
