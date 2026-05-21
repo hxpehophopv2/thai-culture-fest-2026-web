@@ -16,9 +16,11 @@ import {
 } from '@/services/registrationService'
 import { initLineAuth } from '@/services/lineAuthService'
 import { useUserData } from '@/composables/useUserData'
+import { useLocale } from '@/composables/useLocale'
 
 const router = useRouter()
 const { fetchUserData } = useUserData()
+const { t } = useLocale()
 const registerStep = ref(1)
 const selectedType = ref('')
 const step1Error = ref(false)
@@ -181,7 +183,7 @@ onMounted(bootstrap)
     <LangToggle />
   </nav>
   <section class="register">
-    <LoadingScreen v-if="isBooting" text="กำลังเชื่อมต่อกับ LINE..." />
+    <LoadingScreen v-if="isBooting" :text="t({ 'th-TH': 'กำลังเชื่อมต่อกับ LINE...', 'en-US': 'Connecting to LINE...' })" />
 
     <section v-else>
       <registerHeader :step="registerStep" />
