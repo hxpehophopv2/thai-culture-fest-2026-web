@@ -416,6 +416,10 @@ const goBack = () => {
           </div>
 
           <div class="modal-actions">
+            <button class="secondary" @click="showModal = false">ยกเลิก</button>
+            <button class="primary" :disabled="!selectedSlot" @click="confirmReservation">
+              ยืนยันการจอง
+            </button>
             <button
               v-if="hasBookingForSelectedActivity"
               class="danger"
@@ -423,10 +427,6 @@ const goBack = () => {
               @click="cancelReservation"
             >
               ยกเลิกการจอง
-            </button>
-            <button class="secondary" @click="showModal = false">ยกเลิก</button>
-            <button class="primary" :disabled="!selectedSlot" @click="confirmReservation">
-              ยืนยันการจอง
             </button>
           </div>
         </div>
