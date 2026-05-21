@@ -33,9 +33,9 @@ const emit = defineEmits(['submit', 'stay'])
             </path>
           </svg>
 
-          <span class="btn-text">
+          <p class="btn-text">
             {{ isSubmitting ? 'กำลังส่ง...' : 'ยืนยัน' }}
-          </span>
+          </p>
         </button>
         <button class="secondary" @click="() => emit('stay')" :disabled="isSubmitting">
           <p>ไม่</p>
