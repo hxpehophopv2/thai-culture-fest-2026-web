@@ -109,7 +109,18 @@ const workshopsList = [
           <h5>{{ t(item.title) }}</h5>
           <p>{{ t(item.desc) }}</p>
         </div>
-        <button class="item-reserve-btn" @click="emit('open-reserve', item.id)">
+        <button
+          v-if="item.id === 'LAB5'"
+          class="item-reserve-btn"
+          disabled
+        >
+          Coming soon ..
+        </button>
+        <button
+          v-else
+          class="item-reserve-btn"
+          @click="emit('open-reserve', item.id)"
+        >
           {{ t(i18n.btnReserve) }}
         </button>
       </li>
@@ -208,6 +219,13 @@ const workshopsList = [
 .item-reserve-btn:hover:not(:disabled) {
   transform: scale(1.05);
   background: white;
+}
+
+.item-reserve-btn:disabled {
+  background: var(--clr-500);
+  color: var(--clr-200);
+  cursor: not-allowed;
+  opacity: 0.8;
 }
 
 @media (min-width: 500px) {

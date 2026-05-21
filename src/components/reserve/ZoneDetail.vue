@@ -509,18 +509,17 @@ const goBack = () => {
           </div>
 
           <div class="modal-actions">
+            <button class="secondary" @click="showModal = false">{{ t(i18n.cancel) }}</button>
+            <button class="primary" :disabled="!selectedSlot" @click="confirmReservation">
+              {{ t(i18n.confirmBooking) }}
+            </button>
             <button
               v-if="hasBookingForSelectedActivity"
               class="danger"
-              style="margin-right: auto"
               :disabled="isSubmitting"
               @click="cancelReservation"
             >
               {{ t(i18n.cancelBooking) }}
-            </button>
-            <button class="secondary" @click="showModal = false">{{ t(i18n.cancel) }}</button>
-            <button class="primary" :disabled="!selectedSlot" @click="confirmReservation">
-              {{ t(i18n.confirmBooking) }}
             </button>
           </div>
         </div>
@@ -811,6 +810,9 @@ const goBack = () => {
 
 /* ปุ่มยกเลิกการจอง */
 .modal-actions button.danger {
+  align-self: center;
+  padding: var(--sp-s) var(--sp-m);
+  font-size: 0.9rem;
   background: var(--clr-sem-err, #e53935);
   color: white;
   transition: 0.2s;

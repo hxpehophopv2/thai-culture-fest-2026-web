@@ -4,6 +4,9 @@ import { RouterView } from 'vue-router'
 import { initLineAuth } from '@/services/lineAuthService'
 import { useAuth } from '@/composables/useAuth'
 import { useUserData } from '@/composables/useUserData'
+import { useLocale } from '@/composables/useLocale'
+
+const { t } = useLocale()
 
 import GlobalNav from './components/GlobalNav.vue'
 import LoadingScreen from '@/components/LoadingScreen.vue'
@@ -43,7 +46,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <LoadingScreen v-if="isBooting" text="กำลังตรวจสอบข้อมูล..." />
+  <LoadingScreen v-if="isBooting" :text="t({ 'th-TH': 'กำลังตรวจสอบข้อมูล...', 'en-US': 'Checking user information...' })" />
 
   <template v-else>
     <RouterView />
