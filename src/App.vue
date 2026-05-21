@@ -50,3 +50,18 @@ onMounted(() => {
     <GlobalNav />
   </template>
 </template>
+
+<style>
+.page-fade-enter-active,
+.page-fade-leave-active {
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.page-fade-enter-from,
+.page-fade-leave-to {
+  opacity: 0;
+  transform: translateY(15px);
+}
+</style>
