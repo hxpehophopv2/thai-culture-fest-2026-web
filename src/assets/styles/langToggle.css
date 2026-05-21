@@ -23,8 +23,8 @@ nav {
 }
 
 .theme-light {
-  color: var(--clr-300);
-  border: 1px solid var(--clr-300);
+  color: var(--clr-150);
+  border: 1px solid var(--clr-150);
 }
 .theme-light span.active {
   font-weight: 900;

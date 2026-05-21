@@ -66,7 +66,7 @@ export const zones = [
     title: { 'th-TH': 'PLAY ZONE', 'en-US': 'PLAY ZONE' },
     description: {
       'th-TH':
-        'สัมผัสความสนุกและเสน่ห์ของการละเล่นพื้นบ้านไทย เปิดโอกาสให้ผู้เข้าร่วมทุกช่วงวัยได้ร่วมเล่น เรียนรู้ และสร้างประสบการณ์ร่วมกัน ผ่านการละเล่นพื้นบ้านไทย เช่น หมากเก็บ หมากขุม กระโดดยาง และเดินกะลา ซึ่งสะท้อนภูมิปัญญา วิถีชีวิต และวัฒนธรรมไทยในรูปแบบที่สนุกสนานและเข้าถึงได้ง่าย',
+        'สัมผัสความสนุกและเสน่ห์ของการละเล่นพื้นบ้านไทย เปิดโอกาสให้ผู้เข้าร่วมทุกช่วงวัยได้ร่วมเล่น เรียนรู้ และสร้างประสบการณ์ร่วมกัน',
       'en-US':
         'Enjoy the fun and charm of traditional Thai folk games through interactive and energetic activities designed for all ages. PLAY ZONE invites participants to experience classic Thai playground games such as Mak Kep, Mak Khom, Kradod Yang, and Coconut Shell Walking while learning about Thai culture through movement, teamwork, and play.',
     },

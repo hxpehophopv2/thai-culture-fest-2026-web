@@ -337,7 +337,7 @@
 
 /* ---------- BOTTOM CTA SECTION ---------- */
 .bottom-cta-section {
-  padding: var(--sp-2xl) var(--sp-m) var(--sp-4xl);
+  padding: var(--sp-3xl) var(--sp-l);
   background: linear-gradient(135deg, var(--clr-100) 0%, rgba(49, 130, 222, 1) 100%);
   display: flex;
   justify-content: center;
@@ -513,6 +513,10 @@
 }
 .hero-content .cta-button {
   animation-delay: 0.4s;
+  transition: all 150ms ease-out;
+}
+.cta-button span {
+  font-weight: bold;
 }
 
 /* Event Details Staggering */

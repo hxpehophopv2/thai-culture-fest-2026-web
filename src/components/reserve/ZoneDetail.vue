@@ -5,9 +5,12 @@ import { zones } from '@/data/zonesData.js'
 import { useLocale } from '@/composables/useLocale'
 import { updateMyRegistration } from '@/services/registrationService'
 import { useUserData } from '@/composables/useUserData'
+import { X, CircleAlert } from '@lucide/vue'
 
+import LangToggle from '../LangToggle.vue'
 import LabZoneContent from '@/components/reserve/LabZone.vue'
 import StageZoneContent from '@/components/reserve/StageZone.vue'
+import PlayZoneContent from '@/components/reserve/PlayZone.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -58,6 +61,7 @@ onUnmounted(() => {
 const contentMap = {
   lab: LabZoneContent,
   stage: StageZoneContent,
+  play: PlayZoneContent,
 }
 
 const { registrationData, activitiesData, isUserDataLoaded, fetchUserData } = useUserData()
@@ -320,6 +324,10 @@ const goBack = () => {
 
 <template>
   <div class="zone-detail-wrapper">
+    <nav class="hero-nav">
+      <LangToggle theme="light" />
+    </nav>
+
     <main v-if="zone" id="zone-detail">
       <button class="back-btn" @click="goBack">
         <svg
@@ -429,23 +437,27 @@ const goBack = () => {
     <Transition name="fade">
       <div v-if="showAuthModal" class="modal-backdrop" @click.self="showAuthModal = false">
         <div class="modal-box">
-          <div class="modal-header">
-            <h5 class="error-title">ยังไม่ได้ลงทะเบียนเข้าร่วมงาน</h5>
-            <button class="close-btn" @click="showAuthModal = false">✕</button>
-          </div>
+          <button class="close-btn" @click="showAuthModal = false"><X /></button>
+          <div class="modal-text">
+            <div class="modal-header">
+              <div class="alert-icon">
+                <CircleAlert :size="128" :strokeWidth="4" absoluteStrokeWidth />
+              </div>
+              <h5 class="error-title">ยังไม่ได้ลงทะเบียนเข้าร่วมงาน</h5>
+            </div>
 
-          <div class="modal-body">
-            <p style="color: var(--clr-700, #475569); line-height: 1.5">
-              ขออภัยด้วยครับ คุณจำเป็นต้องลงทะเบียนเข้าร่วมงานหลักก่อน
-              จึงจะสามารถใช้สิทธิ์การจองที่นั่งหรือรอบเวลาในกิจกรรมต่างๆ ได้ครับ
-            </p>
+            <div class="modal-body">
+              <p style="color: var(--clr-600, #475569); line-height: 1.5; text-align: center">
+                ขออภัย คุณต้องลงทะเบียนเข้าร่วมงานก่อนจึงจะสามารถจองรอบเวลาในกิจกรรมต่าง ๆ
+              </p>
+            </div>
           </div>
 
           <div class="modal-actions">
-            <button class="secondary" @click="showAuthModal = false">ยกเลิก</button>
             <button class="primary register-btn" @click="router.push('/register')">
               ลงทะเบียนตอนนี้
             </button>
+            <button class="secondary" @click="showAuthModal = false">ยกเลิก</button>
           </div>
         </div>
       </div>
@@ -473,7 +485,7 @@ const goBack = () => {
 
 <style scoped>
 .zone-detail-wrapper {
-  padding: 0 var(--sp-l) var(--sp-3xl);
+  padding: 6rem var(--sp-l) var(--sp-3xl);
   display: flex;
   justify-content: center;
   position: relative;
@@ -544,10 +556,12 @@ const goBack = () => {
 }
 
 .modal-box {
+  position: relative;
   background: white;
   color: #111;
   border-radius: var(--sp-m);
   padding: var(--sp-l);
+  padding-top: var(--sp-2xl);
   width: min(90%, 450px);
   max-height: 85vh;
   overflow-y: auto;
@@ -557,11 +571,25 @@ const goBack = () => {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
+.modal-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-s);
+}
+
 .modal-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
   gap: var(--sp-m);
+}
+
+.alert-icon {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--clr-sem-err);
 }
 
 .modal-header h5 {
@@ -571,12 +599,16 @@ const goBack = () => {
   line-height: 1.4;
 }
 
-/* ตั้งค่าหัวข้อ Warning แจ้งเตือนสีแดง */
 .modal-header h5.error-title {
+  font-size: 1.2rem;
+  font-weight: bold;
   color: var(--clr-sem-err, #e53935);
 }
 
 .close-btn {
+  position: absolute;
+  top: var(--sp-l);
+  right: var(--sp-l);
   background: none;
   border: none;
   font-size: 1.2rem;
@@ -652,12 +684,11 @@ const goBack = () => {
 
 .modal-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: var(--sp-s);
+  flex-direction: column;
+  gap: var(--sp-m);
   margin-top: var(--sp-s);
 }
 .modal-actions button {
-  padding: var(--sp-s) var(--sp-m);
   border-radius: var(--sp-s);
   font-weight: bold;
   border: none;
@@ -665,7 +696,7 @@ const goBack = () => {
 }
 .modal-actions button.secondary {
   background: var(--clr-200);
-  color: var(--clr-900);
+  color: var(--clr-700);
 }
 
 .modal-actions button.primary {

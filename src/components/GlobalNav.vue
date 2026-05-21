@@ -4,16 +4,24 @@ import { useRoute, useRouter } from 'vue-router'
 import { Home, Ticket, UserRound } from '@lucide/vue'
 
 import { useAuth } from '@/composables/useAuth'
+import { useLocale } from '@/composables/useLocale'
 
 const route = useRoute()
 const router = useRouter()
 const { isRegistered } = useAuth()
+const { t } = useLocale()
+
+const i18n = {
+  navHome: { 'th-TH': 'หน้าหลัก', 'en-US': 'Home' },
+  navReserve: { 'th-TH': 'จองกิจกรรม', 'en-US': 'Reserve' },
+  navProfile: { 'th-TH': 'โปรไฟล์', 'en-US': 'My Profile' },
+}
 
 // Nav items configuration
 const navItems = [
-  { id: 'home', path: '/', icon: Home, label: 'Home' },
-  { id: 'reserve', path: '/activities', icon: Ticket, label: 'Reserve' },
-  { id: 'profile', path: '/profile', icon: UserRound, label: 'My Profile' },
+  { id: 'home', path: '/', icon: Home, label: i18n.navHome },
+  { id: 'reserve', path: '/activities', icon: Ticket, label: i18n.navReserve },
+  { id: 'profile', path: '/profile', icon: UserRound, label: i18n.navProfile },
 ]
 
 // Determine active index based on current route path
@@ -55,7 +63,7 @@ const navigate = (path) => {
         <span class="icon-wrapper">
           <component :is="item.icon" :size="24" stroke-width="2.5" />
         </span>
-        <span class="label">{{ item.label }}</span>
+        <span class="label">{{ t(item.label) }}</span>
       </label>
     </div>
   </nav>
