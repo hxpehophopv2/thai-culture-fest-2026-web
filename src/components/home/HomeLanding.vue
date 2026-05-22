@@ -3,26 +3,27 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import { ArrowDown, ArrowUp, MapPin, Calendar, Map } from '@lucide/vue'
 import { useAuth } from '@/composables/useAuth'
-import { useLocale } from '@/composables/useLocale' // นำเข้า useLocale
+import { useLocale } from '@/composables/useLocale'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 import posterHero from '@/assets/images/posterHero.png'
 import Activities from '@/components/reserve/Activities.vue'
 import LangToggle from '../LangToggle.vue'
 import GlobalFooter from '@/components/GlobalFooter.vue'
 
+gsap.registerPlugin(ScrollTrigger)
 const router = useRouter()
 const { isRegistered } = useAuth()
-const { t } = useLocale() // ใช้งานตัวแปลภาษา
-
+const { t } = useLocale()
 const hasScrolled = ref(false)
 const showBackToTop = ref(false)
 
-// ปรับปรุงฟังก์ชันหลักให้ทำงานแบบ Dynamic ทันที
 const handleCtaAction = () => {
   if (isRegistered.value) {
-    router.push('/activities') // ถ้าลงทะเบียนแล้ว -> ส่งไปหน้าเลือกกิจกรรม
+    router.push('/activities')
   } else {
-    router.push('/register') // ถ้ายังไม่ลงทะเบียน -> ส่งไปหน้าฟอร์มลงทะเบียนงาน
+    router.push('/register')
   }
 }
 
@@ -38,37 +39,71 @@ const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-const observer = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible')
-      }
-    })
-  },
-  { threshold: 0.1 },
-)
-
 onMounted(() => {
   window.addEventListener('scroll', handleScroll)
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible')
-        }
-      })
-    },
-    { threshold: 0.1 },
-  )
+  // Hero Section Animation
+  const heroTl = gsap.timeline()
+  heroTl.from('.hero-content > *', {
+    y: 30,
+    opacity: 0,
+    duration: 0.8,
+    ease: 'power3.out',
+    stagger: 0.15,
+  })
 
-  document.querySelectorAll('.animate-on-scroll').forEach((el) => observer.observe(el))
+  // Event Details Section
+  gsap.from('.event-details-section h3', {
+    scrollTrigger: {
+      trigger: '.event-details-section',
+      start: 'top 80%',
+      toggleActions: 'play none none reverse',
+    },
+    y: 30,
+    opacity: 0,
+    duration: 0.6,
+    ease: 'power3.out',
+  })
+
+  gsap.from('.detail-item', {
+    scrollTrigger: {
+      trigger: '.details-wrapper',
+      start: 'top 85%',
+      toggleActions: 'play none none reverse',
+    },
+    y: 40,
+    opacity: 0,
+    duration: 0.8,
+    ease: 'power2.out',
+    stagger: 0.2,
+  })
+
+  // Bottom CTA Section
+  gsap.from('.cta-wrapper', {
+    scrollTrigger: {
+      trigger: '.bottom-cta-section',
+      start: 'top 65%',
+      toggleActions: 'play none none reverse',
+    },
+    y: 50,
+    opacity: 0,
+    duration: 0.8,
+    ease: 'back.out(1.5)',
+  })
+
+  gsap.to('.cta-card', {
+    y: -10,
+    duration: 2,
+    ease: 'sine.inOut',
+    yoyo: true,
+    repeat: -1,
+  })
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
-  observer.disconnect()
+  // ล้าง ScrollTrigger ทิ้งเพื่อป้องกันบักตอนเปลี่ยนหน้า
+  ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
 })
 
 // --- i18n Dictionary ---
@@ -99,8 +134,9 @@ const i18n = {
   },
   locationValue: {
     'th-TH':
-      'พื้นที่สนับสนุนด้านการเรียนรู้ (Science Learning Space), มจธ. บางมด (KMUTT Bangmod Campus)',
-    'en-US': 'Science Learning Space, KMUTT Bangmod Campus',
+      'พื้นที่สนับสนุนด้านการเรียนรู้ (Science Learning Space), มหาวิทยาลัยเทคโนโลยีพระจอมเกล้าธนบุรี (บางมด)',
+    'en-US':
+      "Science Learning Space, King Mongkut's University of Technology Thonburi (Bangmod Campus)",
   },
   howToGetThere: {
     'th-TH': 'วิธีการเดินทาง',
@@ -135,19 +171,19 @@ const i18n = {
 
 <template>
   <div id="home-unregistered">
-    <header class="hero-section animate-on-scroll">
+    <header class="hero-section">
       <nav class="hero-nav">
         <LangToggle theme="dark" />
       </nav>
 
       <div class="hero-content">
-        <h3 class="stagger-item"><RouterLink to="#">KMUTT ROOTED</RouterLink></h3>
-        <h1 class="stagger-item">Thai Sustainable Culture Fest 2026</h1>
-        <small class="stagger-item">
+        <h3><RouterLink to="#">KMUTT ROOTED</RouterLink></h3>
+        <h1>Thai Sustainable Culture Fest 2026</h1>
+        <small>
           {{ t(i18n.heroDesc) }}
         </small>
 
-        <div class="stagger-item">
+        <div>
           <button type="button" class="primary cta-button" @click="handleCtaAction">
             {{ isRegistered ? t(i18n.ctaReserve) : t(i18n.ctaRegister) }}
           </button>
@@ -164,11 +200,11 @@ const i18n = {
       </div>
     </header>
 
-    <section class="event-details-section animate-on-scroll">
+    <section class="event-details-section">
       <div class="container">
         <h3>{{ t(i18n.eventDetailsTitle) }}</h3>
         <div class="details-wrapper">
-          <div class="detail-item stagger-item">
+          <div class="detail-item">
             <MapPin class="icon" />
             <div class="info">
               <p class="label">{{ t(i18n.locationLabel) }}</p>
@@ -178,7 +214,7 @@ const i18n = {
               </a>
             </div>
           </div>
-          <div class="detail-item stagger-item">
+          <div class="detail-item">
             <Calendar class="icon" />
             <div class="info">
               <p class="label">{{ t(i18n.dateTimeLabel) }}</p>
@@ -189,24 +225,26 @@ const i18n = {
       </div>
     </section>
 
-    <section class="activities-section animate-on-scroll">
-      <Activities />
+    <section class="activities-section">
+      <Activities hideOrbs />
     </section>
 
     <footer class="bottom-cta-section animate-on-scroll">
-      <div class="container cta-card">
-        <h3 class="cta-title">
-          {{ isRegistered ? t(i18n.bottomCtaRegistered) : t(i18n.bottomCtaUnregistered) }}
-        </h3>
-        <button
-          type="button"
-          class="cta-button primary large-btn glow-effect"
-          @click="handleCtaAction"
-        >
-          <span>{{
-            isRegistered ? t(i18n.bottomCtaBtnRegistered) : t(i18n.bottomCtaBtnUnregistered)
-          }}</span>
-        </button>
+      <div class="cta-wrapper" style="display: flex; justify-content: center">
+        <div class="cta-card">
+          <h3 class="cta-title">
+            {{ isRegistered ? t(i18n.bottomCtaRegistered) : t(i18n.bottomCtaUnregistered) }}
+          </h3>
+          <button
+            type="button"
+            class="cta-button primary large-btn glow-effect"
+            @click="handleCtaAction"
+          >
+            <span>{{
+              isRegistered ? t(i18n.bottomCtaBtnRegistered) : t(i18n.bottomCtaBtnUnregistered)
+            }}</span>
+          </button>
+        </div>
       </div>
     </footer>
 

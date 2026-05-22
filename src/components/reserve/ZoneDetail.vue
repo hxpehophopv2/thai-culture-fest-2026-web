@@ -515,7 +515,7 @@ const goBack = () => {
             <button class="secondary" @click="showModal = false">{{ t(i18n.cancel) }}</button>
             <button
               v-if="hasBookingForSelectedActivity"
-              class="danger"
+              class="secondary danger"
               :disabled="isSubmitting"
               @click="cancelReservation"
             >
@@ -810,9 +810,6 @@ const goBack = () => {
 
 /* ปุ่มยกเลิกการจอง */
 .modal-actions button.danger {
-  align-self: center;
-  padding: var(--sp-s) var(--sp-m);
-  font-size: 0.9rem;
   background: var(--clr-sem-err, #e53935);
   color: white;
   transition: 0.2s;
@@ -863,19 +860,19 @@ const goBack = () => {
 
 /* Success toast - green */
 .custom-toast.success {
-  background: rgba(28, 120, 55, 0.95);
-  border: 1px solid rgba(40, 167, 69, 0.5);
+  background: var(--clr-sem-ok);
+  border: 1px solid var(--clr-sem-ok, #28a745);
 }
 
 /* Warning toast - yellow */
 .custom-toast.warn {
-  background: rgba(215, 154, 0, 0.95);
+  background: var(--clr-sem-warn);
   border: 1px solid var(--clr-sem-warn, #ffc107);
 }
 
 /* Error toast - red */
 .custom-toast.error {
-  background: rgba(180, 30, 45, 0.95);
+  background: var(--clr-sem-err);
   border: 1px solid var(--clr-sem-err, #dc3545);
 }
 
