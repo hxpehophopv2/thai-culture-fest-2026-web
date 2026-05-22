@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { zones } from '@/data/zonesData.js'
 import { useLocale } from '@/composables/useLocale'
@@ -19,6 +20,26 @@ const iconMap = {
   Drama,
   Running,
   Store,
+}
+
+// --- i18n Dictionary ---
+const i18n = {
+  pageTitle: {
+    'th-TH': 'กิจกรรมและการจองกิจกรรม',
+    'en-US': 'ACTIVITIES & RESERVATIONS',
+  },
+  btnViewActivities: {
+    'th-TH': 'ดูรายละเอียด',
+    'en-US': 'View Details',
+  },
+  btnReserveNow: {
+    'th-TH': 'จองกิจกรรม',
+    'en-US': 'Reserve Now',
+  },
+  noReservation: {
+    'th-TH': 'โซนนี้ไม่ต้องจองล่วงหน้า',
+    'en-US': 'This zone does not require pre-reservation',
+  },
 }
 
 const isMainActivitiesPage = () => route.path === '/activities'
@@ -45,7 +66,7 @@ const goToReserve = (event, zoneId) => {
       <LangToggle theme="light" />
     </nav>
     <main id="reserve">
-      <h3>ACTIVITIES & RESERVATIONS</h3>
+      <h3>{{ t(i18n.pageTitle) }}</h3>
 
       <div
         v-for="zone in zones"
@@ -63,17 +84,27 @@ const goToReserve = (event, zoneId) => {
           </h4>
           <img class="zone-img" :src="zone.image" alt="" />
         </div>
+
         <div class="card-footer">
           <p>{{ t(zone.description) }}</p>
+          <div class="actual-card-footer">
+            <small v-if="zone.id !== 'stage' && zone.id !== 'lab'" class="zone-status">
+              {{ t(i18n.noReservation) }}
+            </small>
+            <small v-else class="zone-status"></small>
 
-          <template v-if="zone.requiresReservation">
-            <button v-if="zone.id === 'lab'" @click.stop="goToZone(zone.id)">
-              View Activities
+            <button v-if="zone.id === 'stage'" @click="goToReserve($event, zone.id)">
+              {{ t(i18n.btnReserveNow) }}
             </button>
-            <button v-else @click="goToReserve($event, zone.id)">Reserve Now</button>
-          </template>
 
-          <small v-else class="zone-status"> This zone does not require pre-registration </small>
+            <button v-else-if="zone.id === 'lab'" @click.stop="goToZone(zone.id)">
+              {{ t(i18n.btnReserveNow) }}
+            </button>
+
+            <button v-else @click.stop="goToZone(zone.id)">
+              {{ t(i18n.btnViewActivities) }}
+            </button>
+          </div>
         </div>
       </div>
     </main>

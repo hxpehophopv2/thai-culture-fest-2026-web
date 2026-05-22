@@ -5,13 +5,104 @@ import { zones } from '@/data/zonesData.js'
 import { useLocale } from '@/composables/useLocale'
 import { updateMyRegistration } from '@/services/registrationService'
 import { useUserData } from '@/composables/useUserData'
+import { X, CircleAlert } from '@lucide/vue'
 
+import LangToggle from '../LangToggle.vue'
 import LabZoneContent from '@/components/reserve/LabZone.vue'
 import StageZoneContent from '@/components/reserve/StageZone.vue'
+import PlayZoneContent from '@/components/reserve/PlayZone.vue'
 
 const route = useRoute()
 const router = useRouter()
-const { t } = useLocale()
+const { t, locale } = useLocale()
+
+// --- i18n Dictionary ---
+const i18n = {
+  back: { 'th-TH': 'ย้อนกลับ', 'en-US': 'Back' },
+  loadingStatus: {
+    'th-TH': 'กำลังโหลดข้อมูลสิทธิ์การจอง...',
+    'en-US': 'Checking registration status...',
+  },
+  editBooking: { 'th-TH': 'แก้ไขการจอง - ', 'en-US': 'Edit Booking - ' },
+  reserveSeat: { 'th-TH': 'จองที่นั่ง - ', 'en-US': 'Reserve - ' },
+  selectTimeSlot: {
+    'th-TH': 'เลือกรอบเวลาที่ต้องการจอง:',
+    'en-US': 'Select your preferred time slot:',
+  },
+  booked: { 'th-TH': 'จองแล้ว', 'en-US': 'Booked' },
+  full: { 'th-TH': 'เต็มแล้ว', 'en-US': 'Full' },
+  rule1: {
+    'th-TH': '* ระบบจะไม่อนุญาตให้จองในเวลาที่ซ้อนทับกับกิจกรรมอื่น',
+    'en-US': '* Booking overlapping time slots is not allowed.',
+  },
+  rule2: {
+    'th-TH': '* สามารถเปลี่ยนแปลงหรือยกเลิกรอบได้ล่วงหน้า 1 วันก่อนวันงาน',
+    'en-US': '* Changes or cancellations can be made up to 1 day before the event.',
+  },
+  rule3: {
+    'th-TH': '* สามารถแก้ไขได้โดยการเลือกเวลาที่ต้องการจองและกดยืนยันอีกครั้ง',
+    'en-US': '* To change your booking, select a new time slot and confirm.',
+  },
+  cancelBooking: { 'th-TH': 'ยกเลิกการจอง', 'en-US': 'Cancel Booking' },
+  cancel: { 'th-TH': 'ยกเลิก', 'en-US': 'Cancel' },
+  confirmBooking: { 'th-TH': 'ยืนยันการจอง', 'en-US': 'Confirm Booking' },
+
+  // Auth Modal
+  notRegisteredTitle: { 'th-TH': 'ยังไม่ได้ลงทะเบียนเข้าร่วมงาน', 'en-US': 'Not Registered Yet' },
+  notRegisteredDesc: {
+    'th-TH': 'ขออภัย คุณต้องลงทะเบียนเข้าร่วมงานก่อนจึงจะสามารถจองรอบเวลาในกิจกรรมต่าง ๆ',
+    'en-US': 'Sorry, you must register for the event before booking activity slots.',
+  },
+  registerNowBtn: { 'th-TH': 'ลงทะเบียนตอนนี้', 'en-US': 'Register Now' },
+
+  // Toasts
+  reserveSuccess: { 'th-TH': 'ยืนยันการจองสำเร็จ', 'en-US': 'Reservation successful' },
+  cancelSuccess: { 'th-TH': 'ยกเลิกการจองสำเร็จ', 'en-US': 'Reservation cancelled' },
+  cancelFail: { 'th-TH': 'ยกเลิกไม่สำเร็จ', 'en-US': 'Cancellation failed' },
+  timeSlotLbl: { 'th-TH': 'รอบเวลา', 'en-US': 'Time slot' },
+
+  // Errors
+  errFullTitle: { 'th-TH': 'รอบกิจกรรมเต็ม', 'en-US': 'Session Full' },
+  errFullMsg: {
+    'th-TH': 'รอบนี้เต็มแล้ว กรุณาเลือกรอบอื่น',
+    'en-US': 'This session is full. Please choose another.',
+  },
+  errOverlapTitle: { 'th-TH': 'เวลาชนกัน', 'en-US': 'Time Conflict' },
+  errOverlapMsg: {
+    'th-TH': 'เวลาซ้อนกับกิจกรรมอื่นที่จองไว้ กรุณาเลือกรอบอื่น',
+    'en-US': 'Time conflict with another booking. Please choose another.',
+  },
+  errDupTitle: { 'th-TH': 'ไม่สามารถจองซ้ำได้', 'en-US': 'Duplicate Booking' },
+  errDupMsg: {
+    'th-TH': 'คุณได้ทำการจองกิจกรรมนี้ไปแล้ว (จองได้สูงสุด 1 รอบต่อกิจกรรม)',
+    'en-US': 'You have already booked this activity (Max 1 session per activity).',
+  },
+  errRegTitle: { 'th-TH': 'ลงทะเบียนซ้ำ', 'en-US': 'Already Registered' },
+  errRegMsg: {
+    'th-TH': 'คุณได้ลงทะเบียนไปแล้ว กรุณาใช้ฟังก์ชันแก้ไขแทน',
+    'en-US': 'You are already registered. Please use the edit function instead.',
+  },
+  errNotFoundTitle: { 'th-TH': 'ไม่พบข้อมูล', 'en-US': 'Not Found' },
+  errNotFoundMsg: {
+    'th-TH': 'ไม่พบข้อมูลรอบกิจกรรม กรุณาลองใหม่',
+    'en-US': 'Session data not found. Please try again.',
+  },
+  errInvalidTitle: { 'th-TH': 'ข้อมูลไม่ถูกต้อง', 'en-US': 'Invalid Data' },
+  errInvalidMsg: {
+    'th-TH': 'ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบและลองใหม่อีกครั้ง',
+    'en-US': 'Invalid data. Please check and try again.',
+  },
+  errConnTitle: { 'th-TH': 'เชื่อมต่อไม่ได้', 'en-US': 'Connection Failed' },
+  errConnMsg: {
+    'th-TH': 'ไม่สามารถเชื่อมต่อได้ กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองใหม่',
+    'en-US': 'Connection failed. Please check your internet connection and try again.',
+  },
+  errGenTitle: { 'th-TH': 'เกิดข้อผิดพลาด', 'en-US': 'Error Occurred' },
+  errGenMsg: {
+    'th-TH': 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง',
+    'en-US': 'An error occurred. Please try again.',
+  },
+}
 
 const zone = computed(() => zones.find((z) => z.id === route.params.id))
 const showModal = ref(false)
@@ -21,11 +112,9 @@ const isUserRegistered = ref(false)
 const selectedActivity = ref('')
 const selectedSlot = ref(null)
 const isSubmitting = ref(false)
-
-// Custom Toast Notification State
 const showToast = ref(false)
 const toastMessage = ref('')
-const toastType = ref('success') // 'success' | 'error'
+const toastType = ref('success') // 'success' | 'error' | 'warn'
 let toastTimeout = null
 
 const triggerToast = (msg, type = 'success') => {
@@ -58,6 +147,7 @@ onUnmounted(() => {
 const contentMap = {
   lab: LabZoneContent,
   stage: StageZoneContent,
+  play: PlayZoneContent,
 }
 
 const { registrationData, activitiesData, isUserDataLoaded, fetchUserData } = useUserData()
@@ -84,30 +174,43 @@ const mapKeyToOrder = {
   STG: 6,
 }
 
+// ดึงชื่อกิจกรรมตามภาษาปัจจุบัน หากไม่มีให้ Fallback กลับไปใช้ค่าเริ่มต้นแบบสองภาษา
 const activityNames = computed(() => {
   const names = {}
   for (const [key, order] of Object.entries(mapKeyToOrder)) {
     const act = activities.value.find((a) => a.sortOrder === order)
     if (act) {
-      names[key] = act.nameTh
+      names[key] = locale.value === 'th-TH' ? act.nameTh : act.nameEn || act.nameTh
     }
   }
-  // Fallback in case not loaded yet
-  return Object.keys(names).length > 0
-    ? names
-    : {
-        LAB1: 'กิจกรรมเวิร์กช็อปร้อยพวงมาลัยไทย',
-        LAB2: 'กิจกรรมเวิร์กช็อปพวงมโหตร',
-        LAB3: 'กิจกรรมเวิร์กช็อปพัดสานไม้ไผ่ไทย',
-        LAB4: 'กิจกรรมเวิร์กช็อปประดิษฐ์เครื่องประดับนาฏศิลป์ไทย',
-        LAB5: 'กิจกรรมการเขียนสี - เขียนหน้าหัวโขน',
-        STG: 'กิจกรรมเสวนาและการแสดง (STAGE ZONE)',
-      }
+
+  if (Object.keys(names).length > 0) return names
+
+  return {
+    LAB1: t({ 'th-TH': 'กิจกรรมเวิร์กช็อปร้อยพวงมาลัยไทย', 'en-US': 'Hand Garland Workshop' }),
+    LAB2: t({ 'th-TH': 'กิจกรรมเวิร์กช็อปพวงมโหตร', 'en-US': 'Phuang Mahot Workshop' }),
+    LAB3: t({
+      'th-TH': 'กิจกรรมเวิร์กช็อปพัดสานไม้ไผ่ไทย',
+      'en-US': 'Thai Bamboo Hand Fans Workshop',
+    }),
+    LAB4: t({
+      'th-TH': 'กิจกรรมเวิร์กช็อปประดิษฐ์เครื่องประดับนาฏศิลป์ไทย',
+      'en-US': 'Thai Dance Ornament Crafting Workshop',
+    }),
+    LAB5: t({
+      'th-TH': 'กิจกรรมการเขียนสี - เขียนหน้าหัวโขน',
+      'en-US': 'Khon Mask Painting Workshop',
+    }),
+    STG: t({
+      'th-TH': 'กิจกรรมเสวนาและการแสดง (STAGE ZONE)',
+      'en-US': 'ROOTED Talks & Performance (STAGE ZONE)',
+    }),
+  }
 })
 
 const formatTime = (dateStr) => {
   const d = new Date(dateStr)
-  return d.toLocaleTimeString('th-TH', {
+  return d.toLocaleTimeString(locale.value, {
     hour: '2-digit',
     minute: '2-digit',
     timeZone: 'Asia/Bangkok',
@@ -124,9 +227,11 @@ const availableSlots = computed(() => {
 
   return act.sessions.map((s) => {
     const isBookedByMe = myBookedSessionIds.includes(s.id)
+    const suffix = locale.value === 'th-TH' ? ' น.' : ''
+
     return {
       id: s.id,
-      time: `${formatTime(s.startTime)} - ${formatTime(s.endTime)} น.`,
+      time: `${formatTime(s.startTime)} - ${formatTime(s.endTime)}${suffix}`,
       capacity: s.capacity,
       booked: s.bookedCount,
       isBooked: isBookedByMe,
@@ -159,21 +264,18 @@ const confirmReservation = async () => {
     const currentBookings = myRegistration.value?.bookings || []
     const currentSessionIds = currentBookings.map((b) => b.session.id)
 
-    // If selecting the slot already booked, just close the modal
     if (currentSessionIds.includes(selectedSlot.value.id)) {
       showModal.value = false
       return
     }
 
-    // Find the target activity being booked/updated
     const order = mapKeyToOrder[selectedActivity.value]
     const targetActivity = activities.value.find((a) => a.sortOrder === order)
 
     if (!targetActivity) {
-      throw new Error('ไม่พบกิจกรรมนี้')
+      throw new Error(t(i18n.errNotFoundMsg))
     }
 
-    // Filter out any existing booking belonging to this activity to allow reschedule/change of time slot
     const filteredSessionIds = currentBookings
       .filter((b) => b.session.activity.id !== targetActivity.id)
       .map((b) => b.session.id)
@@ -181,64 +283,100 @@ const confirmReservation = async () => {
     const newSessionIds = [...filteredSessionIds, selectedSlot.value.id]
     await updateMyRegistration({ selectedSessionIds: newSessionIds })
     triggerToast(
-      `ยืนยันการจองสำเร็จ / Reservation successful:\n${activityNames.value[selectedActivity.value]}\nรอบเวลา: ${selectedSlot.value.time}`,
+      `${t(i18n.reserveSuccess)}:\n${activityNames.value[selectedActivity.value]}\n${t(i18n.timeSlotLbl)}: ${selectedSlot.value.time}`,
     )
     showModal.value = false
 
-    // Refresh Data
     await fetchUserData(true)
   } catch (err) {
     const rawMsg = err.message || ''
     const errorCode = err.payload?.error?.code || ''
-    // Map technical error messages to friendly Thai
-    let friendlyMsg
+
+    let titleKey = i18n.errGenTitle
+    let msgKey = i18n.errGenMsg
     let type = 'warn'
-    let title = 'จองไม่สำเร็จ'
 
     if (errorCode === 'SESSION_FULL' || rawMsg.includes('เต็ม') || rawMsg.includes('full')) {
-      friendlyMsg = 'รอบนี้เต็มแล้ว กรุณาเลือกรอบอื่น'
-      title = 'รอบกิจกรรมเต็ม'
+      titleKey = i18n.errFullTitle
+      msgKey = i18n.errFullMsg
     } else if (
       errorCode === 'TIME_OVERLAP' ||
       rawMsg.includes('ทับซ้อน') ||
       rawMsg.includes('ซ้อนทับ') ||
       rawMsg.includes('conflict')
     ) {
-      friendlyMsg = 'เวลาซ้อนกับกิจกรรมอื่นที่จองไว้ กรุณาเลือกรอบอื่น'
-      title = 'เวลาชนกัน'
+      titleKey = i18n.errOverlapTitle
+      msgKey = i18n.errOverlapMsg
     } else if (
       errorCode === 'DUPLICATE_ACTIVITY' ||
       rawMsg.includes('DUPLICATE') ||
       rawMsg.includes('more than once')
     ) {
-      friendlyMsg = 'คุณได้ทำการจองกิจกรรมนี้ไปแล้ว (จองได้สูงสุด 1 รอบต่อกิจกรรม)'
-      title = 'ไม่สามารถจองซ้ำได้'
+      titleKey = i18n.errDupTitle
+      msgKey = i18n.errDupMsg
     } else if (errorCode === 'ALREADY_REGISTERED' || rawMsg.includes('ALREADY_REGISTERED')) {
-      friendlyMsg = 'คุณได้ลงทะเบียนไปแล้ว กรุณาใช้ฟังก์ชันแก้ไขแทน'
-      title = 'ลงทะเบียนซ้ำ'
+      titleKey = i18n.errRegTitle
+      msgKey = i18n.errRegMsg
     } else if (
       errorCode === 'NOT_FOUND' ||
       rawMsg.includes('ไม่พบ') ||
       rawMsg.includes('NOT_FOUND')
     ) {
-      friendlyMsg = 'ไม่พบข้อมูลรอบกิจกรรม กรุณาลองใหม่'
-      title = 'ไม่พบข้อมูล'
+      titleKey = i18n.errNotFoundTitle
+      msgKey = i18n.errNotFoundMsg
     } else if (errorCode === 'VALIDATION_ERROR' || err.status === 400) {
-      friendlyMsg = 'ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบและลองใหม่อีกครั้ง'
-      title = 'ข้อมูลไม่ถูกต้อง'
+      titleKey = i18n.errInvalidTitle
+      msgKey = i18n.errInvalidMsg
     } else if (
       rawMsg.includes('Failed to fetch') ||
       rawMsg.includes('NetworkError') ||
       rawMsg.includes('ติดต่อ')
     ) {
-      friendlyMsg = 'ไม่สามารถเชื่อมต่อได้ กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองใหม่'
+      titleKey = i18n.errConnTitle
+      msgKey = i18n.errConnMsg
       type = 'error'
-      title = 'เชื่อมต่อไม่ได้'
     } else {
-      friendlyMsg = 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง'
       type = 'error'
     }
-    triggerToast(`${title}\n${friendlyMsg}`, type)
+    triggerToast(`${t(titleKey)}\n${t(msgKey)}`, type)
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+const hasBookingForSelectedActivity = computed(() => {
+  if (!selectedActivity.value || !myRegistration.value?.bookings) return false
+  const order = mapKeyToOrder[selectedActivity.value]
+  return myRegistration.value.bookings.some((b) => b.session.activity.sortOrder === order)
+})
+
+const cancelReservation = async () => {
+  isSubmitting.value = true
+  try {
+    const currentBookings = myRegistration.value?.bookings || []
+    const order = mapKeyToOrder[selectedActivity.value]
+    const targetActivity = activities.value.find((a) => a.sortOrder === order)
+
+    if (!targetActivity) {
+      throw new Error(t(i18n.errNotFoundMsg))
+    }
+
+    const newSessionIds = currentBookings
+      .filter((b) => b.session.activity.id !== targetActivity.id)
+      .map((b) => b.session.id)
+
+    await updateMyRegistration({ selectedSessionIds: newSessionIds })
+
+    triggerToast(
+      `${t(i18n.cancelSuccess)}:\n${activityNames.value[selectedActivity.value]}`,
+      'success',
+    )
+    showModal.value = false
+
+    await fetchUserData(true)
+  } catch (err) {
+    console.error('Failed to cancel reservation', err)
+    triggerToast(`${t(i18n.cancelFail)}:\n${err.message || t(i18n.errGenMsg)}`, 'error')
   } finally {
     isSubmitting.value = false
   }
@@ -258,10 +396,10 @@ onMounted(async () => {
   }
 
   if (route.query.modal === 'true') {
+    const activityKey = route.query.activity || (route.params.id === 'stage' ? 'STG' : '')
     router.replace({ params: route.params })
     setTimeout(() => {
-      const defaultKey = route.params.id === 'stage' ? 'STG' : ''
-      openReserve(defaultKey)
+      openReserve(activityKey)
     }, 350)
   }
 })
@@ -277,6 +415,10 @@ const goBack = () => {
 
 <template>
   <div class="zone-detail-wrapper">
+    <nav class="hero-nav">
+      <LangToggle theme="light" />
+    </nav>
+
     <main v-if="zone" id="zone-detail">
       <button class="back-btn" @click="goBack">
         <svg
@@ -292,7 +434,7 @@ const goBack = () => {
         >
           <path d="m15 18-6-6 6-6" />
         </svg>
-        Back
+        {{ t(i18n.back) }}
       </button>
 
       <img :src="zone.image" alt="" class="detail-img" />
@@ -300,7 +442,7 @@ const goBack = () => {
         <h3>{{ t(zone.title) }}</h3>
 
         <div v-if="isLoadingData" class="loading-activities">
-          <p>กำลังโหลดข้อมูลสิทธิ์การจอง / Checking registration status...</p>
+          <p>{{ t(i18n.loadingStatus) }}</p>
         </div>
         <component
           v-else-if="contentMap[zone.id]"
@@ -317,16 +459,18 @@ const goBack = () => {
           <div class="modal-header">
             <h5>
               {{
-                selectedActivity
-                  ? activityNames[selectedActivity]
-                  : 'จองที่นั่ง - ' + (zone ? t(zone.title) : '')
+                hasBookingForSelectedActivity
+                  ? t(i18n.editBooking) + (selectedActivity ? activityNames[selectedActivity] : '')
+                  : selectedActivity
+                    ? activityNames[selectedActivity]
+                    : t(i18n.reserveSeat) + (zone ? t(zone.title) : '')
               }}
             </h5>
             <button class="close-btn" @click="showModal = false">✕</button>
           </div>
 
           <div class="modal-body">
-            <p class="instruction">เลือกรอบเวลาที่ต้องการจอง:</p>
+            <p class="instruction">{{ t(i18n.selectTimeSlot) }}</p>
 
             <div class="slot-grid">
               <button
@@ -343,29 +487,39 @@ const goBack = () => {
                   class="capacity"
                   style="color: var(--clr-pri-500); font-weight: bold"
                 >
-                  จองแล้ว / Booked
+                  {{ t(i18n.booked) }}
                 </span>
                 <span v-else class="capacity" :class="{ full: slot.isFull }">
                   {{
                     slot.capacity - slot.booked > 0
-                      ? `เหลือ ${slot.capacity - slot.booked} ที่นั่ง`
-                      : 'เต็มแล้ว'
+                      ? locale === 'th-TH'
+                        ? `เหลือ ${slot.capacity - slot.booked} ที่นั่ง`
+                        : `${slot.capacity - slot.booked} seats left`
+                      : t(i18n.full)
                   }}
                 </span>
               </button>
             </div>
 
             <ul class="booking-rules">
-              <li>* ระบบจะไม่อนุญาตให้จองในเวลาที่ซ้อนทับกับกิจกรรมอื่น</li>
-              <li>* สามารถเปลี่ยนแปลงหรือยกเลิกรอบได้ล่วงหน้า 1 วันก่อนวันงาน</li>
-              <li>* สามารถแก้ไขได้โดยการเลือกเวลาที่ต้องการจองและกดยืนยันอีกครั้ง</li>
+              <li>{{ t(i18n.rule1) }}</li>
+              <li>{{ t(i18n.rule2) }}</li>
+              <li>{{ t(i18n.rule3) }}</li>
             </ul>
           </div>
 
           <div class="modal-actions">
-            <button class="secondary" @click="showModal = false">ยกเลิก</button>
             <button class="primary" :disabled="!selectedSlot" @click="confirmReservation">
-              ยืนยันการจอง
+              {{ t(i18n.confirmBooking) }}
+            </button>
+            <button class="secondary" @click="showModal = false">{{ t(i18n.cancel) }}</button>
+            <button
+              v-if="hasBookingForSelectedActivity"
+              class="danger"
+              :disabled="isSubmitting"
+              @click="cancelReservation"
+            >
+              {{ t(i18n.cancelBooking) }}
             </button>
           </div>
         </div>
@@ -375,29 +529,32 @@ const goBack = () => {
     <Transition name="fade">
       <div v-if="showAuthModal" class="modal-backdrop" @click.self="showAuthModal = false">
         <div class="modal-box">
-          <div class="modal-header">
-            <h5 class="error-title">ยังไม่ได้ลงทะเบียนเข้าร่วมงาน</h5>
-            <button class="close-btn" @click="showAuthModal = false">✕</button>
-          </div>
+          <button class="close-btn" @click="showAuthModal = false"><X /></button>
+          <div class="modal-text">
+            <div class="modal-header">
+              <div class="alert-icon">
+                <CircleAlert :size="128" :strokeWidth="4" absoluteStrokeWidth />
+              </div>
+              <h5 class="error-title">{{ t(i18n.notRegisteredTitle) }}</h5>
+            </div>
 
-          <div class="modal-body">
-            <p style="color: var(--clr-700, #475569); line-height: 1.5">
-              ขออภัยด้วยครับ คุณจำเป็นต้องลงทะเบียนเข้าร่วมงานหลักก่อน
-              จึงจะสามารถใช้สิทธิ์การจองที่นั่งหรือรอบเวลาในกิจกรรมต่างๆ ได้ครับ
-            </p>
+            <div class="modal-body">
+              <p style="color: var(--clr-600, #475569); line-height: 1.5; text-align: center">
+                {{ t(i18n.notRegisteredDesc) }}
+              </p>
+            </div>
           </div>
 
           <div class="modal-actions">
-            <button class="secondary" @click="showAuthModal = false">ยกเลิก</button>
             <button class="primary register-btn" @click="router.push('/register')">
-              ลงทะเบียนตอนนี้
+              {{ t(i18n.registerNowBtn) }}
             </button>
+            <button class="secondary" @click="showAuthModal = false">{{ t(i18n.cancel) }}</button>
           </div>
         </div>
       </div>
     </Transition>
 
-    <!-- Custom Toast Notification -->
     <Teleport to="body">
       <Transition name="toast-fade">
         <div v-if="showToast" class="custom-toast" :class="toastType" @click="showToast = false">
@@ -419,7 +576,7 @@ const goBack = () => {
 
 <style scoped>
 .zone-detail-wrapper {
-  padding: 0 var(--sp-l) var(--sp-3xl);
+  padding: 6rem var(--sp-l) var(--sp-3xl);
   display: flex;
   justify-content: center;
   position: relative;
@@ -490,10 +647,12 @@ const goBack = () => {
 }
 
 .modal-box {
+  position: relative;
   background: white;
   color: #111;
   border-radius: var(--sp-m);
   padding: var(--sp-l);
+  padding-top: var(--sp-2xl);
   width: min(90%, 450px);
   max-height: 85vh;
   overflow-y: auto;
@@ -503,11 +662,25 @@ const goBack = () => {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
+.modal-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-s);
+}
+
 .modal-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
   gap: var(--sp-m);
+}
+
+.alert-icon {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--clr-sem-err);
 }
 
 .modal-header h5 {
@@ -517,12 +690,16 @@ const goBack = () => {
   line-height: 1.4;
 }
 
-/* ตั้งค่าหัวข้อ Warning แจ้งเตือนสีแดง */
 .modal-header h5.error-title {
+  font-size: 1.2rem;
+  font-weight: bold;
   color: var(--clr-sem-err, #e53935);
 }
 
 .close-btn {
+  position: absolute;
+  top: var(--sp-l);
+  right: var(--sp-l);
   background: none;
   border: none;
   font-size: 1.2rem;
@@ -598,12 +775,11 @@ const goBack = () => {
 
 .modal-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: var(--sp-s);
+  flex-direction: column;
+  gap: var(--sp-m);
   margin-top: var(--sp-s);
 }
 .modal-actions button {
-  padding: var(--sp-s) var(--sp-m);
   border-radius: var(--sp-s);
   font-weight: bold;
   border: none;
@@ -611,7 +787,7 @@ const goBack = () => {
 }
 .modal-actions button.secondary {
   background: var(--clr-200);
-  color: var(--clr-900);
+  color: var(--clr-700);
 }
 
 .modal-actions button.primary {
@@ -630,6 +806,23 @@ const goBack = () => {
 }
 .modal-actions button.register-btn:hover {
   background: #c62828;
+}
+
+/* ปุ่มยกเลิกการจอง */
+.modal-actions button.danger {
+  align-self: center;
+  padding: var(--sp-s) var(--sp-m);
+  font-size: 0.9rem;
+  background: var(--clr-sem-err, #e53935);
+  color: white;
+  transition: 0.2s;
+}
+.modal-actions button.danger:hover {
+  background: #c62828;
+}
+.modal-actions button.danger:disabled {
+  background: var(--clr-300);
+  cursor: not-allowed;
 }
 
 .loading-activities {

@@ -32,7 +32,7 @@
 }
 
 #reserve {
-  padding: var(--sp-3xl) var(--sp-l);
+  padding: 6rem var(--sp-l) var(--sp-3xl);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -43,7 +43,8 @@
 }
 
 #reserve h3 {
-  font-family: ClashGrotesk-Bold, sans-serif;
+  font-family: ClashGrotesk-Bold, 'IBM Plex Sans Thai', sans-serif;
+  font-weight: 700;
   line-height: var(--lh-h1);
   font-size: var(--fs-h4);
   text-align: center;
@@ -113,14 +114,11 @@
   position: relative;
   z-index: 10;
   cursor: pointer;
-
-  /* Glassmorphism Effect */
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.2);
 
-  /* Highlight border for depth */
   box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.3),
     0 10px 30px rgba(0, 0, 0, 0.3);
@@ -187,7 +185,14 @@
   padding: var(--sp-m);
   display: flex;
   flex-direction: column;
-  gap: var(--sp-s);
+  gap: var(--sp-l);
+}
+
+#reserve .zone-card .card-footer .actual-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--sp-m);
 }
 
 #reserve .zone-card .card-footer p,

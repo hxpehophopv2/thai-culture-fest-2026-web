@@ -1,4 +1,7 @@
 <script setup>
+import { useLocale } from '@/composables/useLocale'
+
+const { t } = useLocale()
 defineProps({ isSubmitting: Boolean })
 const emit = defineEmits(['submit', 'stay'])
 </script>
@@ -6,7 +9,7 @@ const emit = defineEmits(['submit', 'stay'])
 <template>
   <section id="confirm-submit" @click.self="() => emit('stay')">
     <div class="confirm-container">
-      <h5>ยืนยันการส่งข้อมูล?</h5>
+      <h5>{{ t({ 'th-TH': 'ยืนยันการส่งข้อมูล?', 'en-US': 'Confirm submission?' }) }}</h5>
       <div class="confirm-btn-container">
         <button
           class="primary submit"
@@ -33,12 +36,16 @@ const emit = defineEmits(['submit', 'stay'])
             </path>
           </svg>
 
-          <span class="btn-text">
-            {{ isSubmitting ? 'กำลังส่ง...' : 'ยืนยัน' }}
-          </span>
+          <p class="btn-text">
+            {{ 
+              isSubmitting 
+                ? t({ 'th-TH': 'กำลังส่ง...', 'en-US': 'Submitting...' }) 
+                : t({ 'th-TH': 'ยืนยัน', 'en-US': 'Confirm' }) 
+            }}
+          </p>
         </button>
         <button class="secondary" @click="() => emit('stay')" :disabled="isSubmitting">
-          <p>ไม่</p>
+          <p>{{ t({ 'th-TH': 'ไม่', 'en-US': 'No' }) }}</p>
         </button>
       </div>
     </div>

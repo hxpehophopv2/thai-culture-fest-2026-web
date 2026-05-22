@@ -62,6 +62,7 @@ defineProps({
 }
 
 .loading-text {
+  font-family: 'IBM Plex Sans Thai', sans-serif;
   font-weight: bold;
   letter-spacing: 0.5px;
   animation: pulse-text 1.5s infinite ease-in-out alternate;

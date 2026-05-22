@@ -37,6 +37,10 @@
   --clr-130: rgba(255, 255, 255, 0.3);
   --clr-140: rgba(255, 255, 255, 0.4);
   --clr-150: rgba(255, 255, 255, 0.5);
+  --clr-160: rgba(255, 255, 255, 0.6);
+  --clr-170: rgba(255, 255, 255, 0.7);
+  --clr-180: rgba(255, 255, 255, 0.8);
+  --clr-190: rgba(255, 255, 255, 0.9);
 
   /* PRIMARY & ACCENTS */
   --clr-pri-900: #00001f;
@@ -144,12 +148,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 h1 {
-  font-family: ClashGrotesk-Bold, sans-serif;
+  font-family: ClashGrotesk-Bold, 'IBM Plex Sans Thai', sans-serif;
   font-size: var(--fs-h1);
   line-height: var(--lh-h1);
 }
 h2 {
-  font-family: ClashGrotesk-Bold, sans-serif;
+  font-family: ClashGrotesk-Bold, 'IBM Plex Sans Thai', sans-serif;
   font-size: var(--fs-h2);
   line-height: var(--lh-h2);
 }

@@ -57,7 +57,7 @@ const router = createRouter({
         } else {
           resolve({ top: 0 })
         }
-      }, 300)
+      }, 0)
     })
   },
 })

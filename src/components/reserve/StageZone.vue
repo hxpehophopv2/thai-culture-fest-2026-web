@@ -1,36 +1,74 @@
 <script setup>
 import { useLocale } from '@/composables/useLocale'
-const { locale } = useLocale()
 
-// เพิ่มการส่งสัญญาณเปิด Modal
+const { t } = useLocale()
 const emit = defineEmits(['open-reserve'])
+
+// --- i18n Dictionary ---
+const i18n = {
+  description: {
+    'th-TH':
+      'พื้นที่ที่นำเสนอศิลปวัฒนธรรมไทยในรูปแบบร่วมสมัย ผ่านการแสดงนาฏศิลป์ การแสดงโขน และกิจกรรมเสวนาสร้างแรงบันดาลใจ เปิดโอกาสให้ผู้เข้าร่วมงานได้สัมผัส เรียนรู้ และมองเห็นคุณค่าของวัฒนธรรมไทยในมุมมองใหม่ที่เข้าถึงง่ายและใกล้ชิดกับคนรุ่นปัจจุบันมากยิ่งขึ้น',
+    'en-US':
+      'A vibrant space that brings Thai arts and culture to life through contemporary performances, Khon showcases, and inspiring talks; inviting participants to experience, learn, and rediscover the value of Thai culture through a modern and accessible perspective.',
+  },
+  scheduleTitle: {
+    'th-TH': 'กิจกรรมเสวนา “เด็กวิทย์หัวใจศิลป์” และรับชมการแสดงนาฏศิลป์',
+    'en-US': 'ROOTED Talks & Performance',
+  },
+  time: {
+    'th-TH': '14:00 - 15:30 น.',
+    'en-US': '02:00 PM - 03:30 PM',
+  },
+  btnReserve: {
+    'th-TH': 'จองที่นั่งตอนนี้',
+    'en-US': 'Reserve Seats Now',
+  },
+}
+
+const scheduleItems = [
+  {
+    'th-TH': 'พิธีเปิดกิจกรรมเสวนา',
+    'en-US': 'Opening Ceremony of the Talk Session',
+  },
+  {
+    'th-TH': 'การแสดงนาฏศิลป์สร้างสรรค์ ชุด รากไทย',
+    'en-US': 'Creative Thai Dance Performance: Roots of Thailand',
+  },
+  {
+    'th-TH': 'กิจกรรมเสวนา หัวข้อ เด็กวิทย์หัวใจศิลป์: บทบาทคนรุ่นใหม่ในการสืบสานวัฒนธรรมไทย',
+    'en-US':
+      'Discussion: Science Hearts, Thai Arts - The Role of the New Generation in Preserving Thai Culture',
+  },
+  {
+    'th-TH': 'การแสดงโขน ชุด ยกรบ',
+    'en-US': 'Khon Performance: Battle Scene (Yok Rob)',
+  },
+  {
+    'th-TH': 'การแสดงนาฏศิลป์สร้างสรรค์ ชุด ระบำสุธาภิรมย์',
+    'en-US': 'Creative Thai Dance Performance: Suthaphirom Dance',
+  },
+]
 </script>
 
 <template>
   <div class="stage-content">
-    <p>
-      พื้นที่ที่นำเสนอศิลปวัฒนธรรมไทยในรูปแบบร่วมสมัย ผ่านการแสดงนาฏศิลป์ การแสดงโขน
-      และกิจกรรมเสวนาสร้างแรงบันดาลใจ เปิดโอกาสให้ผู้เข้าร่วมงานได้สัมผัส เรียนรู้
-      และมองเห็นคุณค่าของวัฒนธรรมไทยในมุมมองใหม่ที่เข้าถึงง่ายและใกล้ชิดกับคนรุ่นปัจจุบันมากยิ่งขึ้น
-    </p>
+    <p>{{ t(i18n.description) }}</p>
 
     <div class="schedule-box">
-      <h5>กิจกรรมเสวนา “เด็กวิทย์หัวใจศิลป์” และรับชมการแสดงนาฏศิลป์</h5>
-      <time>14:00 - 15:30 น.</time>
+      <h5>{{ t(i18n.scheduleTitle) }}</h5>
+      <time>{{ t(i18n.time) }}</time>
+
       <ul class="schedule-list">
-        <li><p>พิธีเปิดกิจกรรมเสวนา</p></li>
-        <li><p>การแสดงนาฏศิลป์สร้างสรรค์ ชุด รากไทย</p></li>
-        <li>
-          <p>กิจกรรมเสวนา หัวข้อ เด็กวิทย์หัวใจศิลป์: บทบาทคนรุ่นใหม่ในการสืบสานวัฒนธรรมไทย</p>
+        <li v-for="(item, index) in scheduleItems" :key="index">
+          <p>{{ t(item) }}</p>
         </li>
-        <li><p>การแสดงโขน ชุด ยกรบ</p></li>
-        <li><p>การแสดงนาฏศิลป์สร้างสรรค์ ชุด ระบำสุธาภิรมย์</p></li>
       </ul>
     </div>
 
     <div class="stage-highlight">
       <button class="main-reserve-btn" @click="emit('open-reserve', 'STG')">
-        Reserve Seats Now
+        {{ t(i18n.btnReserve) }}
       </button>
     </div>
   </div>
@@ -40,8 +78,10 @@ const emit = defineEmits(['open-reserve'])
 .stage-content {
   color: var(--clr-100);
 }
+.stage-content p {
+  margin-bottom: 1rem;
+}
 
-/* จัดตารางเวลาให้อยู่ในกรอบดูเป็นสัดส่วน */
 .schedule-box {
   background: rgba(0, 0, 0, 0.2);
   border-radius: var(--sp-m);
@@ -50,15 +90,17 @@ const emit = defineEmits(['open-reserve'])
 }
 
 .schedule-box h5 {
+  text-align: center;
   font-size: 1.1rem;
+  font-weight: bold;
   color: var(--clr-100);
-  margin-bottom: 4px;
 }
 
 .schedule-box time {
-  display: inline-block;
+  text-align: center;
+  display: block;
   font-size: 0.9rem;
-  margin-bottom: var(--sp-m);
+  margin: var(--sp-s) 0 var(--sp-m);
 }
 
 .schedule-list {
@@ -70,11 +112,11 @@ const emit = defineEmits(['open-reserve'])
 
 .schedule-list li p {
   color: var(--clr-200);
+  font-weight: normal;
   line-height: 1.5;
   margin: 0;
 }
 
-/* สไตล์กล่องและปุ่มจองใหญ่ */
 .stage-highlight {
   display: flex;
   justify-content: center;
@@ -85,7 +127,7 @@ const emit = defineEmits(['open-reserve'])
   width: 100%;
   max-width: 320px;
   background: var(--clr-100);
-  color: var(--clr-pri-500); /* ให้ตัวหนังสือเป็นสีหลักเพื่อให้เด่นขึ้น */
+  color: var(--clr-pri-500);
   border: none;
   padding: var(--sp-m);
   border-radius: 100px;

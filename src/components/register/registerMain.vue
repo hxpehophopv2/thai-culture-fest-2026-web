@@ -593,7 +593,7 @@ const i18n = {
 :deep(.iti input[type='tel']) {
   width: 100% !important;
   padding: var(--sp-s) !important;
-  padding-left: 7.5em !important;
+  padding-left: 6.5em !important;
   border-radius: var(--sp-s) !important;
   margin: 0 !important;
   box-sizing: border-box;
