@@ -52,7 +52,8 @@
 }
 
 /* ---------- BACKGROUND ORBS ---------- */
-.bubbles-bg {
+/* เปลี่ยนจาก .bubbles-bg เป็น .orb-bg ให้ตรงกับ HTML */
+.orb-bg {
   position: fixed;
   top: 0;
   left: 0;

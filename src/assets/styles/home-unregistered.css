@@ -64,7 +64,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--sp-s);
   max-width: 800px;
   position: relative;
   z-index: 3;
@@ -92,18 +91,22 @@
 
 .hero-content h1 {
   font-size: var(--fs-h2);
-  color: var(--clr-pri-500);
   line-height: var(--lh-h1);
+  color: var(--clr-900);
+  background: linear-gradient(to right, var(--clr-pri-400), var(--clr-pri-600));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .hero-content small {
   font-weight: bold;
   color: var(--clr-500);
+  margin-top: var(--sp-m);
 }
 
 .hero-content button {
   position: static;
-  margin-top: var(--sp-s);
+  margin-top: var(--sp-l);
   z-index: 5;
   font-weight: bold;
 
@@ -147,10 +150,10 @@
 @keyframes floatingImage {
   0%,
   100% {
-    transform: translateY(0);
+    transform: translateY(5px);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-5px);
   }
 }
 
