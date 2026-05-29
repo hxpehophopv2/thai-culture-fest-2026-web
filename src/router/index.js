@@ -63,15 +63,35 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
-  const DEV_MODE_BYPASS = false // เปลี่ยนเป็น false เมื่อต้องการเชื่อมต่อ LINE จริงๆ
+  const DEV_MODE_BYPASS = false // เปลี่ยนเป็น false เมื่อต้องการเชื่อมต่อ LINE จริง
 
   if (DEV_MODE_BYPASS) {
     const { isRegistered } = useAuth()
+    const { profileData, qrData, isUserDataLoaded } = useUserData()
 
-    // เปลี่ยนค่านี้เป็น true ถ้าอยากดูหน้าเว็บในมุมมอง registered
-    isRegistered.value = false
+    isRegistered.value = true
+    isUserDataLoaded.value = true
 
-    return true // อนุญาตให้ผ่านเข้าเว็บได้เลย โดยไม่ต้องรันโค้ดเช็ค LINE ด้านล่าง
+    if (!profileData.value) {
+      profileData.value = {
+        displayName: 'Hope (Dev Bypass)',
+        pictureUrl: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+      }
+    }
+
+    if (!qrData.value) {
+      qrData.value = {
+        dataUrl:
+          'https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg',
+      }
+    }
+
+    window.liff = window.liff || {}
+    if (typeof window.liff.isLoggedIn !== 'function') {
+      window.liff.isLoggedIn = () => true
+    }
+
+    return true
   }
 
   // -----------------------------------------------------------------
@@ -80,7 +100,6 @@ router.beforeEach(async (to) => {
   }
 
   try {
-    // Only force login if NOT on public routes (Home page "/" or paths starting with "/activities")
     const isPublicRoute = to.path === '/' || to.path.startsWith('/activities')
     const auth = await initLineAuth(to.fullPath, !isPublicRoute)
     if (auth.redirected) {
@@ -116,7 +135,6 @@ router.beforeEach(async (to) => {
   }
 })
 
-// Dismiss initial loading screen after first navigation
 let isFirstNavigation = true
 router.afterEach(() => {
   if (isFirstNavigation) {

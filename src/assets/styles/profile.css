@@ -8,8 +8,6 @@
   align-items: center;
   position: relative;
   overflow: hidden;
-
-  /* Reserve style blue-purple gradient background */
   background: #3182de;
   background: -webkit-linear-gradient(
     180deg,
@@ -52,7 +50,6 @@
 }
 
 /* ---------- BACKGROUND ORBS ---------- */
-/* เปลี่ยนจาก .bubbles-bg เป็น .orb-bg ให้ตรงกับ HTML */
 .orb-bg {
   position: fixed;
   top: 0;
@@ -145,7 +142,7 @@
   font-weight: bold;
   font-size: 1.4rem;
   color: var(--clr-100);
-  margin-top: var(--sp-m);
+  margin-top: var(--sp-s);
 }
 
 .badge {
@@ -179,10 +176,10 @@
 }
 
 /* ---------- RESERVATIONS LIST ---------- */
-.my-schedules h3 {
+.my-passport-and-schedules h3 {
   font-size: 1.2rem;
   color: var(--clr-100);
-  margin-bottom: var(--sp-m);
+  margin: var(--sp-l) 0 var(--sp-m);
 }
 
 .schedule-grid {
@@ -206,12 +203,13 @@
   color: var(--clr-pri-500);
   font-weight: bold;
   font-size: 0.85rem;
-  padding: 6px 12px;
+  padding: 4px 8px;
   border-radius: var(--sp-xs);
-  min-width: 64px;
+  min-width: 56px;
   text-align: center;
 }
 
+p.item-details,
 .item-details p {
   font-size: 1rem;
   color: var(--clr-100);
@@ -221,10 +219,4 @@
 .item-details time {
   font-size: 0.85rem;
   color: var(--clr-200);
-}
-
-.empty-state {
-  text-align: center;
-  color: var(--clr-300);
-  padding: var(--sp-l);
 }
