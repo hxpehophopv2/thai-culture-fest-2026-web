@@ -17,7 +17,7 @@ const checkUserStatus = async () => {
   isBooting.value = !isUserDataLoaded.value
 
   // 🟢 ดักโหมด DEV เพื่อไม่ให้ไปเตะ API หรือ LIFF
-  const DEV_MODE_BYPASS = true
+  const DEV_MODE_BYPASS = false
   if (DEV_MODE_BYPASS) {
     await fetchUserData() // เรียกใช้ Mock data จาก UseUserData.js
     isRegistered.value = true

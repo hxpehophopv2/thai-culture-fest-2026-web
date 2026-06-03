@@ -1,8 +1,4 @@
 <script setup>
-// TODO: Fetch and get REAL data, check if:
-//    the general zones (walk-in), has the user checked-in yet? if true, stamp them
-//    the pre-booked activities, has the user checked-in yet? if true, stamp them
-// TODO: Add redirection to Identity, Khon, and Play Zone after clicking on the cards respectively
 
 import { ref, onMounted, computed, watch, nextTick, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -85,6 +81,18 @@ const editBooking = (act) => {
   if (hasAttended(act.id)) return
   const zoneId = act.id === 'STG' ? 'stage' : 'lab'
   router.push(`/activities/${zoneId}?modal=true&activity=${act.id}`)
+}
+
+const zoneRouteMap = {
+  IDY: '/activities/identity',
+  KHN: '/activities/khon',
+  PLY: '/activities/play',
+}
+
+const goToZone = (code) => {
+  if (hasAttended(code)) return
+  const path = zoneRouteMap[code]
+  if (path) router.push(path)
 }
 
 const playAnimation = async () => {
@@ -201,7 +209,7 @@ onUnmounted(() => {
         <div class="subsection">
           <h4 class="subsection-title">{{ t(i18n.generalZones) }}</h4>
           <div class="schedule-grid">
-            <div class="schedule-item clickable" :class="{ 'is-completed': hasAttended('IDY') }">
+            <div class="schedule-item clickable" :class="{ 'is-completed': hasAttended('IDY') }" @click="goToZone('IDY')">
               <span class="code-tag">IDY</span>
               <div class="item-details">
                 <p>IDENTITY ZONE</p>
@@ -226,7 +234,7 @@ onUnmounted(() => {
               </div>
             </div>
 
-            <div class="schedule-item clickable" :class="{ 'is-completed': hasAttended('KHN') }">
+            <div class="schedule-item clickable" :class="{ 'is-completed': hasAttended('KHN') }" @click="goToZone('KHN')">
               <span class="code-tag">KHN</span>
               <div class="item-details">
                 <p>KHON ZONE</p>
@@ -251,7 +259,7 @@ onUnmounted(() => {
               </div>
             </div>
 
-            <div class="schedule-item clickable" :class="{ 'is-completed': hasAttended('PLY') }">
+            <div class="schedule-item clickable" :class="{ 'is-completed': hasAttended('PLY') }" @click="goToZone('PLY')">
               <span class="code-tag">PLY</span>
               <div class="item-details">
                 <p>PLAY ZONE</p>
