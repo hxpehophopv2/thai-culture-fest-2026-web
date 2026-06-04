@@ -124,14 +124,11 @@ nav button.logout-btn:active {
   border-radius: var(--sp-m);
 }
 
-/* ######################## FLOATING ACTION BUTTON ######################## */
+/* ######################## MANUAL ENTRY BUTTON ######################## */
 .fab-manual {
-  min-width: 14em;
-  position: absolute;
-  bottom: var(--sp-2xl);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 20;
+  min-width: 12em;
+  z-index: 11;
+  margin-top: var(--sp-l);
 
   display: flex;
   justify-content: center;
@@ -147,13 +144,13 @@ nav button.logout-btn:active {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   cursor: pointer;
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .fab-manual:hover,
 .fab-manual:active {
-  transform: translateX(-50%) scale(0.98);
+  transform: scale(0.97);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -174,11 +171,13 @@ nav button.logout-btn:active {
 .modal-container {
   width: 90vw;
   max-width: 400px;
+  min-height: 320px;
   background: var(--clr-100);
-  padding: var(--sp-l);
+  padding: var(--sp-xl) var(--sp-l) var(--sp-l);
   border-radius: var(--sp-m);
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: var(--sp-m);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
@@ -186,12 +185,13 @@ nav button.logout-btn:active {
 .modal-container h6 {
   text-align: center;
   color: var(--clr-pri-500);
+  font-weight: bold;
 }
 
 .manual-input {
   width: 100%;
   padding: var(--sp-m);
-  border: 2px solid var(--clr-200, #e2e8f0);
+  border: 1px solid var(--clr-200, #e2e8f0);
   border-radius: var(--sp-s);
   font-size: var(--fs-p1);
   outline: none;
@@ -201,6 +201,7 @@ nav button.logout-btn:active {
 
 .manual-input:focus {
   border-color: var(--clr-pri-500);
+  box-shadow: 0 0 0 1px var(--clr-pri-500);
 }
 
 .manual-input-code {
@@ -209,10 +210,14 @@ nav button.logout-btn:active {
   font-weight: 700;
 }
 
+.modal-container ::placeholder {
+  opacity: 0.5;
+}
+
 .modal-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--sp-m);
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--sp-s);
   margin-top: var(--sp-s);
 }
 
@@ -225,7 +230,8 @@ nav button.logout-btn:active {
 }
 
 .modal-actions button.cancel {
-  background: var(--clr-200, #e2e8f0);
+  background: transparent;
+  box-shadow: none;
   color: var(--clr-600, #475569);
 }
 
@@ -297,9 +303,6 @@ nav button.logout-btn:active {
 
 /* ######################## ZONE BADGE ######################## */
 .zone-badge {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-s);
   background: var(--clr-100);
   padding: var(--sp-xs) var(--sp-m);
   border-radius: 100em;
@@ -314,36 +317,10 @@ nav button.logout-btn:active {
   line-height: 1;
 }
 
-.z-divider {
-  width: 1px;
-  height: 1.2rem;
-  background-color: var(--clr-300, #cbd5e1);
-}
-
-.z-code-btn {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-xs);
-  background: transparent;
-  border: none;
-  padding: 0;
-  color: var(--clr-600);
-  font-family: inherit;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: color 0.2s ease;
-  box-shadow: none;
-}
-
-.z-code-btn:hover {
-  color: var(--clr-pri-500);
-}
-
-/* ######################## COPY TOAST NOTIFICATION ######################## */
+/* ######################## COPY TOAST ######################## */
 .copy-toast {
-  position: absolute;
-  top: 15%;
+  position: fixed;
+  top: var(--sp-xl);
   left: 50%;
   transform: translateX(-50%);
   background: var(--clr-800);
@@ -357,7 +334,6 @@ nav button.logout-btn:active {
   pointer-events: none;
 }
 
-/* Toast Animation */
 .toast-slide-enter-active,
 .toast-slide-leave-active {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -430,20 +406,26 @@ nav button.logout-btn:active {
   color: var(--clr-900);
   font-weight: 700;
   font-size: 1rem;
-  margin-bottom: var(--sp-xs);
+  margin-bottom: var(--sp-s);
 }
 
 .staff-zone-badge {
-  display: inline-block;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-s);
   background: var(--clr-200);
   color: var(--clr-700);
-  padding: 2px 8px;
+  padding: var(--sp-xs) var(--sp-s);
   border-radius: var(--sp-xs);
   font-size: 0.8rem;
+  box-shadow: none;
 }
 
 .staff-zone-badge strong {
+  font-size: var(--fs-p1);
   color: var(--clr-900);
+  text-align: left;
 }
 
 .dropdown-divider {
@@ -473,6 +455,39 @@ nav button.logout-btn:active {
   background: rgba(239, 68, 68, 0.1);
 }
 
+.dropdown-copy-btn {
+  flex-grow: 1;
+  display: flex;
+  gap: var(--sp-s);
+  align-items: center;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  color: var(--clr-700);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  box-shadow: none;
+}
+
+.dropdown-copy-btn:hover {
+  background: var(--clr-150, rgba(0, 0, 0, 0.04));
+}
+
+.dropdown-copy-code {
+  font-weight: 700;
+  font-family: monospace;
+  letter-spacing: 0.05em;
+  color: var(--clr-700);
+}
+
+.dropdown-copy-label {
+  color: var(--clr-700);
+  font-size: 0.8rem;
+  margin-left: auto;
+}
+
 /* Dropdown Animation */
 .dropdown-slide-enter-active,
 .dropdown-slide-leave-active {
@@ -487,107 +502,86 @@ nav button.logout-btn:active {
   transform: scale(0.95);
 }
 
-/* ######################## SCAN RESULT POPUP ######################## */
-.scan-result-popup {
+/* ######################## SCAN RESULT TOAST ######################## */
+.scan-toast {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: var(--sp-2xl);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90vw;
+  max-width: 420px;
   display: flex;
-  align-items: center;
-  gap: var(--sp-m);
-  padding: var(--sp-l);
+  border-radius: var(--sp-s);
+  overflow: hidden;
   z-index: 999999;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
-  animation: popup-pulse 0.3s ease;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  background: var(--clr-100);
 }
 
-@keyframes popup-pulse {
-  0% { transform: scale(0.95); }
-  50% { transform: scale(1.02); }
-  100% { transform: scale(1); }
+.toast-accent {
+  width: 5px;
+  flex-shrink: 0;
 }
 
-.scan-result-popup.popup-success {
-  background: linear-gradient(135deg, #059669, #10b981);
-  color: #fff;
+.toast-success .toast-accent {
+  background: #10b981;
+}
+.toast-warning .toast-accent {
+  background: #f59e0b;
+}
+.toast-error .toast-accent {
+  background: #ef4444;
 }
 
-.scan-result-popup.popup-warning {
-  background: linear-gradient(135deg, #d97706, #f59e0b);
-  color: #fff;
-}
-
-.scan-result-popup.popup-error {
-  background: linear-gradient(135deg, #dc2626, #ef4444);
-  color: #fff;
-}
-
-.result-icon {
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  min-width: 48px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.result-icon-text {
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.result-content {
+.toast-body {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-s) var(--sp-m);
   min-width: 0;
 }
 
-.result-content h4 {
-  margin: 0 0 2px;
-  font-size: 1.1rem;
+.toast-title {
   font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--clr-900);
 }
 
-.result-content p {
-  margin: 0;
-  font-size: 0.9rem;
-  opacity: 0.95;
-  line-height: 1.3;
+.toast-success .toast-title {
+  color: #059669;
+}
+.toast-warning .toast-title {
+  color: #b45309;
+}
+.toast-error .toast-title {
+  color: #dc2626;
 }
 
-.result-content small {
+.toast-msg {
+  font-size: 0.85rem;
+  color: var(--clr-700);
+  line-height: 1.4;
+}
+
+.toast-detail {
   font-size: 0.75rem;
-  opacity: 0.7;
+  color: var(--clr-500);
+  margin-top: 2px;
 }
 
-.close-popup-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  color: #fff;
-  font-size: 1.2rem;
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  box-shadow: none;
+/* Toast Animation */
+.toast-pop-enter-active {
+  transition: all 0.35s cubic-bezier(0.21, 1.02, 0.73, 1);
 }
-
-.close-popup-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+.toast-pop-leave-active {
+  transition: all 0.25s cubic-bezier(0.4, 0, 1, 1);
 }
-
-/* Slide-up Animation */
-.slide-up-enter-active,
-.slide-up-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.slide-up-enter-from,
-.slide-up-leave-to {
+.toast-pop-enter-from {
   opacity: 0;
-  transform: translateY(100%);
+  transform: translateX(-50%) translateY(20px) scale(0.95);
+}
+.toast-pop-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(10px);
 }

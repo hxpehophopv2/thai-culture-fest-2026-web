@@ -86,7 +86,21 @@ const handleLogin = async () => {
   const finalZoneCode = `${zoneCodeArray.value.slice(0, 3).join('')}-${zoneCodeArray.value.slice(3).join('')}`
 
   try {
+    // BYPASS AUTHENTICATION
+    // Simulate network delay
+    // await new Promise((resolve) => setTimeout(resolve, 600))
+
+    // Mock the backend response
+    // const data = {
+    //   sessionId: 'bypass-session-12345',
+    //   activity: {
+    //     zone: finalZoneCode.split('-')[0],
+    //     nameTh: 'โซนทดสอบ (BBBBBBBBBBBBBBBBBBypass)',
+    //     name: 'Test Zone (Bypass)',
+    //   },
+    // }
     const data = await staffLogin(finalZoneCode)
+
     emit('login-success', {
       ...data,
       fullname: fullname.value.trim(),

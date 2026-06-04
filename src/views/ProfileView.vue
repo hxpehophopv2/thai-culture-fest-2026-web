@@ -1,5 +1,4 @@
 <script setup>
-
 import { ref, onMounted, computed, watch, nextTick, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { gsap } from 'gsap'
@@ -194,6 +193,7 @@ onUnmounted(() => {
                 : lineProfile?.displayName || t(i18n.participant)
             }}
           </h2>
+          <!-- TODO: Replace this with a similar styled badge that shows whether the participant has gate-checked-in. if not, show in red, else show in current green -->
           <span class="badge">{{ t(i18n.registeredBadge) }}</span>
         </div>
 
@@ -209,7 +209,11 @@ onUnmounted(() => {
         <div class="subsection">
           <h4 class="subsection-title">{{ t(i18n.generalZones) }}</h4>
           <div class="schedule-grid">
-            <div class="schedule-item clickable" :class="{ 'is-completed': hasAttended('IDY') }" @click="goToZone('IDY')">
+            <div
+              class="schedule-item clickable"
+              :class="{ 'is-completed': hasAttended('IDY') }"
+              @click="goToZone('IDY')"
+            >
               <span class="code-tag">IDY</span>
               <div class="item-details">
                 <p>IDENTITY ZONE</p>
@@ -234,7 +238,11 @@ onUnmounted(() => {
               </div>
             </div>
 
-            <div class="schedule-item clickable" :class="{ 'is-completed': hasAttended('KHN') }" @click="goToZone('KHN')">
+            <div
+              class="schedule-item clickable"
+              :class="{ 'is-completed': hasAttended('KHN') }"
+              @click="goToZone('KHN')"
+            >
               <span class="code-tag">KHN</span>
               <div class="item-details">
                 <p>KHON ZONE</p>
@@ -259,7 +267,11 @@ onUnmounted(() => {
               </div>
             </div>
 
-            <div class="schedule-item clickable" :class="{ 'is-completed': hasAttended('PLY') }" @click="goToZone('PLY')">
+            <div
+              class="schedule-item clickable"
+              :class="{ 'is-completed': hasAttended('PLY') }"
+              @click="goToZone('PLY')"
+            >
               <span class="code-tag">PLY</span>
               <div class="item-details">
                 <p>PLAY ZONE</p>

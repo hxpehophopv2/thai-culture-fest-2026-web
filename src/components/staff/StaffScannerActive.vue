@@ -63,6 +63,7 @@ const i18n = {
   logOut: { 'th-TH': 'ออกจากระบบ', 'en-US': 'Log Out' },
   logOutConfirmTitle: { 'th-TH': 'ยืนยันการออกจากระบบ?', 'en-US': 'Confirm Log Out?' },
   copiedToast: { 'th-TH': 'คัดลอกรหัสโซนแล้ว', 'en-US': 'Zone code copied!' },
+  copyCode: { 'th-TH': 'คัดลอกรหัส', 'en-US': 'Copy Code' },
   popupSuccess: { 'th-TH': 'สำเร็จ', 'en-US': 'Success' },
   popupCheckedIn: { 'th-TH': 'เช็คอินสำเร็จ', 'en-US': 'Checked In' },
   popupWarning: { 'th-TH': 'แจ้งเตือน', 'en-US': 'Warning' },
@@ -133,21 +134,30 @@ const submitManualCode = () => {
   manualCode.value = ''
 }
 
-// Helper to show popup
 const showPopup = (type, title, message, detail = '') => {
   scanResult.value = { type, title, message, detail }
   showResultPopup.value = true
 
-  // Auto-dismiss after 8 seconds (longer for readability)
   if (popupTimeout) clearTimeout(popupTimeout)
   popupTimeout = setTimeout(() => {
     showResultPopup.value = false
-  }, 8000)
+  }, 5000)
 }
 
 // WHAT TO DO WITH THE CODE
 const handleProcessCode = async (code) => {
+  // TODO: im not sure what the original logic is, but check if the 'check-in on walk-in' button is still present. i might have accidentally delete it. i meant the button that pops up with the toast saying error from not pre-registering the activities.
   try {
+    // BYPASS CHECKIN SCAN
+    // Simulate network delay
+    // await new Promise((resolve) => setTimeout(resolve, 800))
+
+    // Mock the backend response
+    // const result = {
+    //   result: 'wrong_time', // Options: 'checked_in', 'already_stamped', 'no_booking', 'wrong_time'
+    //   message: 'เช็คอินเข้างานสำเร็จ',
+    //   person: { name: 'นายทดสอบ สแกนผ่าน', shortCode: 'A3K9F' },
+    // }
     const result = await scanCheckin(code)
 
     let type = 'success'
@@ -168,9 +178,7 @@ const handleProcessCode = async (code) => {
 
     let detailText = `${t(i18n.detailCode)}: ${code}`
     if (result.person) {
-      const shortCodeStr = result.person.shortCode
-        ? ` | ${t(i18n.detailCode)}: ${result.person.shortCode}`
-        : ''
+      const shortCodeStr = result.person.shortCode ? ` (${result.person.shortCode})` : ''
       detailText = `${result.person.name}${shortCodeStr}`
     }
 
@@ -217,9 +225,14 @@ const handleProcessCode = async (code) => {
           <div v-if="isDropdownOpen" class="profile-dropdown">
             <div class="dropdown-header">
               <p class="staff-name">{{ staffName }}</p>
-              <div class="staff-zone-badge">
-                <strong>{{ zoneName }} ({{ zoneCode }})</strong>
-              </div>
+              <button class="staff-zone-badge" @click="copyZoneCode">
+                <strong>{{ zoneName }}</strong>
+                <div class="dropdown-copy-btn">
+                  <span class="dropdown-copy-code">{{ zoneCode }}</span>
+                  <Copy v-if="!isCopied" :size="16" />
+                  <Check v-else :size="16" />
+                </div>
+              </button>
             </div>
 
             <div class="dropdown-divider"></div>
@@ -245,15 +258,8 @@ const handleProcessCode = async (code) => {
         <div class="scan-overlay">
           <small class="scan-text">{{ t(i18n.scanningFor) }}</small>
 
-          <!-- Zone Badge -->
           <div class="zone-badge">
             <span class="z-name">{{ zoneName }}</span>
-            <div class="z-divider"></div>
-            <button class="z-code-btn" @click="copyZoneCode" title="Copy Zone Code">
-              <span>{{ zoneCode }}</span>
-              <Copy v-if="!isCopied" :size="16" remove-padding />
-              <Check v-else :size="16" remove-padding />
-            </button>
           </div>
 
           <div class="scan-frame">
@@ -262,30 +268,20 @@ const handleProcessCode = async (code) => {
             <div class="corner bottom-left"></div>
             <div class="corner bottom-right"></div>
           </div>
+
+          <button class="fab-manual" @click="showManualModal = true">
+            <EditAlt pack="filled" />
+            {{ t(i18n.manualBtn) }}
+          </button>
         </div>
       </qrcode-stream>
 
-      <!-- Error if !Permission -->
       <div v-if="scanError" class="cam-error-msg">
         <p>{{ t(i18n.camError) }}</p>
         <small>{{ scanError }}</small>
       </div>
     </div>
 
-    <!-- Toast Notification -->
-    <Transition name="toast-slide">
-      <div v-if="isCopied" class="copy-toast">
-        {{ t(i18n.copiedToast) }}
-      </div>
-    </Transition>
-
-    <!-- Manual Entry -->
-    <button class="fab-manual" @click="showManualModal = true">
-      <EditAlt pack="filled" />
-      {{ t(i18n.manualBtn) }}
-    </button>
-
-    <!-- Modal Manual Entry -->
     <Transition name="fade">
       <div v-if="showManualModal" class="modal-backdrop" @click.self="showManualModal = false">
         <div class="modal-container">
@@ -311,7 +307,6 @@ const handleProcessCode = async (code) => {
       </div>
     </Transition>
 
-    <!-- Modal Confirm Logout -->
     <Transition name="fade">
       <div v-if="showLogoutModal" class="modal-backdrop" @click.self="showLogoutModal = false">
         <div class="confirm-container">
@@ -328,22 +323,20 @@ const handleProcessCode = async (code) => {
       </div>
     </Transition>
 
-    <!-- Modal Scan Result -->
-    <Transition name="slide-up">
-      <div v-if="showResultPopup" class="scan-result-popup" :class="`popup-${scanResult.type}`">
-        <div class="result-icon">
-          <Check v-if="scanResult.type === 'success'" :size="32" />
-          <span v-else-if="scanResult.type === 'warning'" class="result-icon-text">!</span>
-          <span v-else-if="scanResult.type === 'error'" class="result-icon-text">✕</span>
+    <Transition name="toast-pop">
+      <div
+        v-if="showResultPopup"
+        :key="scanResult.title + scanResult.detail"
+        class="scan-toast"
+        :class="`toast-${scanResult.type}`"
+        @click="showResultPopup = false"
+      >
+        <div class="toast-accent"></div>
+        <div class="toast-body">
+          <span class="toast-title">{{ scanResult.title }}</span>
+          <span class="toast-msg">{{ scanResult.message }}</span>
+          <span v-if="scanResult.detail" class="toast-detail">{{ scanResult.detail }}</span>
         </div>
-        <div class="result-content">
-          <h4>{{ scanResult.title }}</h4>
-          <p>{{ scanResult.message }}</p>
-          <small v-if="scanResult.detail">{{ scanResult.detail }}</small>
-        </div>
-        <button class="close-popup-btn" @click="showResultPopup = false" aria-label="Close">
-          ✕
-        </button>
       </div>
     </Transition>
   </section>
