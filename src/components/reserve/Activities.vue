@@ -1,5 +1,6 @@
 <script setup>
-import { computed } from 'vue'
+// อย่าลืม import nextTick เข้ามาด้วยครับ เพื่อความชัวร์ว่า DOM เรนเดอร์เสร็จก่อน
+import { computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { zones } from '@/data/zonesData.js'
 import { useLocale } from '@/composables/useLocale'
@@ -9,9 +10,22 @@ import '@/assets/styles/reserve.css'
 import { Theater, Drama } from '@lucide/vue'
 import { TShirt, MedicalFlask, Running, Store } from '@boxicons/vue'
 
+// --- Import GSAP ---
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
+
 const router = useRouter()
 const route = useRoute()
 const { t } = useLocale()
+
+defineProps({
+  hideOrbs: {
+    type: Boolean,
+    default: false,
+  },
+})
 
 const iconMap = {
   Theater,
@@ -42,6 +56,55 @@ const i18n = {
   },
 }
 
+// --- GSAP Animations ---
+let ctx
+onMounted(async () => {
+  await nextTick()
+
+  ctx = gsap.context(() => {
+    gsap.from('#reserve h3', {
+      scrollTrigger: {
+        trigger: '#reserve',
+        start: 'top 85%',
+        toggleActions: 'play none none reverse',
+      },
+      y: 30,
+      opacity: 0,
+      duration: 0.6,
+      ease: 'power3.out',
+    })
+
+    const cards = gsap.utils.toArray('.zone-card')
+
+    gsap.from(cards, {
+      scrollTrigger: {
+        trigger: '#reserve',
+        start: 'top 80%',
+        toggleActions: 'play none none reverse',
+        onLeaveBack: () => {
+          cards.forEach((c) => c.classList.remove('hover-ready'))
+        },
+      },
+      x: -20,
+      opacity: 0,
+      duration: 0.6,
+      ease: 'power3.out',
+      stagger: {
+        each: 0.15,
+        onComplete: function () {
+          const el = this.targets()[0]
+          gsap.set(el, { clearProps: 'transform' })
+          el.classList.add('hover-ready')
+        },
+      },
+    })
+  })
+})
+
+onUnmounted(() => {
+  if (ctx) ctx.revert()
+})
+
 const isMainActivitiesPage = () => route.path === '/activities'
 
 const goToZone = (zoneId) => {
@@ -56,7 +119,7 @@ const goToReserve = (event, zoneId) => {
 
 <template>
   <main id="reserve-layout">
-    <div class="bubbles-bg">
+    <div class="bubbles-bg" v-if="!hideOrbs">
       <div class="orb"></div>
       <div class="orb"></div>
       <div class="orb"></div>
@@ -93,11 +156,19 @@ const goToReserve = (event, zoneId) => {
             </small>
             <small v-else class="zone-status"></small>
 
-            <button v-if="zone.id === 'stage'" @click="goToReserve($event, zone.id)">
+            <button
+              v-if="zone.id === 'stage'"
+              class="main-reserve-btn"
+              @click="goToReserve($event, zone.id)"
+            >
               {{ t(i18n.btnReserveNow) }}
             </button>
 
-            <button v-else-if="zone.id === 'lab'" @click.stop="goToZone(zone.id)">
+            <button
+              v-else-if="zone.id === 'lab'"
+              class="main-reserve-btn"
+              @click.stop="goToZone(zone.id)"
+            >
               {{ t(i18n.btnReserveNow) }}
             </button>
 

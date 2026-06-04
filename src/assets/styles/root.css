@@ -200,6 +200,9 @@ mark {
 }
 
 button {
+  font-size: var(--fs-p1);
+  line-height: var(--lh-p1);
+  font-weight: 600;
   cursor: pointer;
   padding: var(--sp-m) var(--sp-l);
   border: none;
