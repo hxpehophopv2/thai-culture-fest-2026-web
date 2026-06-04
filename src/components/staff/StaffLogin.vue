@@ -233,23 +233,4 @@ const i18n = {
   width: 100%;
   margin-top: var(--sp-m);
 }
-
-.form-actions button {
-  width: 100%;
-  padding: var(--sp-s) var(--sp-m);
-  border-radius: var(--sp-s);
-  font-weight: 600;
-  cursor: pointer;
-}
-
-button.secondary {
-  background: var(--clr-200, #e2e8f0);
-  color: var(--clr-900, #0f172a);
-  border: none;
-  transition: background 0.2s;
-}
-
-button.secondary:hover {
-  background: var(--clr-300, #cbd5e1);
-}
 </style>

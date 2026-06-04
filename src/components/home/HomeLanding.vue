@@ -177,7 +177,7 @@ const i18n = {
       </nav>
 
       <div class="hero-content">
-        <h3><RouterLink to="#">KMUTT ROOTED</RouterLink></h3>
+        <h3><RouterLink to="/staff">KMUTT ROOTED</RouterLink></h3>
         <h1>Thai Sustainable Culture Fest 2026</h1>
         <small>
           {{ t(i18n.heroDesc) }}
