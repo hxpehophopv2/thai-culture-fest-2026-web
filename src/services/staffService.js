@@ -64,3 +64,35 @@ export async function scanCheckin(qrData) {
   })
   return response.data
 }
+
+/**
+ * @param {string} scanLogId
+ * @param {string} [note]
+ * @returns {Promise<{ ok: boolean, success: boolean, message: string }>}
+ */
+export async function overrideScan(scanLogId, note = '') {
+  return await staffApiRequest(`/api/checkin/${scanLogId}/override`, {
+    method: 'POST',
+    body: { note },
+  })
+}
+
+/**
+ * @param {string} scanLogId
+ * @param {string} [note]
+ * @returns {Promise<{ ok: boolean, success: boolean, message: string }>}
+ */
+export async function rejectScan(scanLogId, note = '') {
+  return await staffApiRequest(`/api/checkin/${scanLogId}/reject`, {
+    method: 'POST',
+    body: { note },
+  })
+}
+
+/**
+ * @returns {Promise<Array<{ bookingId: string, sessionId: string, startTime: string, endTime: string, person: { id: string, name: string, nickname: string, org: string, classRoom?: string, shortCode?: string }, isAttended: boolean }>>}
+ */
+export async function getActivityBookings() {
+  const response = await staffApiRequest('/api/checkin/bookings')
+  return response.data
+}

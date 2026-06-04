@@ -30,6 +30,8 @@ const i18n = {
   noBooking: { 'th-TH': 'คุณยังไม่มีรายการจองกิจกรรม', 'en-US': 'You have no reservations yet.' },
   stamped: { 'th-TH': 'ผ่านแล้ว', 'en-US': 'PASSED' },
   reserveNowBtn: { 'th-TH': 'จองเลย!', 'en-US': 'Reserve Now!' },
+  gateCheckedInBadge: { 'th-TH': 'เช็กอินเข้างานแล้ว', 'en-US': 'Checked In' },
+  gateNotCheckedInBadge: { 'th-TH': 'ยังไม่ได้เช็กอินเข้างาน', 'en-US': 'Not Checked In' },
 }
 
 const qr = computed(() => qrData.value)
@@ -193,8 +195,12 @@ onUnmounted(() => {
                 : lineProfile?.displayName || t(i18n.participant)
             }}
           </h2>
-          <!-- TODO: Replace this with a similar styled badge that shows whether the participant has gate-checked-in. if not, show in red, else show in current green -->
-          <span class="badge">{{ t(i18n.registeredBadge) }}</span>
+          <span 
+            class="badge" 
+            :class="{ 'badge-red': !registrationData?.gateCheckedInAt }"
+          >
+            {{ registrationData?.gateCheckedInAt ? t(i18n.gateCheckedInBadge) : t(i18n.gateNotCheckedInBadge) }}
+          </span>
         </div>
 
         <div class="qr-wrapper">
@@ -349,6 +355,11 @@ onUnmounted(() => {
 
 <style scoped>
 @import url('@/assets/styles/profile.css');
+
+.badge-red {
+  background: rgb(220, 53, 69) !important;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4) !important;
+}
 
 /* ---------- SUBSECTION STYLES ---------- */
 .subsection {
