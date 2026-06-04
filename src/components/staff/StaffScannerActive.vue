@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { QrcodeStream } from 'vue-qrcode-reader'
 import LangToggle from '@/components/LangToggle.vue'
 import { useLocale } from '@/composables/useLocale'
@@ -7,11 +7,12 @@ import { Copy, Check, User, LogOut } from '@lucide/vue'
 import { EditAlt } from '@boxicons/vue'
 import { scanCheckin } from '@/services/staffService'
 
-const emit = defineEmits(['logout'])
+const emit = defineEmits({
+  logout: () => true,
+})
 
 const { t } = useLocale()
 
-// States
 const isCameraReady = ref(false)
 const isProcessing = ref(false)
 const showManualModal = ref(false)
@@ -20,19 +21,22 @@ const showLogoutModal = ref(false)
 const manualCode = ref('')
 const scanError = ref('')
 const zoneCode = ref('')
-const zoneName = ref('Loading...')
-const staffName = ref('Loading...')
+const zoneName = ref('')
+const staffName = ref('')
 const isCopied = ref(false)
 
-// Scan Result Popup State
 const showResultPopup = ref(false)
 const scanResult = ref({
-  type: 'success', // 'success', 'warning', 'error'
+  type: 'success',
   title: '',
   message: '',
-  detail: ''
+  detail: '',
 })
 let popupTimeout = null
+
+onBeforeUnmount(() => {
+  if (popupTimeout) clearTimeout(popupTimeout)
+})
 
 // QR Scanner config — explicitly set format for mobile compatibility
 const qrFormats = ['qr_code']
@@ -41,17 +45,15 @@ const qrFormats = ['qr_code']
 const cameraConstraints = { facingMode: 'environment' }
 
 onMounted(() => {
-  const boothCodeFromStorage = localStorage.getItem('staff_booth_code') || localStorage.getItem('staff_zone') || 'UNKNOWN'
-  const nameFromStorage = localStorage.getItem('staff_fullname') || 'Staff Member'
-  const activityFromStorage = localStorage.getItem('staff_activity_name') || 'Unknown Zone'
-
-  zoneCode.value = boothCodeFromStorage
-  staffName.value = nameFromStorage
-  zoneName.value = activityFromStorage
+  zoneCode.value =
+    localStorage.getItem('staff_booth_code') || localStorage.getItem('staff_zone') || 'UNKNOWN'
+  staffName.value = localStorage.getItem('staff_fullname') || t(i18n.fallbackStaffName)
+  zoneName.value = localStorage.getItem('staff_activity_name') || t(i18n.fallbackZoneName)
 })
 
 const i18n = {
   scanTitle: { 'th-TH': 'สแกน QR Code', 'en-US': 'Scan QR Code' },
+  scanningFor: { 'th-TH': 'กำลังสแกนสำหรับ', 'en-US': 'SCANNING FOR' },
   manualBtn: { 'th-TH': 'กรอกรหัสเอง', 'en-US': 'Manual Entry' },
   modalTitle: { 'th-TH': 'กรอกรหัสผู้เข้าร่วม', 'en-US': 'Enter Participant Code' },
   modalPlc: { 'th-TH': 'เช่น A3K9F', 'en-US': 'e.g. A3K9F' },
@@ -61,6 +63,19 @@ const i18n = {
   logOut: { 'th-TH': 'ออกจากระบบ', 'en-US': 'Log Out' },
   logOutConfirmTitle: { 'th-TH': 'ยืนยันการออกจากระบบ?', 'en-US': 'Confirm Log Out?' },
   copiedToast: { 'th-TH': 'คัดลอกรหัสโซนแล้ว', 'en-US': 'Zone code copied!' },
+  copyCode: { 'th-TH': 'คัดลอกรหัส', 'en-US': 'Copy Code' },
+  popupSuccess: { 'th-TH': 'สำเร็จ', 'en-US': 'Success' },
+  popupCheckedIn: { 'th-TH': 'เช็คอินสำเร็จ', 'en-US': 'Checked In' },
+  popupWarning: { 'th-TH': 'แจ้งเตือน', 'en-US': 'Warning' },
+  popupRejected: { 'th-TH': 'ปฏิเสธ', 'en-US': 'Rejected' },
+  popupError: { 'th-TH': 'เกิดข้อผิดพลาด', 'en-US': 'Error' },
+  popupServerError: {
+    'th-TH': 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้',
+    'en-US': 'Unable to connect to the server',
+  },
+  detailCode: { 'th-TH': 'รหัส', 'en-US': 'Code' },
+  fallbackStaffName: { 'th-TH': 'สตาฟ', 'en-US': 'Staff Member' },
+  fallbackZoneName: { 'th-TH': 'ไม่ทราบโซน', 'en-US': 'Unknown Zone' },
 }
 
 // LOGOUT TRIGGER
@@ -119,52 +134,63 @@ const submitManualCode = () => {
   manualCode.value = ''
 }
 
-// Helper to show popup
 const showPopup = (type, title, message, detail = '') => {
   scanResult.value = { type, title, message, detail }
   showResultPopup.value = true
 
-  // Auto-dismiss after 8 seconds (longer for readability)
   if (popupTimeout) clearTimeout(popupTimeout)
   popupTimeout = setTimeout(() => {
     showResultPopup.value = false
-  }, 8000)
+  }, 5000)
 }
 
 // WHAT TO DO WITH THE CODE
 const handleProcessCode = async (code) => {
+  // TODO: im not sure what the original logic is, but check if the 'check-in on walk-in' button is still present. i might have accidentally delete it. i meant the button that pops up with the toast saying error from not pre-registering the activities.
   try {
+    // BYPASS CHECKIN SCAN
+    // Simulate network delay
+    // await new Promise((resolve) => setTimeout(resolve, 800))
+
+    // Mock the backend response
+    // const result = {
+    //   result: 'wrong_time', // Options: 'checked_in', 'already_stamped', 'no_booking', 'wrong_time'
+    //   message: 'เช็คอินเข้างานสำเร็จ',
+    //   person: { name: 'นายทดสอบ สแกนผ่าน', shortCode: 'A3K9F' },
+    // }
     const result = await scanCheckin(code)
-    
-    // Determine the type based on backend result code
+
     let type = 'success'
-    let title = 'สำเร็จ'
-    
+    let title = t(i18n.popupSuccess)
+
     if (['wrong_base', 'wrong_time', 'already_stamped', 'gate_already'].includes(result.result)) {
       type = 'warning'
-      title = 'แจ้งเตือน'
+      title = t(i18n.popupWarning)
     } else if (['no_booking', 'rejected', 'not_gate_checked_in'].includes(result.result)) {
       type = 'error'
-      title = 'ปฏิเสธ'
+      title = t(i18n.popupRejected)
     } else if (result.result === 'checked_in' || result.result === 'gate_checked_in') {
       type = 'success'
-      title = 'เช็คอินสำเร็จ'
+      title = t(i18n.popupCheckedIn)
     }
-    
-    // Fallback message if message is undefined
+
     const message = result.message || `Result: ${result.result}`
-    
-    let detailText = `Code: ${code}`
+
+    let detailText = `${t(i18n.detailCode)}: ${code}`
     if (result.person) {
-      const shortCodeStr = result.person.shortCode ? ` | รหัส: ${result.person.shortCode}` : ''
+      const shortCodeStr = result.person.shortCode ? ` (${result.person.shortCode})` : ''
       detailText = `${result.person.name}${shortCodeStr}`
     }
-    
-    showPopup(type, title, message, detailText)
 
+    showPopup(type, title, message, detailText)
   } catch (err) {
     console.error('Scan API error:', err)
-    showPopup('error', 'เกิดข้อผิดพลาด', err.message || 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้', `Code: ${code}`)
+    showPopup(
+      'error',
+      t(i18n.popupError),
+      err.message || t(i18n.popupServerError),
+      `${t(i18n.detailCode)}: ${code}`,
+    )
   } finally {
     // Allow next scan after 1.5 seconds
     setTimeout(() => {
@@ -199,9 +225,14 @@ const handleProcessCode = async (code) => {
           <div v-if="isDropdownOpen" class="profile-dropdown">
             <div class="dropdown-header">
               <p class="staff-name">{{ staffName }}</p>
-              <div class="staff-zone-badge">
-                <strong>{{ zoneName }} ({{ zoneCode }})</strong>
-              </div>
+              <button class="staff-zone-badge" @click="copyZoneCode">
+                <strong>{{ zoneName }}</strong>
+                <div class="dropdown-copy-btn">
+                  <span class="dropdown-copy-code">{{ zoneCode }}</span>
+                  <Copy v-if="!isCopied" :size="16" />
+                  <Check v-else :size="16" />
+                </div>
+              </button>
             </div>
 
             <div class="dropdown-divider"></div>
@@ -225,17 +256,10 @@ const handleProcessCode = async (code) => {
         @camera-on="onCameraReady"
       >
         <div class="scan-overlay">
-          <small class="scan-text">SCANNING FOR</small>
+          <small class="scan-text">{{ t(i18n.scanningFor) }}</small>
 
-          <!-- Zone Badge -->
           <div class="zone-badge">
             <span class="z-name">{{ zoneName }}</span>
-            <div class="z-divider"></div>
-            <button class="z-code-btn" @click="copyZoneCode" title="Copy Zone Code">
-              <span>{{ zoneCode }}</span>
-              <Copy v-if="!isCopied" :size="16" remove-padding />
-              <Check v-else :size="16" remove-padding />
-            </button>
           </div>
 
           <div class="scan-frame">
@@ -244,30 +268,20 @@ const handleProcessCode = async (code) => {
             <div class="corner bottom-left"></div>
             <div class="corner bottom-right"></div>
           </div>
+
+          <button class="fab-manual" @click="showManualModal = true">
+            <EditAlt pack="filled" />
+            {{ t(i18n.manualBtn) }}
+          </button>
         </div>
       </qrcode-stream>
 
-      <!-- Error if !Permission -->
       <div v-if="scanError" class="cam-error-msg">
         <p>{{ t(i18n.camError) }}</p>
         <small>{{ scanError }}</small>
       </div>
     </div>
 
-    <!-- Toast Notification -->
-    <Transition name="toast-slide">
-      <div v-if="isCopied" class="copy-toast">
-        {{ t(i18n.copiedToast) }}
-      </div>
-    </Transition>
-
-    <!-- Manual Entry -->
-    <button class="fab-manual" @click="showManualModal = true">
-      <EditAlt pack="filled" />
-      {{ t(i18n.manualBtn) }}
-    </button>
-
-    <!-- Modal Manual Entry -->
     <Transition name="fade">
       <div v-if="showManualModal" class="modal-backdrop" @click.self="showManualModal = false">
         <div class="modal-container">
@@ -276,10 +290,9 @@ const handleProcessCode = async (code) => {
             v-model="manualCode"
             type="text"
             :placeholder="t(i18n.modalPlc)"
-            class="manual-input"
+            class="manual-input manual-input-code"
             maxlength="6"
             autocapitalize="characters"
-            style="text-transform: uppercase; letter-spacing: 0.3em; font-weight: 700;"
             @keyup.enter="submitManualCode"
           />
           <div class="modal-actions">
@@ -294,7 +307,6 @@ const handleProcessCode = async (code) => {
       </div>
     </Transition>
 
-    <!-- Modal Confirm Logout -->
     <Transition name="fade">
       <div v-if="showLogoutModal" class="modal-backdrop" @click.self="showLogoutModal = false">
         <div class="confirm-container">
@@ -311,20 +323,20 @@ const handleProcessCode = async (code) => {
       </div>
     </Transition>
 
-    <!-- Modal Scan Result -->
-    <Transition name="slide-up">
-      <div v-if="showResultPopup" class="scan-result-popup" :class="`popup-${scanResult.type}`">
-        <div class="result-icon">
-          <Check v-if="scanResult.type === 'success'" :size="32" />
-          <span v-else-if="scanResult.type === 'warning'" style="font-size: 24px; font-weight: bold;">!</span>
-          <span v-else-if="scanResult.type === 'error'" style="font-size: 24px; font-weight: bold;">✕</span>
+    <Transition name="toast-pop">
+      <div
+        v-if="showResultPopup"
+        :key="scanResult.title + scanResult.detail"
+        class="scan-toast"
+        :class="`toast-${scanResult.type}`"
+        @click="showResultPopup = false"
+      >
+        <div class="toast-accent"></div>
+        <div class="toast-body">
+          <span class="toast-title">{{ scanResult.title }}</span>
+          <span class="toast-msg">{{ scanResult.message }}</span>
+          <span v-if="scanResult.detail" class="toast-detail">{{ scanResult.detail }}</span>
         </div>
-        <div class="result-content">
-          <h4>{{ scanResult.title }}</h4>
-          <p>{{ scanResult.message }}</p>
-          <small v-if="scanResult.detail">{{ scanResult.detail }}</small>
-        </div>
-        <button class="close-popup-btn" @click="showResultPopup = false" aria-label="Close">✕</button>
       </div>
     </Transition>
   </section>
