@@ -4,7 +4,11 @@ import { useRouter } from 'vue-router'
 import { useLocale } from '@/composables/useLocale'
 import { staffLogin } from '@/services/staffService'
 
-const emit = defineEmits(['login-success'])
+const emit = defineEmits({
+  'login-success': (payload) => {
+    return payload && typeof payload.fullname === 'string' && typeof payload.boothCode === 'string'
+  },
+})
 
 const router = useRouter()
 const { t } = useLocale()
@@ -90,7 +94,7 @@ const handleLogin = async () => {
     })
   } catch (err) {
     showError.value = true
-    errorMsg.value = err.message || 'Login failed'
+    errorMsg.value = err.message || t(i18n.loginFailed)
   } finally {
     isSubmitting.value = false
   }
@@ -106,6 +110,7 @@ const i18n = {
   fullnamePlc: { 'th-TH': 'เช่น สมชาย ใจดี', 'en-US': 'e.g. John Doe' },
   zoneCodeLabel: { 'th-TH': 'รหัส ZONE ที่ดูแล', 'en-US': 'Assigned Zone Code' },
   errorRequired: { 'th-TH': 'กรุณากรอกข้อมูลให้ครบถ้วน', 'en-US': 'This field is required' },
+  loginFailed: { 'th-TH': 'เข้าสู่ระบบไม่สำเร็จ', 'en-US': 'Login failed' },
   loginBtn: { 'th-TH': 'เข้าสู่ระบบ / เริ่มสแกน', 'en-US': 'Login / Start Scanning' },
   loginBtnLoading: { 'th-TH': 'กำลังเข้าสู่ระบบ...', 'en-US': 'Logging in...' },
   backBtn: { 'th-TH': 'ย้อนกลับ', 'en-US': 'Back' },
@@ -115,7 +120,7 @@ const i18n = {
 <template>
   <section id="register-main">
     <main>
-      <h4 style="margin-bottom: 1em">{{ t(i18n.title) }}</h4>
+      <h4 class="login-title">{{ t(i18n.title) }}</h4>
       <form @submit.prevent="handleLogin">
         <div class="field">
           <label for="staff-fullname">{{ t(i18n.fullnameLabel) }}</label>
@@ -126,11 +131,7 @@ const i18n = {
             :placeholder="t(i18n.fullnamePlc)"
             :class="{ 'error-border': showError && !fullname.trim() }"
           />
-          <small
-            v-if="showError && !fullname.trim()"
-            class="error-text"
-            style="color: var(--clr-sem-err)"
-          >
+          <small v-if="showError && !fullname.trim()" class="error-text">
             {{ t(i18n.errorRequired) }}
           </small>
         </div>
@@ -158,18 +159,14 @@ const i18n = {
             </template>
           </div>
 
-          <small
-            class="error-text"
-            v-if="showError && !isZoneCodeValid"
-            style="color: var(--clr-sem-err)"
-          >
+          <small v-if="showError && !isZoneCodeValid" class="error-text">
             {{ t(i18n.errorRequired) }}
           </small>
         </div>
 
         <p
           v-if="showError && errorMsg && fullname.trim() && isZoneCodeValid"
-          style="color: var(--clr-sem-err); text-align: center; font-size: 0.9em"
+          class="api-error-text"
         >
           {{ errorMsg }}
         </p>
@@ -224,6 +221,16 @@ const i18n = {
   color: var(--clr-500);
   flex-shrink: 0;
   margin: 0 -2px;
+}
+
+.login-title {
+  margin-bottom: 1em;
+}
+
+.api-error-text {
+  color: var(--clr-sem-err);
+  text-align: center;
+  font-size: 0.9em;
 }
 
 .form-actions {

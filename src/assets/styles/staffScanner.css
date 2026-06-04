@@ -203,6 +203,12 @@ nav button.logout-btn:active {
   border-color: var(--clr-pri-500);
 }
 
+.manual-input-code {
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-weight: 700;
+}
+
 .modal-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -365,7 +371,7 @@ nav button.logout-btn:active {
 /* ######################## NAV & USER MENU ######################## */
 .user-menu-wrapper {
   position: relative;
-  z-index: 100000; /* สูงกว่า overlay แน่นอน */
+  z-index: 100000;
 }
 
 .user-avatar-btn {
@@ -525,6 +531,11 @@ nav button.logout-btn:active {
   min-width: 48px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.2);
+}
+
+.result-icon-text {
+  font-size: 24px;
+  font-weight: bold;
 }
 
 .result-content {
