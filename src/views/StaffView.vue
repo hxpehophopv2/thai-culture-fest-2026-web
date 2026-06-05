@@ -2,10 +2,12 @@
 import { ref, onMounted } from 'vue'
 import StaffLogin from '@/components/staff/StaffLogin.vue'
 import StaffScannerActive from '@/components/staff/StaffScannerActive.vue'
+import StaffActivityDashboard from '@/components/staff/StaffActivityDashboard.vue'
 import '@/assets/styles/register.css'
 
 const isBooting = ref(true)
 const isLoggedIn = ref(false)
+const activeTab = ref('scanner')
 
 const checkStaffAuth = async () => {
   isBooting.value = true
@@ -36,6 +38,7 @@ const handleLoginSuccess = (staffData) => {
   )
 
   isLoggedIn.value = true
+  activeTab.value = 'scanner'
 }
 
 // Handle logout made at StaffScannerActive
@@ -62,8 +65,21 @@ onMounted(checkStaffAuth)
       class="register staff-login-screen"
       @login-success="handleLoginSuccess"
     />
-    <!-- Show Scanner View (Logged in) -->
-    <StaffScannerActive v-else class="staff-scan-screen" @logout="handleLogout" />
+    <!-- Show Scanner/Dashboard View (Logged in) -->
+    <template v-else>
+      <StaffScannerActive
+        v-if="activeTab === 'scanner'"
+        class="staff-scan-screen"
+        @logout="handleLogout"
+        @tab-change="activeTab = $event"
+      />
+      <StaffActivityDashboard
+        v-else-if="activeTab === 'dashboard'"
+        class="staff-dashboard-screen"
+        @logout="handleLogout"
+        @tab-change="activeTab = $event"
+      />
+    </template>
   </section>
 </template>
 

@@ -21,8 +21,8 @@ const router = createRouter({
       component: () => import('../views/RegisterView.vue'),
     },
     {
-      path: '/staff-login',
-      name: 'staff login',
+      path: '/staff',
+      name: 'staff',
       component: () => import('../views/StaffView.vue'),
     },
     {

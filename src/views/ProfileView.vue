@@ -1,5 +1,4 @@
 <script setup>
-
 import { ref, onMounted, computed, watch, nextTick, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { gsap } from 'gsap'
@@ -31,6 +30,8 @@ const i18n = {
   noBooking: { 'th-TH': 'คุณยังไม่มีรายการจองกิจกรรม', 'en-US': 'You have no reservations yet.' },
   stamped: { 'th-TH': 'ผ่านแล้ว', 'en-US': 'PASSED' },
   reserveNowBtn: { 'th-TH': 'จองเลย!', 'en-US': 'Reserve Now!' },
+  gateCheckedInBadge: { 'th-TH': 'เช็กอินเข้างานแล้ว', 'en-US': 'Checked In' },
+  gateNotCheckedInBadge: { 'th-TH': 'ยังไม่ได้เช็กอินเข้างาน', 'en-US': 'Not Checked In' },
 }
 
 const qr = computed(() => qrData.value)
@@ -194,7 +195,12 @@ onUnmounted(() => {
                 : lineProfile?.displayName || t(i18n.participant)
             }}
           </h2>
-          <span class="badge">{{ t(i18n.registeredBadge) }}</span>
+          <span 
+            class="badge" 
+            :class="{ 'badge-red': !registrationData?.gateCheckedInAt }"
+          >
+            {{ registrationData?.gateCheckedInAt ? t(i18n.gateCheckedInBadge) : t(i18n.gateNotCheckedInBadge) }}
+          </span>
         </div>
 
         <div class="qr-wrapper">
@@ -209,7 +215,11 @@ onUnmounted(() => {
         <div class="subsection">
           <h4 class="subsection-title">{{ t(i18n.generalZones) }}</h4>
           <div class="schedule-grid">
-            <div class="schedule-item clickable" :class="{ 'is-completed': hasAttended('IDY') }" @click="goToZone('IDY')">
+            <div
+              class="schedule-item clickable"
+              :class="{ 'is-completed': hasAttended('IDY') }"
+              @click="goToZone('IDY')"
+            >
               <span class="code-tag">IDY</span>
               <div class="item-details">
                 <p>IDENTITY ZONE</p>
@@ -234,7 +244,11 @@ onUnmounted(() => {
               </div>
             </div>
 
-            <div class="schedule-item clickable" :class="{ 'is-completed': hasAttended('KHN') }" @click="goToZone('KHN')">
+            <div
+              class="schedule-item clickable"
+              :class="{ 'is-completed': hasAttended('KHN') }"
+              @click="goToZone('KHN')"
+            >
               <span class="code-tag">KHN</span>
               <div class="item-details">
                 <p>KHON ZONE</p>
@@ -259,7 +273,11 @@ onUnmounted(() => {
               </div>
             </div>
 
-            <div class="schedule-item clickable" :class="{ 'is-completed': hasAttended('PLY') }" @click="goToZone('PLY')">
+            <div
+              class="schedule-item clickable"
+              :class="{ 'is-completed': hasAttended('PLY') }"
+              @click="goToZone('PLY')"
+            >
               <span class="code-tag">PLY</span>
               <div class="item-details">
                 <p>PLAY ZONE</p>
@@ -337,6 +355,11 @@ onUnmounted(() => {
 
 <style scoped>
 @import url('@/assets/styles/profile.css');
+
+.badge-red {
+  background: rgb(220, 53, 69) !important;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4) !important;
+}
 
 /* ---------- SUBSECTION STYLES ---------- */
 .subsection {

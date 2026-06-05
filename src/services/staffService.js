@@ -22,7 +22,9 @@ async function staffApiRequest(path, options = {}) {
   const payload = await response.json().catch(() => null)
 
   if (!response.ok || payload?.ok === false) {
-    const error = new Error(payload?.error?.message || `Request failed with status ${response.status}`)
+    const error = new Error(
+      payload?.error?.message || `Request failed with status ${response.status}`,
+    )
     error.status = response.status
     error.code = payload?.error?.code
     throw error
@@ -31,6 +33,10 @@ async function staffApiRequest(path, options = {}) {
   return payload
 }
 
+/**
+ * @param {string} boothCode - Zone booth code in format 'XXX-XXXX'
+ * @returns {Promise<{ sessionId: string, activityName: string }>}
+ */
 export async function staffLogin(boothCode) {
   const response = await staffApiRequest('/api/staff/login', {
     method: 'POST',
@@ -39,15 +45,54 @@ export async function staffLogin(boothCode) {
   return response.data
 }
 
+/**
+ * @returns {Promise<{ sessionId: string, activityName: string, boothCode: string } | null>}
+ */
 export async function getActiveStaffSession() {
   const response = await staffApiRequest('/api/staff/session/active')
   return response.data
 }
 
+/**
+ * @param {string} qrData - Raw QR code string scanned from participant badge
+ * @returns {Promise<{ result: string, message?: string, person?: { name: string, shortCode?: string } }>}
+ */
 export async function scanCheckin(qrData) {
   const response = await staffApiRequest('/api/checkin/scan', {
     method: 'POST',
     body: { qrData },
   })
+  return response.data
+}
+
+/**
+ * @param {string} scanLogId
+ * @param {string} [note]
+ * @returns {Promise<{ ok: boolean, success: boolean, message: string }>}
+ */
+export async function overrideScan(scanLogId, note = '') {
+  return await staffApiRequest(`/api/checkin/${scanLogId}/override`, {
+    method: 'POST',
+    body: { note },
+  })
+}
+
+/**
+ * @param {string} scanLogId
+ * @param {string} [note]
+ * @returns {Promise<{ ok: boolean, success: boolean, message: string }>}
+ */
+export async function rejectScan(scanLogId, note = '') {
+  return await staffApiRequest(`/api/checkin/${scanLogId}/reject`, {
+    method: 'POST',
+    body: { note },
+  })
+}
+
+/**
+ * @returns {Promise<Array<{ bookingId: string, sessionId: string, startTime: string, endTime: string, person: { id: string, name: string, nickname: string, org: string, classRoom?: string, shortCode?: string }, isAttended: boolean }>>}
+ */
+export async function getActivityBookings() {
+  const response = await staffApiRequest('/api/checkin/bookings')
   return response.data
 }
