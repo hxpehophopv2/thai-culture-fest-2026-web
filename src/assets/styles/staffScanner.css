@@ -29,7 +29,7 @@ nav button.logout-btn:active {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background-color: var(--clr-950, #000);
+  background-color: var(--clr-900, #000);
 }
 
 .camera-container {
@@ -505,7 +505,7 @@ nav button.logout-btn:active {
 /* ######################## SCAN RESULT TOAST ######################## */
 .scan-toast {
   position: fixed;
-  bottom: var(--sp-2xl);
+  bottom: 100px;
   left: 50%;
   transform: translateX(-50%);
   width: 90vw;
