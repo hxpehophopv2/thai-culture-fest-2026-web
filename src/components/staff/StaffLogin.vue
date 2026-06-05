@@ -1,5 +1,6 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { gsap } from 'gsap'
 import { useRouter } from 'vue-router'
 import { useLocale } from '@/composables/useLocale'
 import { staffLogin } from '@/services/staffService'
@@ -86,19 +87,7 @@ const handleLogin = async () => {
   const finalZoneCode = `${zoneCodeArray.value.slice(0, 3).join('')}-${zoneCodeArray.value.slice(3).join('')}`
 
   try {
-    // BYPASS AUTHENTICATION
-    // Simulate network delay
-    // await new Promise((resolve) => setTimeout(resolve, 600))
-
-    // Mock the backend response
-    // const data = {
-    //   sessionId: 'bypass-session-12345',
-    //   activity: {
-    //     zone: finalZoneCode.split('-')[0],
-    //     nameTh: 'โซนทดสอบ (BBBBBBBBBBBBBBBBBBypass)',
-    //     name: 'Test Zone (Bypass)',
-    //   },
-    // }
+    // DEV MODE: ควบคุมที่ STAFF_DEV_MODE ใน staffService.js
     const data = await staffLogin(finalZoneCode)
 
     emit('login-success', {
@@ -118,6 +107,22 @@ const goBack = () => {
   router.push('/')
 }
 
+const loginRef = ref(null)
+let ctx
+
+onMounted(() => {
+  ctx = gsap.context(() => {
+    const tl = gsap.timeline()
+    tl.from('.login-title', { y: -20, opacity: 0, duration: 0.6, ease: 'power3.out' })
+    tl.from('.field', { y: 20, opacity: 0, duration: 0.5, stagger: 0.15, ease: 'power2.out' }, '-=0.3')
+    tl.from('.form-actions button', { y: 15, opacity: 0, duration: 0.5, stagger: 0.1, ease: 'power2.out' }, '-=0.2')
+  }, loginRef.value)
+})
+
+onUnmounted(() => {
+  if (ctx) ctx.revert()
+})
+
 const i18n = {
   title: { 'th-TH': 'ลงทะเบียนสตาฟ', 'en-US': 'Staff Registration' },
   fullnameLabel: { 'th-TH': 'ชื่อ-สกุล (ผู้เข้าใช้งาน)', 'en-US': 'Full Name' },
@@ -132,7 +137,7 @@ const i18n = {
 </script>
 
 <template>
-  <section id="register-main">
+  <section id="register-main" ref="loginRef">
     <main>
       <h4 class="login-title">{{ t(i18n.title) }}</h4>
       <form @submit.prevent="handleLogin">

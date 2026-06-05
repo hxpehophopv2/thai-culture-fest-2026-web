@@ -1,12 +1,11 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, onUnmounted } from 'vue'
+import { gsap } from 'gsap'
 import { QrcodeStream } from 'vue-qrcode-reader'
-import LangToggle from '@/components/LangToggle.vue'
 import { useLocale } from '@/composables/useLocale'
-import { Copy, Check, User, LogOut } from '@lucide/vue'
 import { EditAlt } from '@boxicons/vue'
 import { scanCheckin, overrideScan, rejectScan } from '@/services/staffService'
-import StaffNav from './StaffNav.vue'
+import StaffHeader from './StaffHeader.vue'
 
 const emit = defineEmits({
   logout: () => true,
@@ -19,14 +18,11 @@ const isCameraReady = ref(false)
 const isProcessing = ref(false)
 const isActionProcessing = ref(false)
 const showManualModal = ref(false)
-const isDropdownOpen = ref(false)
-const showLogoutModal = ref(false)
 const manualCode = ref('')
 const scanError = ref('')
 const zoneCode = ref('')
 const zoneName = ref('')
 const staffName = ref('')
-const isCopied = ref(false)
 
 const showResultPopup = ref(false)
 const scanResult = ref({
@@ -35,7 +31,7 @@ const scanResult = ref({
   message: '',
   detail: '',
   scanLogId: null,
-  canOverride: false
+  canOverride: false,
 })
 let popupTimeout = null
 
@@ -49,11 +45,29 @@ const qrFormats = ['qr_code']
 // Prefer rear camera on mobile
 const cameraConstraints = { facingMode: 'environment' }
 
+const scannerRef = ref(null)
+let ctx
+
 onMounted(() => {
   zoneCode.value =
     localStorage.getItem('staff_booth_code') || localStorage.getItem('staff_zone') || 'UNKNOWN'
   staffName.value = localStorage.getItem('staff_fullname') || t(i18n.fallbackStaffName)
   zoneName.value = localStorage.getItem('staff_activity_name') || t(i18n.fallbackZoneName)
+
+  ctx = gsap.context(() => {
+    const tl = gsap.timeline()
+    tl.from('.scan-text', { y: -15, opacity: 0, duration: 0.5, ease: 'power2.out' })
+    tl.from(
+      '.scan-frame',
+      { scale: 0.8, opacity: 0, duration: 0.4, ease: 'back.out(1.2)' },
+      '-=0.3',
+    )
+    tl.from('.fab-manual', { y: 20, opacity: 0, duration: 0.5, ease: 'back.out(1.2)' }, '-=0.2')
+  }, scannerRef.value)
+})
+
+onUnmounted(() => {
+  if (ctx) ctx.revert()
 })
 
 const i18n = {
@@ -82,31 +96,6 @@ const i18n = {
   btnApprove: { 'th-TH': 'อนุมัติพิเศษ', 'en-US': 'Approve' },
   btnReject: { 'th-TH': 'ปฏิเสธ', 'en-US': 'Reject' },
   processing: { 'th-TH': 'กำลังบันทึก...', 'en-US': 'Saving...' },
-}
-
-// LOGOUT TRIGGER
-const triggerLogout = () => {
-  isDropdownOpen.value = false
-  showLogoutModal.value = true
-}
-
-// LOGOUT CONFIRM
-const confirmLogOut = () => {
-  showLogoutModal.value = false
-  emit('logout')
-}
-
-// COPY LOGIC
-const copyZoneCode = async () => {
-  try {
-    await navigator.clipboard.writeText(zoneCode.value)
-    isCopied.value = true
-    setTimeout(() => {
-      isCopied.value = false
-    }, 2000) // 2s
-  } catch (err) {
-    console.error('Failed to copy text: ', err)
-  }
 }
 
 // DETECT CODE
@@ -163,10 +152,24 @@ const handleOverride = async (scanLogId) => {
   isActionProcessing.value = true
   try {
     const res = await overrideScan(scanLogId)
-    showPopup('success', t(i18n.popupCheckedIn), res.message || 'อนุมัติพิเศษเรียบร้อย', scanResult.value.detail, null, false)
+    showPopup(
+      'success',
+      t(i18n.popupCheckedIn),
+      res.message || 'อนุมัติพิเศษเรียบร้อย',
+      scanResult.value.detail,
+      null,
+      false,
+    )
   } catch (err) {
     console.error('Override error:', err)
-    showPopup('error', t(i18n.popupError), err.message || 'อนุมัติล้มเหลว', scanResult.value.detail, null, false)
+    showPopup(
+      'error',
+      t(i18n.popupError),
+      err.message || 'อนุมัติล้มเหลว',
+      scanResult.value.detail,
+      null,
+      false,
+    )
   } finally {
     isActionProcessing.value = false
   }
@@ -177,10 +180,24 @@ const handleReject = async (scanLogId) => {
   isActionProcessing.value = true
   try {
     const res = await rejectScan(scanLogId)
-    showPopup('error', t(i18n.popupRejected), res.message || 'ปฏิเสธเช็คอินเรียบร้อย', scanResult.value.detail, null, false)
+    showPopup(
+      'error',
+      t(i18n.popupRejected),
+      res.message || 'ปฏิเสธเช็คอินเรียบร้อย',
+      scanResult.value.detail,
+      null,
+      false,
+    )
   } catch (err) {
     console.error('Reject error:', err)
-    showPopup('error', t(i18n.popupError), err.message || 'ปฏิเสธล้มเหลว', scanResult.value.detail, null, false)
+    showPopup(
+      'error',
+      t(i18n.popupError),
+      err.message || 'ปฏิเสธล้มเหลว',
+      scanResult.value.detail,
+      null,
+      false,
+    )
   } finally {
     isActionProcessing.value = false
   }
@@ -237,51 +254,13 @@ const handleProcessCode = async (code) => {
 </script>
 
 <template>
-  <section id="scanner-view">
-    <Transition name="fade">
-      <div
-        v-if="isDropdownOpen"
-        class="dropdown-overlay-close"
-        @click="isDropdownOpen = false"
-      ></div>
-    </Transition>
-    <nav>
-      <LangToggle theme="light" />
-      <StaffNav current-tab="scanner" @tab-change="$emit('tab-change', $event)" />
-      <div class="user-menu-wrapper">
-        <button
-          class="user-avatar-btn"
-          @click="isDropdownOpen = !isDropdownOpen"
-          aria-label="User Profile"
-        >
-          <User :size="20" />
-        </button>
-
-        <!-- Dropdown Menu -->
-        <Transition name="dropdown-slide">
-          <div v-if="isDropdownOpen" class="profile-dropdown">
-            <div class="dropdown-header">
-              <p class="staff-name">{{ staffName }}</p>
-              <button class="staff-zone-badge" @click="copyZoneCode">
-                <strong>{{ zoneName }}</strong>
-                <div class="dropdown-copy-btn">
-                  <span class="dropdown-copy-code">{{ zoneCode }}</span>
-                  <Copy v-if="!isCopied" :size="16" />
-                  <Check v-else :size="16" />
-                </div>
-              </button>
-            </div>
-
-            <div class="dropdown-divider"></div>
-
-            <button class="dropdown-logout-btn" @click="triggerLogout">
-              <LogOut :size="16" />
-              {{ t(i18n.logOut) }}
-            </button>
-          </div>
-        </Transition>
-      </div>
-    </nav>
+  <section id="scanner-view" ref="scannerRef">
+    <StaffHeader
+      :staff-name="staffName"
+      :zone-name="zoneName"
+      :zone-code="zoneCode"
+      @logout="emit('logout')"
+    />
 
     <!-- Camera Section -->
     <div class="camera-container">
@@ -344,22 +323,6 @@ const handleProcessCode = async (code) => {
       </div>
     </Transition>
 
-    <Transition name="fade">
-      <div v-if="showLogoutModal" class="modal-backdrop" @click.self="showLogoutModal = false">
-        <div class="confirm-container">
-          <h5>{{ t(i18n.logOutConfirmTitle) }}</h5>
-          <div class="confirm-btn-container">
-            <button class="discard" @click="confirmLogOut">
-              {{ t(i18n.logOut) }}
-            </button>
-            <button class="secondary" @click="showLogoutModal = false">
-              {{ t(i18n.cancel) }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </Transition>
-
     <Transition name="toast-pop">
       <div
         v-if="showResultPopup"
@@ -376,15 +339,25 @@ const handleProcessCode = async (code) => {
 
           <!-- Actions for Override -->
           <div v-if="scanResult.canOverride" class="toast-actions" @click.stop>
-            <button class="toast-btn-approve" @click="handleOverride(scanResult.scanLogId)" :disabled="isActionProcessing">
+            <button
+              class="toast-btn-approve"
+              @click="handleOverride(scanResult.scanLogId)"
+              :disabled="isActionProcessing"
+            >
               {{ isActionProcessing ? t(i18n.processing) : t(i18n.btnApprove) }}
             </button>
-            <button class="toast-btn-reject" @click="handleReject(scanResult.scanLogId)" :disabled="isActionProcessing">
+            <button
+              class="toast-btn-reject"
+              @click="handleReject(scanResult.scanLogId)"
+              :disabled="isActionProcessing"
+            >
               {{ t(i18n.btnReject) }}
             </button>
           </div>
         </div>
-        <button class="toast-close-btn" @click.stop="showResultPopup = false" aria-label="Close">✕</button>
+        <button class="toast-close-btn" @click.stop="showResultPopup = false" aria-label="Close">
+          ✕
+        </button>
       </div>
     </Transition>
   </section>
@@ -395,26 +368,34 @@ const handleProcessCode = async (code) => {
 
 .toast-actions {
   display: flex;
-  gap: 8px;
-  margin-top: 10px;
-  width: 100%;
+  align-items: center;
+  gap: var(--sp-xs);
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
-.toast-btn-approve {
-  background: #10b981;
-  color: white;
-  border: none;
+.toast-btn-approve,
+.toast-btn-reject {
   padding: 6px 12px;
-  border-radius: 4px;
+  border-radius: var(--sp-xs);
+  border: none;
+  font-family: inherit;
   font-weight: 700;
   font-size: 0.8rem;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: opacity 0.2s, transform 0.1s;
+  transition:
+    background 0.2s,
+    transform 0.1s;
+  box-shadow: none;
+}
+
+.toast-btn-approve {
+  background: var(--clr-pri-500);
+  color: white;
 }
 
 .toast-btn-approve:hover {
-  opacity: 0.9;
+  background: var(--clr-pri-600, #1a4a7a);
 }
 
 .toast-btn-approve:active {
@@ -422,20 +403,19 @@ const handleProcessCode = async (code) => {
 }
 
 .toast-btn-reject {
-  background: rgba(0, 0, 0, 0.05);
+  background: transparent;
   color: var(--clr-700);
-  border: 1px solid var(--clr-300);
-  padding: 6px 12px;
-  border-radius: 4px;
   font-weight: 700;
   font-size: 0.8rem;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+  transition:
+    background 0.2s,
+    transform 0.1s;
   box-shadow: none;
 }
 
 .toast-btn-reject:hover {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .toast-btn-reject:active {
@@ -467,10 +447,5 @@ const handleProcessCode = async (code) => {
   opacity: 0.6;
   cursor: not-allowed;
   pointer-events: none;
-}
-
-nav {
-  justify-content: space-between !important;
-  align-items: center !important;
 }
 </style>

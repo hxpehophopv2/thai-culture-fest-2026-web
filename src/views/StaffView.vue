@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import StaffLogin from '@/components/staff/StaffLogin.vue'
 import StaffScannerActive from '@/components/staff/StaffScannerActive.vue'
 import StaffActivityDashboard from '@/components/staff/StaffActivityDashboard.vue'
+import StaffNav from '@/components/staff/StaffNav.vue'
 import '@/assets/styles/register.css'
 
 const isBooting = ref(true)
@@ -79,6 +80,7 @@ onMounted(checkStaffAuth)
         @logout="handleLogout"
         @tab-change="activeTab = $event"
       />
+      <StaffNav :current-tab="activeTab" @tab-change="activeTab = $event" />
     </template>
   </section>
 </template>
